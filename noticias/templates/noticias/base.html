@@ -4,13 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Local News{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     {% block head %}{% endblock %}
 </head>
 <body>
     <!-- Header -->
-    <header>
-        
+    <header class="bg-black h-[100px] flex justify-between items-center px-8">
+        <div class="flex gap-2">
+            <h1 class="text-white text-3xl">Local</h1> <h1 class="text-3xl text-blue-600">News</h1>
+        </div>
+        <form action="#"
+                class="w-full max-w-lg flex bg-white rounded-full shadow-md overflow-hidden">
+                <input type="text" name="q" placeholder="Pesquisar notícia"
+                    class="flex-grow p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-l-full pl-5">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-900 text-white p-3 px-6 rounded-r-full transition duration-300 ease-in-out flex items-center justify-center"><i
+                        class="fas fa-search mr-2"></i> Pesquisar</button>
+        </form>
+        <div class="bg-white px-3 py-2 rounded-lg">
+            <a href="#">Login/cadastro</a>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -21,8 +35,39 @@
     </main>
 
     <!-- Footer -->
-    <footer>
-        
+    <footer class="bg-black py-4">
+        <div class="flex flex-col gap-1 items-center">
+            <div class="flex gap-2 w-fit">
+                <h1 class="text-white text-3xl">Local</h1> <h1 class="text-3xl text-blue-600">News</h1>
+            </div>
+            <div class="w-fit h-fit">
+                <h2 class="text-gray-200">Nem sempre fake, mas sempre news!</h2>
+            </div>
+        </div>
+        <div class="flex flex-col mt-4 items-center">
+            <div class="text-white w-fit">
+                <p class="w-fit">Deseja publicar no nosso portal?</p>
+            </div>
+            <div class="text-white w-fit">
+                <p class="w-fit">Entre em contato</p>
+            </div>
+            <div class="flex m-auto w-fit gap-6 mt-3">
+                <p class="w-fit text-white">contato@localnews.com.br</p>
+                <p class="w-fit text-white">(11) 3000-0000</p>
+                <p class="w-fit text-white">São Paulo, SP - Brasil</p>
+            </div>
+        </div>
+        <div class="w-full border-t-1 border-t-gray-300 mt-2 py-4 px-8 flex items-center justify-between">
+            <p class="text-white">&copy; 2025 - Local News. Todos os direitos reservados.</p>
+            <div class="flex gap-2 items-center">
+                <p class="text-white">Nossas redes:</p>
+                <div class="flex gap-2">
+                    <i class="text-white fab fa-facebook fa-2x"></i>
+                    <i class="text-white fab fa-instagram fa-2x"></i>
+                    <i class="text-white fab fa-youtube fa-2x"></i>
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
