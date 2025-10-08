@@ -42,7 +42,7 @@ source venv/bin/activate
 
 Agora, com o ambiente virtual ativado, instale as dependências necessárias executando o seguinte comando:
 ```
-pip install django djangorestframework django-taggit django-summernote pillow folium geopy
+pip install django djangorestframework django-taggit django-summernote pillow folium geopy psycopg2
 ```
 
 Isso irá instalar as seguintes ferramentas:
