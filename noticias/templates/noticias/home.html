@@ -11,6 +11,24 @@
     <a class="px-3 py-0.5  rounded-lg border-2 border-[#cac4d0] bg-white text-lg" href="">Economia</a>
     <a class="px-3 py-0.5  rounded-lg border-2 border-[#cac4d0] bg-white text-lg" href="">Outro</a>
 </nav>
-
+<form method="POST" action="{% url 'home' %}">
+    {% csrf_token %}
+    <label>Email:</label>
+    <input type="email" name="email" required>
+  
+    <label>Nome de Usuário:</label>
+    <input type="text" name="nome" required>
+  
+    <label>Senha:</label>
+    <input type="password" name="senha" required>
+  
+    <label>Perfil:</label>
+    <select name="perfil">
+      <option value="usuario">Usuário Comum</option>
+      <option value="editor">Editor</option>
+    </select>
+  
+    <button type="submit">Cadastrar</button>
+  </form>
 <!-- </main> -->
 {% endblock %}

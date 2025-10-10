@@ -134,3 +134,5 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #cria uma pasta 'media' na raiz do projeto
+
+AUTH_USER_MODEL = 'noticias.Usuario'
