@@ -69,3 +69,6 @@ python manage.py runserver
 ```
 
 Abra o navegador e acesse http://127.0.0.1:8000/. Você deverá ver a página padrão do Django indicando que o servidor está funcionando.
+
+4. Banco de dados
+Foi utilizado o postgres e é necessário configurar o usuário, a senha e o nome do banco exatamento como está no arquivo [settings](https://github.com/Emmanuelf21/Local-News/blob/main/portal/settings.py)
