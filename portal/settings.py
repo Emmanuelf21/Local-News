@@ -79,10 +79,14 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 ### MODIFICADO ###
 # Substituindo a configuração do SQLite pela do Supabase/PostgreSQL
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600  # Mantém as conexões ativas por 600 segundos
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'LocalNews',
+        'USER': 'postgres',
+        'PASSWORD': 'senai103',
+        'HOST': 'localhost', 
+        'PORT': '5432',
+    }
 }
 
 
@@ -126,3 +130,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+import os
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #cria uma pasta 'media' na raiz do projeto
+
+AUTH_USER_MODEL = 'noticias.Usuario'

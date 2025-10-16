@@ -1,25 +1,95 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 # Create your models here.
+class UsuarioManager(BaseUserManager):
+    def create_user(self, email_usuario, nome_usuario, password=None, perfil='usuario'):
+        if not email_usuario:
+            raise ValueError("O campo 'email' é obrigatório.")
+        email_usuario = self.normalize_email(email_usuario)
+
+        user = self.model(
+            email_usuario=email_usuario,
+            nome_usuario=nome_usuario,
+            perfil=perfil,
+        )
+        user.set_password(password)  # Importante: usa o set_password
+        user.save(using=self._db)
+        return user
+
+    def create_editor(self, email_usuario, nome_usuario, password):
+        return self.create_user(
+            email_usuario=email_usuario,
+            nome_usuario=nome_usuario,
+            password=password,
+            perfil='editor'
+        )
+
+    def create_superuser(self, email_usuario, nome_usuario, password):
+        user = self.create_user(
+            email_usuario=email_usuario,
+            nome_usuario=nome_usuario,
+            password=password,
+            perfil='editor',  # ou 'admin' se quiser outro perfil
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+    
+class Usuario(AbstractBaseUser, PermissionsMixin):
+    PERFIS = (
+        ('usuario', 'Usuário Comum'),
+        ('editor', 'Editor'),
+    )
+
+    email_usuario = models.EmailField("Email", unique=True)
+    nome_usuario = models.CharField("Nome de Usuário", max_length=150)
+    senha_usuario = models.CharField("Senha", max_length=128)
+    perfil = models.CharField("Perfil", max_length=10, choices=PERFIS, default='usuario')
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    # Adicionando related_name para evitar conflito
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='usuario_set',  # Aqui definimos um nome exclusivo para o relacionamento
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='usuario_set',  # Aqui definimos um nome exclusivo para o relacionamento
+        blank=True
+    )
+
+    objects = UsuarioManager()
+
+    USERNAME_FIELD = 'email_usuario'
+    REQUIRED_FIELDS = ['nome_usuario']
+
+    def __str__(self):
+        return self.email_usuario
+    
 class Noticia(models.Model):
-    CATEGORIAS = [
-        ('política', 'Política'),
-        ('esportes','Esportes'),
-        ('entretenimento','Entretenimento'),
-        ('tecnologia','Tecnologia'),
-        ('saúde', 'Saúde'),
-        ('economia','Economia'),
-        ('outros','Outros')
-    ]
-    image = models.ImageField("Imagem", upload_to='receitas/images/', blank=True, null=True)
+    image = models.ImageField("Imagem", upload_to='noticias/images/', blank=True, null=True)
     
     titulo=models.CharField("Título", max_length=200)
-    categoria = models.CharField("Categoria", max_length=50, choices=CATEGORIAS, default='Outros')
-    
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name="noticias", verbose_name="Categoria")
+    # categoria = models.CharField("Categoria", max_length=50, choices=CATEGORIAS, default='Outros')
+    usuario = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='Noticias',
+        verbose_name='Usuário',
+        null=True,
+    ) 
+    bairro = models.ForeignKey('Bairro', on_delete=models.CASCADE, related_name='noticias', verbose_name='Bairro', default=1)
     descricao=models.CharField("Descrição", max_length=255)
     introducao=models.TextField("Introdução")
     desenvolvimento_inicial=models.TextField("Desenvolvimento")
-    video = models.TextField("Vídeo", help_text='link do youtube')
+    video = models.TextField("Vídeo", help_text='link do youtube', blank=True)
     desenvolvimento_final=models.TextField("Desenvolvimento")
     conclusao=models.TextField("Conclusão")
     
@@ -42,3 +112,49 @@ class Noticia(models.Model):
         verbose_name = "Notícia"
         verbose_name_plural = "Notícias"
         ordering = ['-created_at'] #ordena as receitas pela data de criação (mais novas primeiro)
+
+
+class Comentario(models.Model):
+    usuario = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        verbose_name='Usuário',
+    )
+    
+    noticia = models.ForeignKey(
+        Noticia,
+        on_delete=models.CASCADE,
+        related_name='comentarios',
+        verbose_name='Notícia',
+    )
+    
+    comentario = models.TextField("Comentário")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self): 
+        return self.comentario  # Limita no print
+
+    class Meta:
+        verbose_name = "Comentario"
+        verbose_name_plural = "Comentarios"
+        ordering = ['-created_at']
+
+class Categoria(models.Model):
+    categoria = models.CharField("Categoria", max_length=50)
+    
+    def __str__(self): 
+        return self.categoria
+
+class Bairro(models.Model):
+    bairro = models.CharField("Bairro", max_length=150)
+    
+    def __str__(self): 
+        return self.bairro
+    
+class Perfil(models.Model):
+    perfil = models.CharField("Perfil", max_length=50)
+    
+    def __str__(self):
+        return self.perfil
+    
