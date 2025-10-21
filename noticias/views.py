@@ -5,6 +5,11 @@ from django.contrib import messages
 Usuario = get_user_model()
 # Create your views here.
 def home(request):
+    return render(request, "noticias/home.html")
+
+Usuario = get_user_model()
+
+def cadastro(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         nome = request.POST.get('nome')
@@ -14,7 +19,7 @@ def home(request):
         # Verifica se o email já está cadastrado
         if Usuario.objects.filter(email_usuario=email).exists():
             messages.error(request, 'Email já cadastrado.')
-            return redirect('home.html')
+            return redirect('cadastro')
 
         # Cria o usuário com o perfil selecionado
         if perfil == 'editor':
@@ -30,8 +35,8 @@ def home(request):
                 senha_usuario=senha,
                 perfil='usuario'
             )
-        
-        messages.success(request, 'Usuário cadastrado com sucesso.')
-        return redirect('home.html')
 
-    return render(request, "noticias/home.html")
+        messages.success(request, 'Usuário cadastrado com sucesso.')
+        return redirect('login')
+
+    return render(request, 'cadastro.html')
