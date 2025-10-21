@@ -5,11 +5,11 @@ Django settings for portal project.
 
 from pathlib import Path
 import os                 ### ADICIONADO ###
-from dotenv import load_dotenv ### ADICIONADO ###
-import dj_database_url    ### ADICIONADO ###
+#from dotenv import load_dotenv ### ADICIONADO ###
+#import dj_database_url    ### ADICIONADO ###
 
 # Carrega as variáveis de ambiente do arquivo .env
-load_dotenv()             ### ADICIONADO ###
+#load_dotenv()             ### ADICIONADO ###
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY') ### MODIFICADO ###
+SECRET_KEY = "django-insecure-^bslunvia86+-ouu3al8$3az$92ty(@pj=u=5%b@cf$c4-i)mp" ### MODIFICADO ###
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True' ### MODIFICADO ###
+DEBUG = 'True' ### MODIFICADO ###
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    ALLOWED_HOSTS = ['*']  # Permite todos os hosts em modo debug
+else:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
