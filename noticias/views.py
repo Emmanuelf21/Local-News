@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import CadastroForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .forms import NoticiaForm
 # Create your views here.
 
 # def cadastro(request):
@@ -63,3 +64,17 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'Você saiu da sua conta.')
     return redirect('login_cadastro')
+
+@login_required
+def cadastrar_noticia(request):
+    if request.method == 'POST':
+        form = NoticiaForm(request.POST, request.FILES)
+        if form.is_valid():
+            noticia = form.save(commit=False)  # não salva ainda
+            noticia.usuario = request.user      # define o usuário logado
+            noticia.save()
+            return redirect('home')
+            # return redirect('lista_noticias')   # troque pelo nome da sua view de listagem
+    else:
+        form = NoticiaForm()
+    return render(request, 'noticias/cadastrar_noticia.html', {'form': form})

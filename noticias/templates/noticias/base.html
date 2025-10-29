@@ -7,6 +7,7 @@
     <title>{% block title %}Local News{% endblock %}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/cadastrar_noticia.css' %}">
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const btn = document.getElementById('perfilButton');
@@ -60,7 +61,7 @@
                     <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Ver perfil</a>
         
                     {% if user.perfil == 'editor' %}
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Criar notícia</a>
+                        <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Criar notícia</a>
                     {% endif %}
         
                     <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">

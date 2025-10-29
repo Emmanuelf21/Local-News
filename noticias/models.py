@@ -112,7 +112,7 @@ class Noticia(models.Model):
     descricao=models.CharField("Descrição", max_length=255)
     introducao=models.TextField("Introdução")
     desenvolvimento_inicial=models.TextField("Desenvolvimento")
-    video = models.TextField("Vídeo", help_text='link do youtube', blank=True)
+    video = models.TextField("Vídeo", blank=True)
     desenvolvimento_final=models.TextField("Desenvolvimento")
     conclusao=models.TextField("Conclusão")
     
