@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from .forms import CadastroForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
+from .models import Noticia, Curtida, Visualizacao, Comentario
 # Create your views here.
 
 # def cadastro(request):
@@ -78,3 +79,59 @@ def cadastrar_noticia(request):
     else:
         form = NoticiaForm()
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
+
+@login_required
+def dashboard(request):
+    user = request.user
+
+    # Admin vê todas as notícias, editor vê apenas as suas
+    if user.is_superuser:
+        noticias = Noticia.objects.all()
+    else:
+        noticias = Noticia.objects.filter(usuario=user)
+
+    # Totais do dashboard
+    total_visualizacoes = sum(n.visualizacoes.count() for n in noticias)
+    total_curtidas = sum(n.curtidas.count() for n in noticias)
+
+    context = {
+        'noticias': noticias,
+        'total_visualizacoes': total_visualizacoes,
+        'total_curtidas': total_curtidas,
+    }
+    return render(request, 'noticias/perfil.html', context)
+
+@login_required
+def editar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Só o autor ou admin pode editar
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        messages.error(request, "Você não tem permissão para editar esta notícia.")
+        return redirect('dashboard')
+
+    # Instancia o form com os dados da notícia existente
+    if request.method == "POST":
+        form = NoticiaForm(request.POST, request.FILES, instance=noticia)
+        if form.is_valid():
+            noticia_editada = form.save(commit=False)
+            noticia_editada.usuario = noticia.usuario  # mantém o autor original
+            noticia_editada.save()
+            messages.success(request, "Notícia atualizada com sucesso!")
+            return redirect('dashboard')
+    else:
+        form = NoticiaForm(instance=noticia)
+
+    context = {'form': form, 'noticia': noticia}
+    return render(request, 'noticias/editar_noticia.html', context)
+
+@login_required
+def excluir_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        messages.error(request, "Você não tem permissão para excluir esta notícia.")
+        return redirect('dashboard')
+
+    noticia.delete()
+    messages.success(request, "Notícia excluída com sucesso!")
+    return redirect('dashboard')
