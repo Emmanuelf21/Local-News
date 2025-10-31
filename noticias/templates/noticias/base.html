@@ -61,7 +61,7 @@
             <!-- Dropdown -->
             <div id="dropdownMenu"
                 class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Alterar dados</a>
+                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-md">Alterar dados</a>
 
                 {% if user.perfil == 'editor' %}
                 <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Publicações</a>
@@ -70,7 +70,7 @@
                     notícia</a>
                 {% endif %}
 
-                <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-md">
                     Sair
                 </a>
             </div>
