@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
+from .models import Noticia
 
 Usuario = get_user_model()
 
@@ -65,3 +66,16 @@ class LoginForm(forms.Form):
             if not user:
                 raise forms.ValidationError("Email ou senha incorretos.")
         return cleaned_data
+
+class NoticiaForm(forms.ModelForm):
+    class Meta:
+        model = Noticia
+        exclude = ['usuario']  # <--- Exclui o campo do formulário
+        widgets = {
+            'descricao': forms.TextInput(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'placeholder': 'Breve descrição'}),
+            'introducao': forms.Textarea(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'rows': 3}),
+            'desenvolvimento_inicial': forms.Textarea(attrs={'class': 'form-control flex flex-col px-2 py-1 border rounded-md border-gray-500', 'rows': 4}),
+            'desenvolvimento_final': forms.Textarea(attrs={'class': 'form-control flex flex-col px-2 py-1 border rounded-md border-gray-500', 'rows': 4}),
+            'conclusao': forms.Textarea(attrs={'class': 'form-control flex flex-col border px-2 py-1 rounded-md border-gray-500', 'rows': 3}),
+            'video': forms.TextInput(attrs={'class': 'form-control flex flex-col border-b px-2 py-1', 'placeholder': 'Cole o link do YouTube'}),
+        }

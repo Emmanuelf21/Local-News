@@ -112,7 +112,7 @@ class Noticia(models.Model):
     descricao=models.CharField("Descrição", max_length=255)
     introducao=models.TextField("Introdução")
     desenvolvimento_inicial=models.TextField("Desenvolvimento")
-    video = models.TextField("Vídeo", help_text='link do youtube', blank=True)
+    video = models.TextField("Vídeo", blank=True)
     desenvolvimento_final=models.TextField("Desenvolvimento")
     conclusao=models.TextField("Conclusão")
     
@@ -181,3 +181,17 @@ class Perfil(models.Model):
     def __str__(self):
         return self.perfil
     
+User = get_user_model()
+
+class Curtida(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE, related_name='curtidas')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'noticia')
+
+
+class Visualizacao(models.Model):
+    noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE, related_name='visualizacoes')
+    data = models.DateTimeField(auto_now_add=True)
