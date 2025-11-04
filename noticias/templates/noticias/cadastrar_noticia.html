@@ -1,55 +1,84 @@
 {% extends "noticias/base.html"%}
 {% block title %}Nova Notícia - Local News{% endblock %}
 
-{%block content%}
-<div class="flex flex-col items-center px-5 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[60%]">
-    <h2 style="text-align:center;" class="mt-5 text-xl">Adicionar Notícia</h2>
-    <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4 w-[70%] py-4">
+{% block content %}
+<div class="flex flex-col items-center px-5 py-8 rounded-lg bg-[#f2f2f2] m-auto my-14 w-full max-w-3xl shadow-md">
+    <h2 class="text-center mt-2 text-2xl font-semibold text-gray-800">Adicionar Notícia</h2>
+
+    <form method="POST" enctype="multipart/form-data" 
+          class="flex flex-col gap-5 w-full px-2 sm:px-4 md:px-8 py-6">
         {% csrf_token %}
+
+        <!-- Imagem principal -->
         <div class="flex flex-col">
-            <label for="id_image" >Imagem Principal</label>
-            <div class="inserir-imagem">{{ form.image }}</div>
+            <label for="id_image" class="font-medium text-gray-700">Imagem Principal</label>
+            <div class="inserir-imagem mt-1">{{ form.image }}</div>
         </div>
-        <div class="flex flex-col titulo">
-            <label for="id_titulo">Título:</label>
+
+        <!-- Título -->
+        <div class="flex flex-col">
+            <label for="id_titulo" class="font-medium text-gray-700">Título</label>
             {{ form.titulo }}
         </div>
-        <div class="flex categoria">
-            <label for="id_categoria">Categoria:</label>
-            {{ form.categoria }}
+
+        <!-- Categoria -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <label for="id_categoria" class="font-medium text-gray-700">Categoria</label>
+            <div class="flex-1">{{ form.categoria }}</div>
         </div>
-        <div class="flex bairro">
-            <label for="id_bairro">Bairro:</label>
-            {{ form.bairro }}
+
+        <!-- Bairro -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <label for="id_bairro" class="font-medium text-gray-700">Bairro</label>
+            <div class="flex-1">{{ form.bairro }}</div>
         </div>
+
+        <!-- Descrição -->
         <div class="flex flex-col">
-            <label for="id_descricao">Descrição</label>
+            <label for="id_descricao" class="font-medium text-gray-700">Descrição</label>
             {{ form.descricao }}
         </div>
+
+        <!-- Introdução -->
         <div class="flex flex-col">
-            <label for="id_introducao">Introdução</label>
+            <label for="id_introducao" class="font-medium text-gray-700">Introdução</label>
             {{ form.introducao }}
         </div>
+
+        <!-- Desenvolvimento inicial -->
         <div class="flex flex-col">
-            <label for="id_desenvolvimento_inicial">Desenvolvimento Inicial</label>
+            <label for="id_desenvolvimento_inicial" class="font-medium text-gray-700">Desenvolvimento Inicial</label>
             {{ form.desenvolvimento_inicial }}
         </div>
+
+        <!-- Vídeo -->
         <div class="flex flex-col">
-            <label for="id_video">Vídeo (link do YouTube)</label>
+            <label for="id_video" class="font-medium text-gray-700">Vídeo (link do YouTube)</label>
             {{ form.video }}
         </div>
+
+        <!-- Desenvolvimento final -->
         <div class="flex flex-col">
-            <label for="id_desenvolvimento_final">Desenvolvimento Final</label>
+            <label for="id_desenvolvimento_final" class="font-medium text-gray-700">Desenvolvimento Final</label>
             {{ form.desenvolvimento_final }}
         </div>
+
+        <!-- Conclusão -->
         <div class="flex flex-col">
-            <label for="id_conclusao">Conclusão</label>
+            <label for="id_conclusao" class="font-medium text-gray-700">Conclusão</label>
             {{ form.conclusao }}
         </div>
 
-        <div style="text-align:center;" class="flex gap-2 m-auto w-fit">
-            <button type="reset" class="bg-black px-4 py-1 text-white rounded-md hover:bg-gray-500 cursor-pointer">Limpar</button>
-            <button type="submit" class="bg-black px-4 py-1 text-white rounded-md hover:bg-gray-500 cursor-pointer">Salvar</button>
+        <!-- Botões -->
+        <div class="flex flex-col sm:flex-row justify-center gap-3 mt-6">
+            <button type="reset" 
+                    class="bg-black text-white px-5 py-2 rounded-md hover:bg-gray-700 transition duration-300">
+                Limpar
+            </button>
+            <button type="submit" 
+                    class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-800 transition duration-300">
+                Salvar
+            </button>
         </div>
     </form>
 </div>

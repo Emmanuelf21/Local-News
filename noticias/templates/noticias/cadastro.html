@@ -1,51 +1,50 @@
 {% extends "noticias/base.html"%}
 {% block title %}Cadastro - Local News{% endblock %}
-{%block content%}
-<div class="flex flex-col items-center py-4 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[60%]">
+{% block content %}
+<div class="flex flex-col items-center py-6 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%]">
+    
+    <!-- Cabeçalho -->
     <div class="text-center">
         <div class="flex justify-center gap-2">
-            <h1 class="text-black text-3xl">Local</h1>
-            <h1 class="text-3xl text-blue-600">News</h1>
+            <h1 class="text-black text-3xl md:text-4xl font-bold">Local</h1>
+            <h1 class="text-3xl md:text-4xl text-blue-600 font-bold">News</h1>
         </div>
-        <div>
-            <p class="text-gray-600 text-md">Nem sempre Fake, mas sempre News!</p>
-        </div>
-        <div>
-            <h2 class="text-xl">Junte-se a nós</h2>
-        </div>
+        <p class="text-gray-600 text-sm md:text-md mt-1">Nem sempre Fake, mas sempre News!</p>
+        <h2 class="text-lg md:text-xl mt-3 font-semibold">Junte-se a nós</h2>
     </div>
-    <!-- 🔹 Formulário de Login -->
-    <div class="flex justify-center pt-10 pb-10 w-full gap-10 items-stretch ml-10">
-    
+
+    <!-- 🔹 Formulários -->
+    <div class="flex flex-col md:flex-row justify-center pt-10 pb-10 w-full md:gap-10 gap-6 items-stretch px-4">
+        
         <!-- Formulário de Login -->
-        <div class="flex flex-col items-center">
-            <h2 class="text-xl">Já possuo uma conta!</h2>
-            <form method="POST" class="flex flex-col gap-2 mt-4">
+        <div class="flex flex-col items-center flex-1">
+            <h2 class="text-lg md:text-xl font-semibold">Já possuo uma conta!</h2>
+            <form method="POST" class="flex flex-col gap-3 mt-4 w-full max-w-sm">
                 {% csrf_token %}
                 {{ login_form.as_p }}
                 <button type="submit" name="login_submit"
-                    class="cursor-pointer m-auto mt-4 w-fit bg-black text-white px-4 py-1 rounded-md">
+                    class="cursor-pointer mt-4 w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
                     Entrar
                 </button>
             </form>
         </div>
-    
-        <!-- Linha vertical ajustando altura automaticamente -->
-        <div class="border-l-2 border-gray-300 self-stretch"></div>
-    
+
+        <!-- Linha divisória (some no mobile) -->
+        <div class="hidden md:block border-l-2 border-gray-300"></div>
+
         <!-- Formulário de Cadastro -->
-        <div class="flex flex-col items-center">
-            <h2 class="text-xl">Não possui uma conta?</h2>
-            <form method="POST" class="flex flex-col gap-2 mt-4">
+        <div class="flex flex-col items-center flex-1">
+            <h2 class="text-lg md:text-xl font-semibold">Não possui uma conta?</h2>
+            <form method="POST" class="flex flex-col gap-3 mt-4 w-full max-w-sm">
                 {% csrf_token %}
                 {{ cadastro_form.as_p }}
                 <button type="submit" name="cadastro_submit"
-                    class="cursor-pointer m-auto mt-4 w-fit bg-black text-white px-4 py-1 rounded-md">
+                    class="cursor-pointer mt-4 w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
                     Cadastrar
                 </button>
             </form>
         </div>
     </div>
-    
+
 </div>
 {% endblock %}
