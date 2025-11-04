@@ -1,0 +1,65 @@
+{% extends "noticias/base.html"%}
+{% block title %}Dashboard - Local News{% endblock %}
+{%block content%}
+<main class="w-full">
+    <div class="my-5 flex flex-col items-center">
+        <div class="my-5 pb-3 w-full px-15 flex justify-between border-b-1 border-gray-400">
+            <div class="w-fit">
+                <h2 class="text-2xl">Dashboard Administrativo</h2>
+                <p class="text-gray-500 text-lg">Gerencie suas Publicações!</p>
+            </div>
+            <div class="w-fit">
+                <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 text-white rounded-lg hover:bg-gray-500 bg-black">+ Nova notícia</a>
+            </div>
+        </div>
+      
+        <div class="flex gap-5 row my-4">
+          <div class="col-md-6 px-5 py-2.5 border-2 border-gray-300 rounded-xl">
+            <div class="card p-3">
+              <h5 class="text-xl">Total de Visualizações</h5>
+              <h3 class="text-3xl text-gray-700 text-center">{{ total_visualizacoes }}</h3>
+            </div>
+          </div>
+          <div class="col-md-6 px-5 py-2.5 border-2 border-gray-300 rounded-xl">
+            <div class="card p-3">
+              <h5 class="text-xl">Total de Curtidas</h5>
+              <h3 class="text-3xl text-gray-700 text-center">{{ total_curtidas }}</h3>
+            </div>
+          </div>
+        </div>
+      
+        <h4 class="mt-4 text-xl bold">{% if user.is_superuser %}Todas Notícias{% else %}Suas Notícias Publicadas{% endif %}</h4>
+      
+        <table class="table table-striped mt-3 border border-gray-400 m-auto overflow-scroll">
+            <thead class="border-b-1 border-gray-400 bg-gray-100 py-2">
+                <tr>
+                <th class="py-1 px-2">Título</th>
+                <th class="px-4 w-[100px]">Autor</th>
+                <th class="px-4">Curtidas</th>
+                <th class="px-4">Comentários</th>
+                <th class="px-4">Visualizações</th>
+                <th class="px-2">Ações</th>
+                </tr>
+          </thead>
+          <tbody>
+            {% for n in noticias %}
+            <tr class="bg-gray-400 text-white border-b-1">
+              <td class="text-center px-2">{{ n.titulo }}</td>
+              <td class="text-center">{{ n.usuario.nome_usuario }}</td>
+              <td class="text-center">{{ n.curtidas.count }}</td>
+              <td class="text-center">{{ n.comentarios.count }}</td>
+              <td class="text-center">{{ n.visualizacoes.count }}</td>
+              <td class="py-2 px-2">
+                <a href="{% url 'editar_noticia' n.id %}" class="btn btn-sm btn-warning bg-black text-white hover:bg-gray-500 px-2 py-0.5 rounded-md">Editar</a>
+                <a href="{% url 'excluir_noticia' n.id %}" class="btn btn-sm btn-danger bg-red-500 rounded-md px-2 py-0.5 hover:bg-red-700 hover:text-white">Excluir</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center">Nenhuma notícia encontrada.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      
+      </div>
+</main>
+{% endblock %}

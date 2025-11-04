@@ -1,0 +1,19 @@
+.inserir-imagem input{
+    border: 1px solid gray;
+    border-radius: 8px;
+    background: rgba(202, 202, 202, 0.795);
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+.titulo input{
+    border-bottom: 1px solid grey;
+}
+
+.bairro select, .categoria select{
+    border-bottom: 1px solid gray;
+    cursor: pointer;
+}
+form label{
+    font-size: 1.1rem;
+}

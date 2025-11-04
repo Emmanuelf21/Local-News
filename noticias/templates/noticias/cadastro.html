@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -53,3 +54,56 @@
 
 </body>
 </html>
+=======
+{% extends "noticias/base.html"%}
+{% block title %}Cadastro - Local News{% endblock %}
+{%block content%}
+<div class="flex flex-col items-center py-4 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[60%]">
+    <div class="text-center">
+        <div class="flex justify-center gap-2">
+            <h1 class="text-black text-3xl">Local</h1>
+            <h1 class="text-3xl text-blue-600">News</h1>
+        </div>
+        <div>
+            <p class="text-gray-600 text-md">Nem sempre Fake, mas sempre News</p>
+        </div>
+        <div>
+            <h2 class="text-xl">Junte-se a nós</h2>
+        </div>
+    </div>
+    <!-- 🔹 Formulário de Login -->
+    <div class="flex justify-center pt-10 pb-10 w-full gap-10 items-stretch ml-10">
+    
+        <!-- Formulário de Login -->
+        <div class="flex flex-col items-center">
+            <h2 class="text-xl">Já possuo uma conta!</h2>
+            <form method="POST" class="flex flex-col gap-2 mt-4">
+                {% csrf_token %}
+                {{ login_form.as_p }}
+                <button type="submit" name="login_submit"
+                    class="cursor-pointer m-auto mt-4 w-fit bg-black text-white px-4 py-1 rounded-md">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    
+        <!-- Linha vertical ajustando altura automaticamente -->
+        <div class="border-l-2 border-gray-300 self-stretch"></div>
+    
+        <!-- Formulário de Cadastro -->
+        <div class="flex flex-col items-center">
+            <h2 class="text-xl">Não possui uma conta?</h2>
+            <form method="POST" class="flex flex-col gap-2 mt-4">
+                {% csrf_token %}
+                {{ cadastro_form.as_p }}
+                <button type="submit" name="cadastro_submit"
+                    class="cursor-pointer m-auto mt-4 w-fit bg-black text-white px-4 py-1 rounded-md">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+>>>>>>> 8f491f7b23b9d85142f354bc0cbf4aaf279a88d8

@@ -1,0 +1,92 @@
+{% extends "noticias/base.html" %}
+{% block title %}Editar Notícia - Local News{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center px-5 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[60%]">
+    <h2 class="mt-5 text-xl text-center">Editar Notícia</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-4 w-[70%] py-4">
+        {% csrf_token %}
+
+        <!-- Imagem -->
+        <div class="flex flex-col">
+            <label for="id_image">Imagem Principal</label>
+
+            {% if noticia.image %}
+                <div class="mb-2 flex flex-col items-center">
+                    <img src="{{ noticia.image.url }}" alt="Imagem atual" class="w-48 h-auto rounded-md border border-gray-300 shadow-sm mb-2">
+                    <p class="text-sm text-gray-600">Imagem atual</p>
+                </div>
+            {% endif %}
+
+            <div class="inserir-imagem">
+                {{ form.image }}
+            </div>
+        </div>
+
+        <!-- Título -->
+        <div class="flex flex-col titulo">
+            <label for="id_titulo">Título:</label>
+            {{ form.titulo }}
+        </div>
+
+        <!-- Categoria -->
+        <div class="flex categoria">
+            <label for="id_categoria">Categoria:</label>
+            {{ form.categoria }}
+        </div>
+
+        <!-- Bairro -->
+        <div class="flex bairro">
+            <label for="id_bairro">Bairro:</label>
+            {{ form.bairro }}
+        </div>
+
+        <!-- Descrição -->
+        <div class="flex flex-col">
+            <label for="id_descricao">Descrição:</label>
+            {{ form.descricao }}
+        </div>
+
+        <!-- Introdução -->
+        <div class="flex flex-col">
+            <label for="id_introducao">Introdução:</label>
+            {{ form.introducao }}
+        </div>
+
+        <!-- Desenvolvimento inicial -->
+        <div class="flex flex-col">
+            <label for="id_desenvolvimento_inicial">Desenvolvimento Inicial:</label>
+            {{ form.desenvolvimento_inicial }}
+        </div>
+
+        <!-- Vídeo -->
+        <div class="flex flex-col">
+            <label for="id_video">Vídeo (link do YouTube):</label>
+            {{ form.video }}
+        </div>
+
+        <!-- Desenvolvimento final -->
+        <div class="flex flex-col">
+            <label for="id_desenvolvimento_final">Desenvolvimento Final:</label>
+            {{ form.desenvolvimento_final }}
+        </div>
+
+        <!-- Conclusão -->
+        <div class="flex flex-col">
+            <label for="id_conclusao">Conclusão:</label>
+            {{ form.conclusao }}
+        </div>
+
+        <!-- Botões -->
+        <div class="flex gap-3 justify-center mt-4">
+            <a href="{% url 'dashboard' %}" class="bg-gray-500 px-4 py-1 text-white rounded-md hover:bg-gray-400 cursor-pointer">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-black px-4 py-1 text-white rounded-md hover:bg-gray-700 cursor-pointer">
+                Atualizar
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
