@@ -6,45 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario
-# Create your views here.
-<<<<<<< HEAD
-def home(request):
-    return render(request, "noticias/home.html")
-
-Usuario = get_user_model()
-
-def cadastro(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        nome = request.POST.get('nome')
-        senha = request.POST.get('senha')
-        perfil = request.POST.get('perfil')  # Captura o perfil selecionado
-
-        # Verifica se o email já está cadastrado
-        if Usuario.objects.filter(email_usuario=email).exists():
-            messages.error(request, 'Email já cadastrado.')
-            return redirect('cadastro')
-
-        # Cria o usuário com o perfil selecionado
-        if perfil == 'editor':
-            Usuario.objects.create_editor(
-                email_usuario=email,
-                nome_usuario=nome,
-                senha_usuario=senha
-            )
-        else:
-            Usuario.objects.create_user(
-                email_usuario=email,
-                nome_usuario=nome,
-                senha_usuario=senha,
-                perfil='usuario'
-            )
-
-        messages.success(request, 'Usuário cadastrado com sucesso.')
-        return redirect('login')
-
-    return render(request, 'cadastro.html')
-=======
+import folium
 
 # def cadastro(request):
 #     if request.method == 'POST':
@@ -173,4 +135,28 @@ def excluir_noticia(request, id):
     noticia.delete()
     messages.success(request, "Notícia excluída com sucesso!")
     return redirect('dashboard')
->>>>>>> 8f491f7b23b9d85142f354bc0cbf4aaf279a88d8
+
+def mapa_noticias(request):
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'categoria')
+
+    # Mapa inicial do Brasil
+    mapa = folium.Map(location=[-15.78, -47.93], zoom_start=4)
+
+    for noticia in noticias:
+        bairro = noticia.bairro
+        if bairro.latitude and bairro.longitude:
+            popup_text = f"""
+                <b>{noticia.titulo}</b><br>
+                <i>{bairro.bairro}</i><br>
+                <small>{noticia.categoria}</small><br>
+                <a href='/noticia/{noticia.id}/' target='_blank'>Ver notícia</a>
+            """
+            folium.Marker(
+                location=[bairro.latitude, bairro.longitude],
+                popup=folium.Popup(popup_text, max_width=300),
+                tooltip=noticia.titulo,
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(mapa)
+
+    mapa_html = mapa._repr_html_()
+    return render(request, 'mapa_noticias.html', {'mapa': mapa_html})

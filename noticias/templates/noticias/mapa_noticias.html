@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa das Notícias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">🗺️ Mapa das Notícias</h1>
+        <a href="{% url 'home' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+            Voltar
+        </a>
+    </header>
+
+    <main class="flex-grow p-4">
+        <div class="rounded-lg overflow-hidden shadow-lg">
+            {{ mapa|safe }}
+        </div>
+    </main>
+</body>
+</html>
