@@ -74,9 +74,6 @@ def home(request):
         'categorias': categorias,
     }
     return render(request, 'noticias/home.html', context)
-    # noticias = Noticia.objects.all()
-    # return render(request, 'noticias/home.html', {'noticias': noticias})
-
 
 def logout_view(request):
     logout(request)
