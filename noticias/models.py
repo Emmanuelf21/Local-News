@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .managers import UsuarioManager
+from geopy.geocoders import Nominatim
 
 # # Create your models here.
 # class UsuarioManager(BaseUserManager):
@@ -171,7 +172,19 @@ class Categoria(models.Model):
 
 class Bairro(models.Model):
     bairro = models.CharField("Bairro", max_length=150)
-    
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Se não tiver coordenadas, tenta geocodificar automaticamente
+        if not self.latitude or not self.longitude:
+            geolocator = Nominatim(user_agent="localnews_bairros")
+            location = geolocator.geocode(f"{self.bairro}, Brasil")
+            if location:
+                self.latitude = location.latitude
+                self.longitude = location.longitude
+        super().save(*args, **kwargs)
+
     def __str__(self): 
         return self.bairro
     

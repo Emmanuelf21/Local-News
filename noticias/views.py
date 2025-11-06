@@ -6,7 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
-# Create your views here.
+import folium
+
 
 # def cadastro(request):
 #     if request.method == 'POST':
@@ -149,3 +150,28 @@ def excluir_noticia(request, id):
     noticia.delete()
     messages.success(request, "Notícia excluída com sucesso!")
     return redirect('dashboard')
+
+def mapa_noticias(request):
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'categoria')
+
+    # Mapa inicial do Brasil
+    mapa = folium.Map(location=[-15.78, -47.93], zoom_start=4)
+
+    for noticia in noticias:
+        bairro = noticia.bairro
+        if bairro.latitude and bairro.longitude:
+            popup_text = f"""
+                <b>{noticia.titulo}</b><br>
+                <i>{bairro.bairro}</i><br>
+                <small>{noticia.categoria}</small><br>
+                <a href='/noticia/{noticia.id}/' target='_blank'>Ver notícia</a>
+            """
+            folium.Marker(
+                location=[bairro.latitude, bairro.longitude],
+                popup=folium.Popup(popup_text, max_width=300),
+                tooltip=noticia.titulo,
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(mapa)
+
+    mapa_html = mapa._repr_html_()
+    return render(request, 'mapa_noticias.html', {'mapa': mapa_html})
