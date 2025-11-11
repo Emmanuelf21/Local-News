@@ -166,8 +166,8 @@ def mapa_noticias():
     mapa = folium.Map(
     location=[-9.95, -67.75],  # ajustar conforme necessidade
     zoom_start=13,
-    zoom_control=True,
-    scrollWheelZoom=True,
+    zoom_control=False,
+    scrollWheelZoom=False,
     doubleClickZoom=False,
     touchZoom=False
     )
