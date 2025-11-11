@@ -14,10 +14,10 @@
           <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[420px] object-cover">
         {% endif %}
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-8 flex flex-col justify-end">
-          <span class="bg-blue-700 text-xs px-3 py-1 rounded-full mb-2">{{ noticia.categoria }}</span>
+          <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.categoria }}</span>
           <h2 class="text-3xl font-bold text-white mb-2">{{ noticia.titulo }}</h2>
           <p class="text-gray-200 line-clamp-2 mb-4">{{ noticia.descricao|truncatechars:150 }}</p>
-          <a href="{% url 'detalhar_noticia' noticia.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
+          <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
         </div>
       </div>
       {% endfor %}
@@ -42,7 +42,7 @@
     {% for categoria in categorias %}
       <a href="{% url 'home' %}?categoria={{ categoria.id }}"
          class="px-4 py-1 rounded-full border {% if categoria_selecionada == categoria.id|stringformat:'s' %}bg-black text-white border-black{% else %}border-gray-300 hover:bg-gray-100{% endif %}">
-         {{ categoria.categoria }}
+         {{ categoria.name }}
       </a>
     {% endfor %}
   </nav>
@@ -58,7 +58,7 @@
       <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.categoria }}</span>
       <h2 class="text-3xl font-bold mt-3">{{ destaque.titulo }}</h2>
       <p class="text-gray-200 mt-2 mb-4">{{ destaque.descricao|truncatewords:20 }}</p>
-      <a href="{% url 'detalhar_noticia' destaque.id %}" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
+      <a href="#" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
     </div>
   </section>
   {% endwith %}
@@ -77,7 +77,7 @@
         <div class="text-xs text-gray-500 mb-3">
           Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
         </div>
-        <a href="{% url 'detalhar_noticia' noticia.id %}" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
+        <a href="#" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
       </div>
     </article>
     {% empty %}

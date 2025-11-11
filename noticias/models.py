@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from .managers import UsuarioManager
 from geopy.geocoders import Nominatim
+from taggit.models import Tag
 
 # # Create your models here.
 # class UsuarioManager(BaseUserManager):
@@ -99,8 +100,8 @@ class Noticia(models.Model):
     image = models.ImageField("Imagem", upload_to='noticias/images/', blank=True, null=True)
     
     titulo=models.CharField("Título", max_length=200)
-    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name="noticias", verbose_name="Categoria")
-    # categoria = models.CharField("Categoria", max_length=50, choices=CATEGORIAS, default='Outros')
+    # categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name="noticias", verbose_name="Categoria")
+    categoria = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='noticias')
     usuario = models.ForeignKey(
         get_user_model(),  # Isso já está correto
         on_delete=models.CASCADE,

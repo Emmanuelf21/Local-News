@@ -47,6 +47,7 @@ header h1:hover {
 }
 
 /* INPUTS E FORMULÁRIOS */
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -58,6 +59,7 @@ select {
   transition: var(--transicao);
   width: 100%;
 }
+
 input:focus,
 textarea:focus,
 select:focus {
@@ -180,12 +182,13 @@ body.dark .card {
   background: #1e293b;
   color: #f8fafc;
 }
+
 body.dark input,
 body.dark textarea,
 body.dark select {
   background-color: #1e293b;
   color: #f1f5f9;
-  border: 1px solid #334155;
+  border: none;
 }
 body.dark table {
   background-color: #1e293b;
@@ -196,6 +199,10 @@ body.dark a {
 }
 body.dark a:hover {
   color: #93c5fd;
+}
+
+.form-base>input, .form-base.dark>input{
+  border: none;
 }
 
 /* === BOTÃO DE TEMA === */

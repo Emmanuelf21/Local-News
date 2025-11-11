@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
 import folium
-
+from taggit.models import Tag 
 
 # def cadastro(request):
 #     if request.method == 'POST':
@@ -60,10 +60,10 @@ def login_cadastro(request):
 
 def home(request):
     categoria_id = request.GET.get('categoria')
-    categorias = Categoria.objects.all()
+    categorias = Tag.objects.all()
 
     if categoria_id:
-        categoria = get_object_or_404(Categoria, id=categoria_id)
+        categoria = get_object_or_404(Tag, id=categoria_id)
         noticias = Noticia.objects.filter(categoria=categoria).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
@@ -122,7 +122,7 @@ def dashboard(request):
         'total_visualizacoes': total_visualizacoes,
         'total_curtidas': total_curtidas,
     }
-    return render(request, 'noticias/perfil.html', context)
+    return render(request, 'noticias/dashboard.html', context)
 
 @login_required
 def editar_noticia(request, id):
