@@ -2,15 +2,69 @@
 {% block title %}Cadastro - Local News{% endblock %}
 {% block content %}
 <div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
-  <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Crie sua conta</h2>
-  <form method="post" class="flex flex-col gap-4">
+  <!-- Título -->
+  <h2 id="form-title" class="text-2xl font-semibold mb-6 text-center text-gray-800">Crie sua conta</h2>
+
+  <!-- Formulário de Cadastro -->
+  <form id="cadastro-form" method="POST" class="flex flex-col gap-4">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition">Cadastrar</button>
+    {{ cadastro_form.as_p }}
+    <button
+      name="cadastro_submit"
+      type="submit"
+      class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition"
+    >
+      Cadastrar
+    </button>
   </form>
+
+  <!-- Formulário de Login -->
+  <form id="login-form" method="POST" class="flex flex-col gap-4 hidden">
+    {% csrf_token %}
+    {{ login_form.as_p }}
+    <button
+    name="login_submit"
+      type="submit"
+      class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition"
+    >
+      Entrar
+    </button>
+  </form>
+
+  <!-- Link de alternância -->
   <p class="text-sm text-center text-gray-500 mt-4">
     Já tem conta?
-    <a href="{% url 'login_cadastro' %}" class="text-blue-600 hover:underline">Entre aqui</a>
+    <a href="#" id="toggle-link" class="text-blue-600 hover:underline">Entre aqui</a>
   </p>
 </div>
+
+<!-- Script para alternar -->
+<script>
+  const toggleLink = document.getElementById("toggle-link");
+  const formTitle = document.getElementById("form-title");
+  const loginForm = document.getElementById("login-form");
+  const cadastroForm = document.getElementById("cadastro-form");
+
+  toggleLink.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const isCadastroVisible = !cadastroForm.classList.contains("hidden");
+
+    // Alterna a exibição dos formulários
+    cadastroForm.classList.toggle("hidden");
+    loginForm.classList.toggle("hidden");
+
+    // Atualiza o texto
+    if (isCadastroVisible) {
+      formTitle.textContent = "Entre na sua conta";
+      toggleLink.textContent = "Crie uma conta";
+      toggleLink.previousSibling.textContent = "Não tem conta? ";
+    } else {
+      formTitle.textContent = "Crie sua conta";
+      toggleLink.textContent = "Entre aqui";
+      toggleLink.previousSibling.textContent = "Já tem conta? ";
+    }
+  });
+</script>
+
 {% endblock %}

@@ -40,9 +40,13 @@
 
       <!-- Pesquisa -->
       <form method="get" action="{% url 'home' %}"
-        class="hidden md:flex bg-white dark:bg-gray-800 rounded-full overflow-hidden shadow-md w-1/2 transition-colors duration-300">
-        <input type="text" name="q" placeholder="Pesquisar..."
-          class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-200 dark:bg-gray-800 focus:outline-none" />
+        class="hidden flex flex-row md:flex bg-white dark:bg-gray-800 rounded-full overflow-hidden shadow-md w-1/2 transition-colors duration-300">
+        <input 
+        type="text" 
+        name="q" 
+        placeholder="Pesquisar..."
+        class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-200 dark:bg-gray-800 focus:outline-none border-0"
+      />
         <button class="bg-blue-600 px-5 hover:bg-blue-800 transition flex items-center gap-2">
           <i class="fas fa-search"></i><span>Buscar</span>
         </button>
@@ -67,7 +71,7 @@
 
           <div id="dropdownMenu"
             class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg fade-in">
-            <a href="{% url 'perfil' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
+            <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
             {% if user.perfil == 'editor' %}
               <a href="{% url 'dashboard' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Publicações</a>
               <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Criar notícia</a>
