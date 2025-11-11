@@ -68,11 +68,14 @@ def home(request):
         noticias = Noticia.objects.filter(categoria=categoria).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
-
-    context = {
+    
+    mapa_html = mapa_noticias()
+    
+    context = { 
         'noticias': noticias,
         'categoria_selecionada': categoria_id,
         'categorias': categorias,
+        'mapa': mapa_html,
     }
     return render(request, 'noticias/home.html', context)
 
@@ -151,12 +154,19 @@ def excluir_noticia(request, id):
     messages.success(request, "Notícia excluída com sucesso!")
     return redirect('dashboard')
 
-def mapa_noticias(request):
+def mapa_noticias():
     noticias = Noticia.objects.select_related('bairro', 'usuario', 'categoria')
 
     # Mapa inicial do Brasil
-    mapa = folium.Map(location=[-15.78, -47.93], zoom_start=4)
-
+    mapa = folium.Map(
+    location=[-9.95, -67.75],  # ajustar conforme necessidade
+    zoom_start=13,
+    zoom_control=True,
+    scrollWheelZoom=True,
+    doubleClickZoom=False,
+    touchZoom=False
+    )
+    
     for noticia in noticias:
         bairro = noticia.bairro
         if bairro.latitude and bairro.longitude:
@@ -166,12 +176,18 @@ def mapa_noticias(request):
                 <small>{noticia.categoria}</small><br>
                 <a href='/noticia/{noticia.id}/' target='_blank'>Ver notícia</a>
             """
+            
+
             folium.Marker(
                 location=[bairro.latitude, bairro.longitude],
                 popup=folium.Popup(popup_text, max_width=300),
                 tooltip=noticia.titulo,
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(mapa)
+    mapa.options['maxBounds'] = [
+    [-10.02, -67.95],  # sudoeste (y-mín, x-mín)
+    [-9.98, -67.75]   # nordeste (y-máx, x-máx)
+    ]
 
     mapa_html = mapa._repr_html_()
-    return render(request, 'mapa_noticias.html', {'mapa': mapa_html})
+    return mapa_html

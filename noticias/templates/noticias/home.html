@@ -2,90 +2,105 @@
 {% block title %}Home - Local News{% endblock %}
 {%block content%}
 <nav class="flex w-full max-h-96 gap-5 px-8 py-4 bg-[#efefef] shadow-lg overflow-y-auto scroll-smooth">
-    <!-- Botão Notícias (sem filtro, padrão) -->
-    <a class="px-3 py-0.5 rounded-lg border-2 {% if not categoria_selecionada %}border-[#000] bg-black text-white{% else %}border-[#cac4d0] bg-white text-lg{% endif %}" href="{% url 'home' %}">Notícias</a>
+  <!-- Botão Notícias (sem filtro, padrão) -->
+  <a class="px-3 py-0.5 rounded-lg border-2 {% if not categoria_selecionada %}border-[#000] bg-black text-white{% else %}border-[#cac4d0] bg-white text-lg{% endif %}"
+    href="{% url 'home' %}">Notícias</a>
 
-    <!-- Loop pelas categorias -->
-    {% for categoria in categorias %}
-        <a class="px-3 py-0.5 rounded-lg border-2 
+  <!-- Loop pelas categorias -->
+  {% for categoria in categorias %}
+  <a class="px-3 py-0.5 rounded-lg border-2 
             {% if categoria_selecionada == categoria.id|stringformat:'s' %}
                 border-[#000] bg-black text-white
             {% else %}
                 border-[#cac4d0] bg-white text-lg
-            {% endif %}" 
-           href="{% url 'home' %}?categoria={{ categoria.id }}">
-           {{ categoria.categoria }}
-        </a>
-    {% endfor %}
+            {% endif %}" href="{% url 'home' %}?categoria={{ categoria.id }}">
+    {{ categoria.categoria }}
+  </a>
+  {% endfor %}
 </nav>
 <!-- </main> -->
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Primeira notícia em destaque -->
-        {% if noticias|length > 0 %}
-        {% with destaque=noticias.0 %}
-        <section class="bg-black text-white rounded-lg p-8 mb-8 relative overflow-hidden">
-          <div class="max-w-4xl">
-            <!-- Categoria -->
-            <span class="inline-block bg-gray-700 text-xs px-3 py-1 rounded-full mb-3">{{ destaque.categoria }}</span>
-      
-            <!-- Título -->
-            <h1 class="text-3xl sm:text-4xl font-bold mb-2">{{ destaque.titulo }}</h1>
-      
-            <!-- Descrição breve -->
-            <p class="text-gray-300 mb-6">{{ destaque.descricao|truncatewords:20 }}</p>
-      
-            <!-- Info autor e data -->
-            <div class="flex items-center text-gray-400 text-sm mb-6 space-x-4">
-              <div class="flex items-center space-x-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z" />
-                </svg>
-                <span>{{ destaque.created_at|date:"d/m/Y" }}</span>
-              </div>
-              <div>
-                Por {{ destaque.usuario.get_full_name|default:destaque.usuario }}
-              </div>
-            </div>
-      
-            <!-- Botão Ver mais -->
-           
-            <a href="#" class="inline-block bg-blue-900 hover:bg-blue-700 transition text-white px-4 py-2 rounded text-sm font-semibold">
-              Ver mais
-            </a>
-          </div>
-      
-          <!-- Imagem no fundo, posicionada à direita -->
-          {% if destaque.image %}
-          <img src="{{ destaque.image.url }}" alt="Imagem da notícia" class="absolute top-0 right-0 h-full object-cover opacity-30 rounded-r-lg hidden md:block" style="width: 50%;">
-          {% endif %}
-        </section>
-        {% endwith %}
-        {% endif %}
-      
-        <!-- Lista das outras notícias -->
-        <section class="space-y-6">
-          {% for noticia in noticias %}
-          <article class="border-b border-gray-300 pb-4">
-            <h2 class="text-xl font-semibold">{{ noticia.titulo }}</h2>
-            <p class="text-gray-600">{{ noticia.descricao|truncatewords:25 }}</p>
-            <div class="flex flex-wrap items-center text-sm text-gray-500 mt-1 space-x-4">
-              <span>Por {{ noticia.usuario.get_full_name|default:noticia.usuario }}</span>
-              <span>Data: {{ noticia.created_at|date:"d/m/Y" }}</span>
-              <span>{{ noticia.comentarios.count }} comentários</span>
-              <a href="#" class="inline-block bg-blue-800 hover:bg-blue-700 transition text-white px-4 py-1 rounded text-sm font-semibold">
-                Ver mais
-              </a>
-            </div>
-          </article>
-          {% empty %}
-          <p class="text-center text-gray-500">Nenhuma notícia disponível.</p>
-          {% endfor %}
-        </section>
-      
+  <!-- Primeira notícia em destaque -->
+  {% if noticias|length > 0 %}
+  {% with destaque=noticias.0 %}
+  <section class="bg-black text-white rounded-lg p-8 mb-8 relative overflow-hidden">
+    <div class="max-w-4xl">
+      <!-- Categoria -->
+      <span class="inline-block bg-gray-700 text-xs px-3 py-1 rounded-full mb-3">{{ destaque.categoria }}</span>
+
+      <!-- Título -->
+      <h1 class="text-3xl sm:text-4xl font-bold mb-2">{{ destaque.titulo }}</h1>
+
+      <!-- Descrição breve -->
+      <p class="text-gray-300 mb-6">{{ destaque.descricao|truncatewords:20 }}</p>
+
+      <!-- Info autor e data -->
+      <div class="flex items-center text-gray-400 text-sm mb-6 space-x-4">
+        <div class="flex items-center space-x-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z" />
+          </svg>
+          <span>{{ destaque.created_at|date:"d/m/Y" }}</span>
+        </div>
+        <div>
+          Por {{ destaque.usuario.get_full_name|default:destaque.usuario }}
+        </div>
       </div>
-      
+
+      <!-- Botão Ver mais -->
+
+      <a href="#"
+        class="inline-block bg-blue-900 hover:bg-blue-700 transition text-white px-4 py-2 rounded text-sm font-semibold">
+        Ver mais
+      </a>
+    </div>
+
+    <!-- Imagem no fundo, posicionada à direita -->
+    {% if destaque.image %}
+    <img src="{{ destaque.image.url }}" alt="Imagem da notícia"
+      class="absolute top-0 right-0 h-full object-cover opacity-30 rounded-r-lg hidden md:block" style="width: 50%;">
+    {% endif %}
+  </section>
+  {% endwith %}
+  {% endif %}
+
+  <!-- Lista das outras notícias -->
+  <section class="space-y-6">
+    {% for noticia in noticias %}
+    <article class="border-b border-gray-300 pb-4">
+      <h2 class="text-xl font-semibold">{{ noticia.titulo }}</h2>
+      <p class="text-gray-600">{{ noticia.descricao|truncatewords:25 }}</p>
+      <div class="flex flex-wrap items-center text-sm text-gray-500 mt-1 space-x-4">
+        <span>Por {{ noticia.usuario.get_full_name|default:noticia.usuario }}</span>
+        <span>Data: {{ noticia.created_at|date:"d/m/Y" }}</span>
+        <span>{{ noticia.comentarios.count }} comentários</span>
+        <a href="#"
+          class="inline-block bg-blue-800 hover:bg-blue-700 transition text-white px-4 py-1 rounded text-sm font-semibold">
+          Ver mais
+        </a>
+      </div>
+    </article>
+    {% empty %}
+    <p class="text-center text-gray-500">Nenhuma notícia disponível.</p>
+    {% endfor %}
+  </section>
+  <section class="bg-gray-100 min-h-screen flex flex-col">
+    <div class="bg-white shadow-md p-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">🗺️ Notícias por Região</h1>
+    </div>
+
+    <main class="flex-grow p-4">
+      <div class="rounded-lg overflow-hidden shadow-lg h-[400px]">
+        {{ mapa|safe }}
+      </div>
+    </main>
+  </section>
+</div>
+
 {% endblock %}
 
 <!-- <a href="{% url 'detalhes_noticia' destaque.id %}" class="inline-block bg-blue-900 hover:bg-blue-700 transition text-white px-4 py-2 rounded text-sm font-semibold">

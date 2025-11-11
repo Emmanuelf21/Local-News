@@ -179,7 +179,7 @@ class Bairro(models.Model):
         # Se não tiver coordenadas, tenta geocodificar automaticamente
         if not self.latitude or not self.longitude:
             geolocator = Nominatim(user_agent="localnews_bairros")
-            location = geolocator.geocode(f"{self.bairro}, Brasil")
+            location = geolocator.geocode(f"{self.bairro}, Acre, Brasil")
             if location:
                 self.latitude = location.latitude
                 self.longitude = location.longitude
