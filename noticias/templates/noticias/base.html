@@ -19,8 +19,6 @@
                     e.stopPropagation();
                     menu.classList.toggle('hidden');
                 });
-
-                // Fecha o menu ao clicar fora
                 document.addEventListener('click', () => {
                     menu.classList.add('hidden');
                 });
@@ -31,27 +29,33 @@
     {% block head %}{% endblock %}
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-black h-[100px] flex justify-between items-center px-8">
-        <a class="flex gap-2" href="{% url 'home'%}">
-            <h1 class="text-white text-3xl">Local</h1>
-            <h1 class="text-3xl text-blue-600">News</h1>
+    <header class="bg-black flex items-center justify-between px-6 py-4">
+        <!-- Logo -->
+        <a class="flex gap-2 items-center mb-2 sm:mb-0" href="{% url 'home' %}">
+            <h1 class="text-white text-2xl sm:text-3xl font-bold">Local</h1>
+            <h1 class="text-2xl sm:text-3xl text-blue-600 font-bold">News</h1>
         </a>
-        <form action="#" class="w-full max-w-lg flex bg-white rounded-full shadow-md overflow-hidden">
+
+        <!-- Barra de pesquisa (oculta no mobile) -->
+        <form action="#" class="hidden sm:flex w-full sm:w-auto flex-grow sm:flex-grow-0 bg-white rounded-full shadow-md overflow-hidden mx-4 sm:mx-0">
             <input type="text" name="q" placeholder="Pesquisar notícia"
-                class="flex-grow p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-l-full pl-5">
+                class="flex-grow p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-l-full pl-5">
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-900 text-white p-3 px-6 rounded-r-full transition duration-300 ease-in-out flex items-center justify-center"><i
-                    class="fas fa-search mr-2"></i> Pesquisar</button>
+                class="bg-blue-600 hover:bg-blue-900 text-white p-3 px-6 rounded-r-full transition duration-300 ease-in-out flex items-center justify-center">
+                <i class="fas fa-search mr-2"></i> Pesquisar
+            </button>
         </form>
-        <div class="relative inline-block text-left">
+
+        <!-- Perfil -->
+        <div class="relative inline-block text-left mt-2 sm:mt-0">
             {% if user.is_authenticated %}
             <!-- Botão do perfil -->
             <button id="perfilButton"
                 class="flex items-center gap-2 bg-white px-3 py-2 rounded-lg hover:bg-gray-100 focus:outline-none">
                 <img src="{% static 'img/user_icon.png' %}" alt="Perfil" class="w-6 h-6">
-                <span>{{ user.nome_usuario }}</span>
+                <span class="text-sm sm:text-base">{{ user.nome_usuario }}</span>
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -60,81 +64,62 @@
 
             <!-- Dropdown -->
             <div id="dropdownMenu"
-                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">
-                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Alterar dados</a>
-
+                class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-md">Alterar dados</a>
                 {% if user.perfil == 'editor' %}
                 <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Publicações</a>
-
-                <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Criar
-                    notícia</a>
+                <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Criar notícia</a>
                 {% endif %}
-
-                <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                    Sair
-                </a>
+                <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-md">Sair</a>
             </div>
-
             {% else %}
-            <!-- Usuário não logado -->
             <div class="bg-white px-3 py-2 rounded-lg">
-                <a href="{% url 'login_cadastro' %}" class="text-black hover:underline">
+                <a href="{% url 'login_cadastro' %}" class="text-black hover:underline text-sm sm:text-base">
                     Login / Cadastro
                 </a>
             </div>
             {% endif %}
         </div>
-
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main class="flex-grow ">
         {% block content %}
         <!-- O conteúdo da página será renderizado aqui -->
         {% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer class="bg-black py-4">
+    <footer class="bg-black text-center py-6 mt-10">
         <div class="flex flex-col gap-1 items-center">
-            <div class="flex gap-2 w-fit">
-                <h1 class="text-white text-3xl">Local</h1>
-                <h1 class="text-3xl text-blue-600">News</h1>
+            <div class="flex gap-2 justify-center">
+                <h1 class="text-white text-2xl sm:text-3xl">Local</h1>
+                <h1 class="text-2xl sm:text-3xl text-blue-600">News</h1>
             </div>
-            <div class="w-fit h-fit">
-                <h2 class="text-gray-200">Nem sempre fake, mas sempre news!</h2>
+            <h2 class="text-gray-300 text-sm sm:text-base">Nem sempre fake, mas sempre news!</h2>
+        </div>
+
+        <div class="mt-6 text-gray-200 text-sm sm:text-base">
+            <p>Deseja publicar no nosso portal? Entre em contato:</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-3 text-white">
+                <p>📧 contato@localnews.com.br</p>
+                <p>📞 (11) 3000-0000</p>
+                <p>📍 São Paulo, SP - Brasil</p>
             </div>
         </div>
-        <div class="flex flex-col mt-4 items-center">
-            <div class="text-white w-fit">
-                <p class="w-fit">Deseja publicar no nosso portal?</p>
-            </div>
-            <div class="text-white w-fit">
-                <p class="w-fit">Entre em contato</p>
-            </div>
-            <div class="flex m-auto w-fit gap-6 mt-3">
-                <p class="w-fit text-white">contato@localnews.com.br</p>
-                <p class="w-fit text-white">(11) 3000-0000</p>
-                <p class="w-fit text-white">São Paulo, SP - Brasil</p>
-            </div>
-        </div>
-        <div class="w-full border-t-1 border-t-gray-300 mt-2 py-4 px-8 flex items-center justify-between">
-            <p class="text-white">&copy; 2025 - Local News. Todos os direitos reservados.</p>
-            <div class="flex gap-2 items-center">
-                <p class="text-white">Nossas redes:</p>
-                <div class="flex gap-2">
-                    <i class="text-white fab fa-facebook fa-2x"></i>
-                    <i class="text-white fab fa-instagram fa-2x"></i>
-                    <i class="text-white fab fa-youtube fa-2x"></i>
+
+        <div class="w-full border-t border-gray-700 mt-6 pt-4 px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p class="text-gray-300 text-sm">&copy; 2025 - Local News. Todos os direitos reservados.</p>
+            <div class="flex gap-3 items-center">
+                <p class="text-gray-300 text-sm">Nossas redes:</p>
+                <div class="flex gap-3">
+                    <i class="text-white fab fa-facebook fa-lg hover:text-blue-500"></i>
+                    <i class="text-white fab fa-instagram fa-lg hover:text-pink-500"></i>
+                    <i class="text-white fab fa-youtube fa-lg hover:text-red-600"></i>
                 </div>
             </div>
         </div>
     </footer>
 </body>
-<<<<<<< HEAD
 </html>
 
-=======
-
-</html>
->>>>>>> 8f491f7b23b9d85142f354bc0cbf4aaf279a88d8
