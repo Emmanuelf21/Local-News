@@ -1,50 +1,16 @@
-{% extends "noticias/base.html"%}
+{% extends "noticias/base.html" %}
 {% block title %}Cadastro - Local News{% endblock %}
 {% block content %}
-<div class="flex flex-col items-center py-6 rounded-lg bg-[#f2f2f2] m-auto my-14 w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%]">
-    
-    <!-- Cabeçalho -->
-    <div class="text-center">
-        <div class="flex justify-center gap-2">
-            <h1 class="text-black text-3xl md:text-4xl font-bold">Local</h1>
-            <h1 class="text-3xl md:text-4xl text-blue-600 font-bold">News</h1>
-        </div>
-        <p class="text-gray-600 text-sm md:text-md mt-1">Nem sempre Fake, mas sempre News!</p>
-        <h2 class="text-lg md:text-xl mt-3 font-semibold">Junte-se a nós</h2>
-    </div>
-
-    <!-- 🔹 Formulários -->
-    <div class="flex flex-col md:flex-row justify-center pt-10 pb-10 w-full md:gap-10 gap-6 items-stretch px-4">
-        
-        <!-- Formulário de Login -->
-        <div class="flex flex-col items-center flex-1">
-            <h2 class="text-lg md:text-xl font-semibold">Já possuo uma conta!</h2>
-            <form method="POST" class="flex flex-col gap-3 mt-4 w-full max-w-sm">
-                {% csrf_token %}
-                {{ login_form.as_p }}
-                <button type="submit" name="login_submit"
-                    class="cursor-pointer mt-4 w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-                    Entrar
-                </button>
-            </form>
-        </div>
-
-        <!-- Linha divisória (some no mobile) -->
-        <div class="hidden md:block border-l-2 border-gray-300"></div>
-
-        <!-- Formulário de Cadastro -->
-        <div class="flex flex-col items-center flex-1">
-            <h2 class="text-lg md:text-xl font-semibold">Não possui uma conta?</h2>
-            <form method="POST" class="flex flex-col gap-3 mt-4 w-full max-w-sm">
-                {% csrf_token %}
-                {{ cadastro_form.as_p }}
-                <button type="submit" name="cadastro_submit"
-                    class="cursor-pointer mt-4 w-full bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-                    Cadastrar
-                </button>
-            </form>
-        </div>
-    </div>
-
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
+  <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Crie sua conta</h2>
+  <form method="post" class="flex flex-col gap-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition">Cadastrar</button>
+  </form>
+  <p class="text-sm text-center text-gray-500 mt-4">
+    Já tem conta?
+    <a href="{% url 'login_cadastro' %}" class="text-blue-600 hover:underline">Entre aqui</a>
+  </p>
 </div>
 {% endblock %}
