@@ -1,96 +1,12 @@
 {% extends "noticias/base.html" %}
 {% block title %}Editar Notícia - Local News{% endblock %}
-
 {% block content %}
-<div class="flex flex-col items-center px-5 py-8 rounded-lg bg-[#f2f2f2] m-auto my-14 w-full max-w-3xl shadow-md">
-    <h2 class="mt-2 text-2xl font-semibold text-center text-gray-800">Editar Notícia</h2>
-
-    <form method="POST" enctype="multipart/form-data" 
-          class="flex flex-col gap-5 w-full px-2 sm:px-4 md:px-8 py-6">
-        {% csrf_token %}
-
-        <!-- Imagem Principal -->
-        <div class="flex flex-col">
-            <label for="id_image" class="font-medium text-gray-700">Imagem Principal</label>
-
-            {% if noticia.image %}
-                <div class="mb-3 flex flex-col items-center">
-                    <img src="{{ noticia.image.url }}" 
-                         alt="Imagem atual" 
-                         class="w-48 h-auto rounded-md border border-gray-300 shadow-sm mb-2">
-                    <p class="text-sm text-gray-600">Imagem atual</p>
-                </div>
-            {% endif %}
-
-            <div class="mt-1">{{ form.image }}</div>
-        </div>
-
-        <!-- Título -->
-        <div class="flex flex-col">
-            <label for="id_titulo" class="font-medium text-gray-700">Título</label>
-            {{ form.titulo }}
-        </div>
-
-        <!-- Categoria -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <label for="id_categoria" class="font-medium text-gray-700">Categoria</label>
-            <div class="flex-1">{{ form.categoria }}</div>
-        </div>
-
-        <!-- Bairro -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <label for="id_bairro" class="font-medium text-gray-700">Bairro</label>
-            <div class="flex-1">{{ form.bairro }}</div>
-        </div>
-
-        <!-- Descrição -->
-        <div class="flex flex-col">
-            <label for="id_descricao" class="font-medium text-gray-700">Descrição</label>
-            {{ form.descricao }}
-        </div>
-
-        <!-- Introdução -->
-        <div class="flex flex-col">
-            <label for="id_introducao" class="font-medium text-gray-700">Introdução</label>
-            {{ form.introducao }}
-        </div>
-
-        <!-- Desenvolvimento Inicial -->
-        <div class="flex flex-col">
-            <label for="id_desenvolvimento_inicial" class="font-medium text-gray-700">Desenvolvimento Inicial</label>
-            {{ form.desenvolvimento_inicial }}
-        </div>
-
-        <!-- Vídeo -->
-        <div class="flex flex-col">
-            <label for="id_video" class="font-medium text-gray-700">Vídeo (link do YouTube)</label>
-            {{ form.video }}
-        </div>
-
-        <!-- Desenvolvimento Final -->
-        <div class="flex flex-col">
-            <label for="id_desenvolvimento_final" class="font-medium text-gray-700">Desenvolvimento Final</label>
-            {{ form.desenvolvimento_final }}
-        </div>
-
-        <!-- Conclusão -->
-        <div class="flex flex-col">
-            <label for="id_conclusao" class="font-medium text-gray-700">Conclusão</label>
-            {{ form.conclusao }}
-        </div>
-
-        <!-- Botões -->
-        <div class="flex flex-col sm:flex-row justify-center gap-3 mt-6">
-            <a href="{% url 'dashboard' %}" 
-               class="bg-gray-500 text-white px-5 py-2 rounded-md text-center hover:bg-gray-400 transition duration-300">
-                Cancelar
-            </a>
-
-            <button type="submit" 
-                    class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-800 transition duration-300">
-                Atualizar
-            </button>
-        </div>
-    </form>
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
+  <h2 class="text-2xl font-semibold mb-6 text-gray-800">Editar Notícia</h2>
+  <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition hover:scale-[1.02]">Salvar Alterações</button>
+  </form>
 </div>
 {% endblock %}
