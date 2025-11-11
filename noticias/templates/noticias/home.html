@@ -4,6 +4,35 @@
 
 <div class="max-w-7xl mx-auto py-8">
 
+  <!-- 📰 Carrossel de Últimas Notícias -->
+  {% if ultimas_noticias %}
+  <div id="carrosselNoticias" class="relative w-full overflow-hidden rounded-xl shadow-lg mb-10">
+    <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
+      {% for noticia in ultimas_noticias %}
+      <div class="min-w-full relative">
+        {% if noticia.image %}
+          <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[420px] object-cover">
+        {% endif %}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-8 flex flex-col justify-end">
+          <span class="bg-blue-700 text-xs px-3 py-1 rounded-full mb-2">{{ noticia.categoria }}</span>
+          <h2 class="text-3xl font-bold text-white mb-2">{{ noticia.titulo }}</h2>
+          <p class="text-gray-200 line-clamp-2 mb-4">{{ noticia.descricao|truncatechars:150 }}</p>
+          <a href="{% url 'detalhar_noticia' noticia.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Botões -->
+    <button id="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+      <i class="fas fa-chevron-left text-white"></i>
+    </button>
+    <button id="nextSlide" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+      <i class="fas fa-chevron-right text-white"></i>
+    </button>
+  </div>
+  {% endif %}
+
   <!-- Categorias -->
   <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
     <a href="{% url 'home' %}"
@@ -29,7 +58,7 @@
       <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.categoria }}</span>
       <h2 class="text-3xl font-bold mt-3">{{ destaque.titulo }}</h2>
       <p class="text-gray-200 mt-2 mb-4">{{ destaque.descricao|truncatewords:20 }}</p>
-      <a href="#" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
+      <a href="{% url 'detalhar_noticia' destaque.id %}" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
     </div>
   </section>
   {% endwith %}
@@ -48,7 +77,7 @@
         <div class="text-xs text-gray-500 mb-3">
           Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
         </div>
-        <a href="#" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
+        <a href="{% url 'detalhar_noticia' noticia.id %}" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
       </div>
     </article>
     {% empty %}
@@ -57,4 +86,32 @@
   </section>
 
 </div>
+
+<!-- Script do Carrossel -->
+<script>
+  const slides = document.getElementById('carrosselSlides');
+  const totalSlides = slides.children.length;
+  let index = 0;
+
+  function showSlide(i) {
+    slides.style.transform = `translateX(-${i * 100}%)`;
+  }
+
+  document.getElementById('prevSlide').addEventListener('click', () => {
+    index = (index - 1 + totalSlides) % totalSlides;
+    showSlide(index);
+  });
+
+  document.getElementById('nextSlide').addEventListener('click', () => {
+    index = (index + 1) % totalSlides;
+    showSlide(index);
+  });
+
+  // Auto slide a cada 7s
+  setInterval(() => {
+    index = (index + 1) % totalSlides;
+    showSlide(index);
+  }, 7000);
+</script>
+
 {% endblock %}
