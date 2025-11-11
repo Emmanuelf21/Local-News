@@ -59,25 +59,30 @@ def login_cadastro(request):
 
 
 def home(request):
-    categoria_id = request.GET.get('categoria')  # pega o parâmetro GET 'categoria'
+    categoria_id = request.GET.get('categoria')
     categorias = Categoria.objects.all()
-    
+
     if categoria_id:
-        # tenta pegar a categoria para garantir que existe
         categoria = get_object_or_404(Categoria, id=categoria_id)
         noticias = Noticia.objects.filter(categoria=categoria).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
-    
+
+    # 🔹 Últimas 5 notícias para o carrossel
+    ultimas_noticias = Noticia.objects.all().order_by('-created_at')[:5]
+
+    # 🔹 Mapa interativo
     mapa_html = mapa_noticias()
-    
-    context = { 
+
+    context = {
         'noticias': noticias,
+        'ultimas_noticias': ultimas_noticias,  # envia para o template
         'categoria_selecionada': categoria_id,
         'categorias': categorias,
         'mapa': mapa_html,
     }
     return render(request, 'noticias/home.html', context)
+
 
 def logout_view(request):
     logout(request)
