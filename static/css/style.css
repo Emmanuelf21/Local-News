@@ -167,3 +167,112 @@ footer i:hover {
     font-size: 1.5rem;
   }
 }
+/* === 🌗 MODO CLARO E ESCURO AUTOMÁTICO === */
+:root {
+  --cor-primaria: #2563eb;
+  --cor-secundaria: #1e293b;
+  --cor-clara: #f8fafc;
+  --cor-texto: #0f172a;
+  --radius: 0.75rem;
+  --transicao: all 0.25s ease-in-out;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  background-color: var(--cor-clara);
+  color: var(--cor-texto);
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+/* === MODO ESCURO (automático ou manual) === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cor-primaria: #60a5fa;
+    --cor-secundaria: #0f172a;
+    --cor-clara: #020617;
+    --cor-texto: #e2e8f0;
+  }
+}
+
+body.dark {
+  --cor-primaria: #60a5fa;
+  --cor-secundaria: #0f172a;
+  --cor-clara: #020617;
+  --cor-texto: #e2e8f0;
+}
+
+/* === ESTILO PADRÃO === */
+header {
+  transition: var(--transicao);
+}
+header:hover {
+  background-color: rgba(0, 0, 0, 0.95);
+}
+button,
+a.btn {
+  transition: var(--transicao);
+  font-weight: 500;
+}
+button:hover,
+a.btn:hover {
+  transform: scale(1.02);
+  filter: brightness(1.05);
+}
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  transition: var(--transicao);
+}
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* === AJUSTES VISUAIS PARA O DARK MODE === */
+body.dark,
+@media (prefers-color-scheme: dark) {
+  header {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+  }
+  footer {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+  }
+  .card {
+    background: #1e293b;
+    color: #f8fafc;
+  }
+  input,
+  textarea,
+  select {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+  }
+  table {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+  a {
+    color: #60a5fa;
+  }
+  a:hover {
+    color: #93c5fd;
+  }
+}
+
+/* === BOTÃO DE TEMA === */
+#toggle-theme {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+#toggle-theme:hover {
+  transform: scale(1.2);
+}
