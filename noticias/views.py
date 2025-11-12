@@ -106,16 +106,24 @@ def cadastrar_noticia(request):
             noticia.usuario = request.user
 
             # Combina o texto principal da notícia
-            texto = f"{noticia.titulo}. {noticia.introducao}. {noticia.desenvolvimento_inicial}. {noticia.desenvolvimento_final}. {noticia.conclusao}"
+            partes = [
+                noticia.titulo,
+                noticia.introducao,
+                noticia.desenvolvimento_inicial,
+                noticia.desenvolvimento_final,
+                noticia.conclusao
+            ]
+            texto = ". ".join([p for p in partes if p])
 
             # Chama o modelo da Hugging Face
             label = analisar_texto_noticia(texto)
             
             # Interpreta o resultado e define a categoria
+            
             if label == 0:
-                noticia.categoria_id = 3
+                noticia.categoria_id = 1  # REAL
             else:
-                noticia.categoria_id = 1
+                noticia.categoria_id = 2 
 
             noticia.save()
             return redirect('home')
