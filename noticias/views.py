@@ -90,10 +90,30 @@ def detalhar_noticia(request, id):
     return render(request, 'noticias/detalhar_noticia.html', context)
 
 
+# 📰 NOVA VIEW — página individual da notícia
+def detalhar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # 🔹 Registra visualização (evita duplicar para o mesmo usuário)
+    if request.user.is_authenticated:
+        if not Visualizacao.objects.filter(usuario=request.user, noticia=noticia).exists():
+            Visualizacao.objects.create(usuario=request.user, noticia=noticia)
+
+    # 🔹 Recupera comentários relacionados
+    comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
+
+    context = {
+        'noticia': noticia,
+        'comentarios': comentarios,
+    }
+    return render(request, 'noticias/detalhar_noticia.html', context)
+
+
 def logout_view(request):
     logout(request)
     messages.info(request, 'Você saiu da sua conta.')
     return redirect('login_cadastro')
+
 
 
 @login_required
@@ -123,6 +143,7 @@ def cadastrar_noticia(request):
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
 
 
+
 @login_required
 def dashboard(request):
     user = request.user
@@ -143,6 +164,7 @@ def dashboard(request):
         'total_curtidas': total_curtidas,
     }
     return render(request, 'noticias/dashboard.html', context)
+
 
 
 @login_required
@@ -170,6 +192,7 @@ def editar_noticia(request, id):
     return render(request, 'noticias/editar_noticia.html', context)
 
 
+
 @login_required
 def excluir_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
@@ -182,11 +205,18 @@ def excluir_noticia(request, id):
     return redirect('dashboard')
 
 
+
 def mapa_noticias():
     noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
 
     # Mapa inicial do Brasil
     mapa = folium.Map(
+        location=[-9.95, -67.75],
+        zoom_start=13,
+        zoom_control=False,
+        scrollWheelZoom=False,
+        doubleClickZoom=False,
+        touchZoom=False
         location=[-9.95, -67.75],
         zoom_start=13,
         zoom_control=False,
@@ -211,7 +241,10 @@ def mapa_noticias():
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(mapa)
 
+
     mapa.options['maxBounds'] = [
+        [-10.02, -67.95],
+        [-9.98, -67.75]
         [-10.02, -67.95],
         [-9.98, -67.75]
     ]
