@@ -216,13 +216,13 @@ def mapa_noticias():
         zoom_control=False,
         scrollWheelZoom=False,
         doubleClickZoom=False,
-        touchZoom=False
+        touchZoom=False,
         location=[-9.95, -67.75],
         zoom_start=13,
         zoom_control=False,
         scrollWheelZoom=False,
         doubleClickZoom=False,
-        touchZoom=False
+        touchZoom=False,
     )
     
     for noticia in noticias:
