@@ -8,20 +8,7 @@ from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
 import folium
 from taggit.models import Tag 
-
-# def cadastro(request):
-#     if request.method == 'POST':
-#         form = CadastroForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, 'Usuário cadastrado com sucesso!')
-#             return redirect('cadastro')
-#         else:
-#             messages.error(request, 'Por favor, corrija os erros abaixo.')
-#     else:
-#         form = CadastroForm()
-
-#     return render(request, 'noticias/cadastro.html', {'form': form})
+from .utils import analisar_texto_noticia
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
@@ -59,12 +46,12 @@ def login_cadastro(request):
 
 
 def home(request):
-    categoria_id = request.GET.get('categoria')
-    categorias = Tag.objects.all()
+    tema_id = request.GET.get('tema')
+    temas = Tag.objects.all()
 
-    if categoria_id:
-        categoria = get_object_or_404(Tag, id=categoria_id)
-        noticias = Noticia.objects.filter(categoria=categoria).order_by('-created_at')
+    if tema_id:
+        tema = get_object_or_404(Tag, id=tema_id)
+        noticias = Noticia.objects.filter(tema=tema).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
 
@@ -77,11 +64,30 @@ def home(request):
     context = {
         'noticias': noticias,
         'ultimas_noticias': ultimas_noticias,  # envia para o template
-        'categoria_selecionada': categoria_id,
-        'categorias': categorias,
+        'tema_selecionada': tema_id,
+        'temas': temas,
         'mapa': mapa_html,
     }
     return render(request, 'noticias/home.html', context)
+
+
+# 📰 NOVA VIEW — página individual da notícia
+def detalhar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # 🔹 Registra visualização (evita duplicar para o mesmo usuário)
+    if request.user.is_authenticated:
+        if not Visualizacao.objects.filter(usuario=request.user, noticia=noticia).exists():
+            Visualizacao.objects.create(usuario=request.user, noticia=noticia)
+
+    # 🔹 Recupera comentários relacionados
+    comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
+
+    context = {
+        'noticia': noticia,
+        'comentarios': comentarios,
+    }
+    return render(request, 'noticias/detalhar_noticia.html', context)
 
 
 def logout_view(request):
@@ -89,19 +95,33 @@ def logout_view(request):
     messages.info(request, 'Você saiu da sua conta.')
     return redirect('login_cadastro')
 
+
 @login_required
 def cadastrar_noticia(request):
     if request.method == 'POST':
         form = NoticiaForm(request.POST, request.FILES)
         if form.is_valid():
-            noticia = form.save(commit=False)  # não salva ainda
-            noticia.usuario = request.user      # define o usuário logado
+            noticia = form.save(commit=False)
+            noticia.usuario = request.user
+
+            # Combina o texto principal da notícia
+            texto = f"{noticia.titulo}. {noticia.introducao}. {noticia.desenvolvimento_inicial}. {noticia.desenvolvimento_final}. {noticia.conclusao}"
+
+            # Chama o modelo da Hugging Face
+            label = analisar_texto_noticia(texto)
+            
+            # Interpreta o resultado e define a categoria
+            if label == 0:
+                noticia.categoria_id = 3
+            else:
+                noticia.categoria_id = 1
+
             noticia.save()
             return redirect('home')
-            # return redirect('lista_noticias')   # troque pelo nome da sua view de listagem
     else:
         form = NoticiaForm()
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
+
 
 @login_required
 def dashboard(request):
@@ -123,6 +143,7 @@ def dashboard(request):
         'total_curtidas': total_curtidas,
     }
     return render(request, 'noticias/dashboard.html', context)
+
 
 @login_required
 def editar_noticia(request, id):
@@ -148,6 +169,7 @@ def editar_noticia(request, id):
     context = {'form': form, 'noticia': noticia}
     return render(request, 'noticias/editar_noticia.html', context)
 
+
 @login_required
 def excluir_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
@@ -159,17 +181,18 @@ def excluir_noticia(request, id):
     messages.success(request, "Notícia excluída com sucesso!")
     return redirect('dashboard')
 
+
 def mapa_noticias():
-    noticias = Noticia.objects.select_related('bairro', 'usuario', 'categoria')
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
 
     # Mapa inicial do Brasil
     mapa = folium.Map(
-    location=[-9.95, -67.75],  # ajustar conforme necessidade
-    zoom_start=13,
-    zoom_control=False,
-    scrollWheelZoom=False,
-    doubleClickZoom=False,
-    touchZoom=False
+        location=[-9.95, -67.75],
+        zoom_start=13,
+        zoom_control=False,
+        scrollWheelZoom=False,
+        doubleClickZoom=False,
+        touchZoom=False
     )
     
     for noticia in noticias:
@@ -178,20 +201,19 @@ def mapa_noticias():
             popup_text = f"""
                 <b>{noticia.titulo}</b><br>
                 <i>{bairro.bairro}</i><br>
-                <small>{noticia.categoria}</small><br>
+                <small>{noticia.tema}</small><br>
                 <a href='/noticia/{noticia.id}/' target='_blank'>Ver notícia</a>
             """
-            
-
             folium.Marker(
                 location=[bairro.latitude, bairro.longitude],
                 popup=folium.Popup(popup_text, max_width=300),
                 tooltip=noticia.titulo,
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(mapa)
+
     mapa.options['maxBounds'] = [
-    [-10.02, -67.95],  # sudoeste (y-mín, x-mín)
-    [-9.98, -67.75]   # nordeste (y-máx, x-máx)
+        [-10.02, -67.95],
+        [-9.98, -67.75]
     ]
 
     mapa_html = mapa._repr_html_()

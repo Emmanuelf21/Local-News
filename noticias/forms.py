@@ -70,7 +70,7 @@ class LoginForm(forms.Form):
 class NoticiaForm(forms.ModelForm):
     class Meta:
         model = Noticia
-        exclude = ['usuario']  # <--- Exclui o campo do formulário
+        exclude = ['usuario', 'categoria']  # <--- Exclui o campo do formulário
         widgets = {
             'descricao': forms.TextInput(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'placeholder': 'Breve descrição'}),
             'introducao': forms.Textarea(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'rows': 3}),

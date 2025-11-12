@@ -9,41 +9,45 @@
   <div id="carrosselNoticias" class="relative w-full overflow-hidden rounded-xl shadow-lg mb-10">
     <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
       {% for noticia in ultimas_noticias %}
+      {% if noticia.categoria.id == 1 %}
       <div class="min-w-full relative">
         {% if noticia.image %}
-          <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[420px] object-cover">
+        <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[420px] object-cover">
         {% endif %}
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-8 flex flex-col justify-end">
-          <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.categoria }}</span>
+          <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.tema }}</span>
           <h2 class="text-3xl font-bold text-white mb-2">{{ noticia.titulo }}</h2>
           <p class="text-gray-200 line-clamp-2 mb-4">{{ noticia.descricao|truncatechars:150 }}</p>
-          <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
+          <a href="{% url 'detalhar_noticia' noticia.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
         </div>
       </div>
+      {% endif %}
       {% endfor %}
     </div>
 
     <!-- Botões -->
-    <button id="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+    <button id="prevSlide"
+      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
       <i class="fas fa-chevron-left text-white"></i>
     </button>
-    <button id="nextSlide" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+    <button id="nextSlide"
+      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
       <i class="fas fa-chevron-right text-white"></i>
     </button>
   </div>
   {% endif %}
 
-  <!-- Categorias -->
+  <!-- temas -->
   <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
     <a href="{% url 'home' %}"
-       class="px-4 py-1 rounded-full border {% if not categoria_selecionada %}bg-black text-white border-black{% else %}border-gray-300{% endif %}">
-       Todas
+      class="px-4 py-1 rounded-full border {% if not tema_selecionada %}bg-black text-white border-black{% else %}border-gray-300{% endif %}">
+      Todas
     </a>
-    {% for categoria in categorias %}
-      <a href="{% url 'home' %}?categoria={{ categoria.id }}"
-         class="px-4 py-1 rounded-full border {% if categoria_selecionada == categoria.id|stringformat:'s' %}bg-black text-white border-black{% else %}border-gray-300 hover:bg-gray-100{% endif %}">
-         {{ categoria.name }}
-      </a>
+    {% for tema in temas %}
+    <a href="{% url 'home' %}?tema={{ tema.id }}"
+      class="px-4 py-1 rounded-full border {% if tema_selecionada == tema.id|stringformat:'s' %}bg-black text-white border-black{% else %}border-gray-300 hover:bg-gray-100{% endif %}">
+      {{ tema.name }}
+    </a>
     {% endfor %}
   </nav>
 
@@ -51,14 +55,14 @@
   {% if noticias %}
   {% with destaque=noticias.0 %}
   <section class="relative rounded-xl overflow-hidden shadow-lg mb-10">
-    {% if destaque.image %}
-      <img src="{{ destaque.image.url }}" class="w-full h-80 object-cover brightness-75" />
+    {% if destaque.image and destaque.categoria.id == 1%}
+    <img src="{{ destaque.image.url }}" class="w-full h-80 object-cover brightness-75" />
     {% endif %}
     <div class="absolute bottom-0 left-0 p-8 text-white bg-gradient-to-t from-black/80 to-transparent w-full">
-      <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.categoria }}</span>
+      <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
       <h2 class="text-3xl font-bold mt-3">{{ destaque.titulo }}</h2>
       <p class="text-gray-200 mt-2 mb-4">{{ destaque.descricao|truncatewords:20 }}</p>
-      <a href="#" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
+      <a href="{% url 'detalhar_noticia' destaque.id %}" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
     </div>
   </section>
   {% endwith %}
@@ -67,9 +71,11 @@
   <!-- Outras notícias -->
   <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for noticia in noticias|slice:"1:" %}
-    <article class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+    {% if noticia.categoria.id == 1 %}
+    <article
+      class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
       {% if noticia.image %}
-        <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
+      <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
       {% endif %}
       <div class="p-4">
         <h3 class="text-lg font-semibold mb-1">{{ noticia.titulo }}</h3>
@@ -77,13 +83,15 @@
         <div class="text-xs text-gray-500 mb-3">
           Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
         </div>
-        <a href="#" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
+        <a href="{% url 'detalhar_noticia' noticia.id %}" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
       </div>
     </article>
+    {% endif %}
     {% empty %}
-      <p class="text-center text-gray-500 col-span-full">Nenhuma notícia disponível.</p>
+    <p class="text-center text-gray-500 col-span-full">Nenhuma notícia disponível.</p>
     {% endfor %}
   </section>
+
   <!-- Section do Mapa -->
   <section class="bg-transparent flex flex-col items-center mt-10 border-t border-gray-200 py-4">
     <h1 class="text-2xl font-bold">🗺️ Notícias por Região</h1>

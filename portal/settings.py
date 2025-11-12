@@ -4,12 +4,8 @@ Django settings for portal project.
 """
 
 from pathlib import Path
-import os                 ### ADICIONADO ###
-#from dotenv import load_dotenv ### ADICIONADO ###
-#import dj_database_url    ### ADICIONADO ###
-
-# Carrega as variáveis de ambiente do arquivo .env
-#load_dotenv()             ### ADICIONADO ###
+import os              
+from dotenv import load_dotenv
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -138,11 +134,15 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-import os
-from pathlib import Path
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #cria uma pasta 'media' na raiz do projeto
 
 AUTH_USER_MODEL = 'noticias.Usuario'
+
+load_dotenv()
+
+HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")

@@ -100,8 +100,8 @@ class Noticia(models.Model):
     image = models.ImageField("Imagem", upload_to='noticias/images/', blank=True, null=True)
     
     titulo=models.CharField("Título", max_length=200)
-    # categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name="noticias", verbose_name="Categoria")
-    categoria = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='noticias')
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, related_name="noticias", verbose_name="Categoria", default=1)
+    tema = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='noticias')
     usuario = models.ForeignKey(
         get_user_model(),  # Isso já está correto
         on_delete=models.CASCADE,
