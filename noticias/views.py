@@ -10,6 +10,7 @@ from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
 import folium
 from taggit.models import Tag 
 from .utils import analisar_texto_noticia 
+from django.db.models import Q
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
@@ -63,6 +64,18 @@ def home(request):
     
     # 🔹 Mapa interativo
     mapa_html = mapa_noticias()
+
+    # BARRA DE PESQUISA
+    query = request.GET.get('q')
+    if query:
+        noticias = noticias.filter(
+            Q(titulo__icontains=query) |
+            Q(descricao__icontains=query) |
+            Q(introducao__icontains=query) |
+            Q(desenvolvimento_inicial__icontains=query) |
+            Q(desenvolvimento_final__icontains=query) |
+            Q(conclusao__icontains=query)
+        )
 
     context = {
         'noticias': noticias,
