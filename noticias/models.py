@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from .managers import UsuarioManager
 from geopy.geocoders import Nominatim
 from taggit.models import Tag
+from taggit.managers import TaggableManager
+
 
 # # Create your models here.
 # class UsuarioManager(BaseUserManager):
@@ -110,6 +112,8 @@ class Noticia(models.Model):
         null=True,
     )
 
+    
+
     bairro = models.ForeignKey('Bairro', on_delete=models.CASCADE, related_name='noticias', verbose_name='Bairro', default=1)
     descricao=models.CharField("Descrição", max_length=255)
     introducao=models.TextField("Introdução")
@@ -209,3 +213,8 @@ class Curtida(models.Model):
 class Visualizacao(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE, related_name='visualizacoes')
     data = models.DateTimeField(auto_now_add=True)
+
+# Gerenciador para listar as notícias mais curtidas
+class NoticiaPopularManager(models.Manager):
+    def mais_curtidas(self):
+        return self.annotate(num_curtidas=models.Count('curtidas')).order_by('-num_curtidas')
