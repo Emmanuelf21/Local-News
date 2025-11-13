@@ -83,7 +83,7 @@
 
                 <div id="dropdownMenu"
                     class="hidden absolute top-[100%] right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg fade-in">
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
+                    <a href="{% url 'perfil' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
                     {% if user.perfil == 'editor' or user.perfil == 'admin' %}
                     <a href="{% url 'dashboard' %}"
                         class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Publicações</a>

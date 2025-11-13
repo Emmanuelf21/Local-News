@@ -153,7 +153,11 @@ def dashboard(request):
     }
     return render(request, 'noticias/dashboard.html', context)
 
-
+@login_required
+def perfil(request):
+    user = request.user
+    
+    return render(request, 'noticias/perfil.html', {'user': user})
 
 @login_required
 def editar_noticia(request, id):
