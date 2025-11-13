@@ -54,9 +54,8 @@ def home(request):
         noticias = Noticia.objects.filter(tema=tema).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
-
-    # 🔹 Últimas 5 notícias para o carrossel
-    ultimas_noticias = Noticia.objects.all().order_by('-created_at')[:5]
+    #  Notícias mais curtidas (até 6)
+    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
 
     # 🔹 Mapa interativo
     mapa_html = mapa_noticias()
@@ -64,6 +63,7 @@ def home(request):
     context = {
         'noticias': noticias,
         'ultimas_noticias': ultimas_noticias,  # envia para o template
+        'mais_curtidas': mais_curtidas,   
         'tema_selecionada': tema_id,
         'temas': temas,
         'mapa': mapa_html,
