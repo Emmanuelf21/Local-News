@@ -21,8 +21,37 @@
 
   <!-- Corpo da notícia -->
   <div class="prose max-w-none text-gray-800 dark:text-gray-200 leading-relaxed">
-    {{ noticia.texto|linebreaks }}
+   
+    <!-- Descrição -->
+    <p class="font-semibold my-2">{{ noticia.descricao }}</p>
+  
+    <!-- Introdução -->
+    <p>{{ noticia.introducao|linebreaks }}</p>
+  
+    <!-- Desenvolvimento Inicial -->
+    <p>{{ noticia.desenvolvimento_inicial|linebreaks }}</p>
+  
+    <!-- Vídeo (se existir) -->
+    {% if noticia.video %}
+      <div class="my-4 aspect-w-16 aspect-h-9">
+        <iframe class="w-full h-64 md:h-96" src="{{ noticia.video }}" frameborder="0" allowfullscreen></iframe>
+      </div>
+    {% endif %}
+  
+    <!-- Desenvolvimento Final -->
+    <p>{{ noticia.desenvolvimento_final|linebreaks }}</p>
+  
+    <!-- Conclusão -->
+    <h2>Conclusão</h2>
+    <p>{{ noticia.conclusao|linebreaks }}</p>
+  
+    <!-- Data de publicação e autor -->
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+      Publicado por {{ noticia.usuario.get_full_name }} em {{ noticia.created_at|date:"d/m/Y H:i" }}
+    </p>
+  
   </div>
+  
 
   <!-- Área de estatísticas -->
   <div class="flex gap-6 mt-10 text-gray-500 text-sm border-t pt-4">

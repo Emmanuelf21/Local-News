@@ -75,17 +75,16 @@ def home(request):
 def detalhar_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
 
-    # 🔹 Registra visualização (evita duplicar para o mesmo usuário)
-    if request.user.is_authenticated:
-        if not Visualizacao.objects.filter(usuario=request.user, noticia=noticia).exists():
-            Visualizacao.objects.create(usuario=request.user, noticia=noticia)
+    visualizacao, created = Visualizacao.objects.get_or_create(noticia=noticia)
+    visualizacao.quantidade += 1
+    visualizacao.save(update_fields=['quantidade'])
 
-    # 🔹 Recupera comentários relacionados
     comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
 
     context = {
         'noticia': noticia,
         'comentarios': comentarios,
+        'visualizacoes': visualizacao.quantidade,
     }
     return render(request, 'noticias/detalhar_noticia.html', context)
 
