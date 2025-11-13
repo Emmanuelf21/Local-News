@@ -212,9 +212,13 @@ class Curtida(models.Model):
 
 class Visualizacao(models.Model):
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE, related_name='visualizacoes')
-    data = models.DateTimeField(auto_now_add=True)
+    quantidade = models.PositiveIntegerField(default=0)
+    
+    def __str__(self):
+        return f"{self.noticia.titulo} — {self.quantidade} visualizações"
 
 # Gerenciador para listar as notícias mais curtidas
 class NoticiaPopularManager(models.Manager):
     def mais_curtidas(self):
         return self.annotate(num_curtidas=models.Count('curtidas')).order_by('-num_curtidas')
+

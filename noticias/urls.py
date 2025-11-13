@@ -10,4 +10,7 @@ urlpatterns = [
     path('editar/<int:id>/', views.editar_noticia, name='editar_noticia'),
     path('excluir/<int:id>/', views.excluir_noticia, name='excluir_noticia'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('perfil/',views.perfil, name='perfil'),
+    path('noticia/<int:id>/', views.detalhar_noticia, name='detalhar_noticia'),
+    path('noticia/<int:noticia_id>/curtir/', views.curtir_noticia, name='curtir_noticia'),
 ]

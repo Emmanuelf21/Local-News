@@ -78,20 +78,44 @@ def home(request):
 # 📰 NOVA VIEW — página individual da notícia
 def detalhar_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
+    # 🔢 Atualiza as visualizações
+    visualizacao, created = Visualizacao.objects.get_or_create(noticia=noticia)
+    visualizacao.quantidade += 1
+    visualizacao.save(update_fields=['quantidade'])
 
-    # 🔹 Registra visualização (evita duplicar para o mesmo usuário)
-    if request.user.is_authenticated:
-        if not Visualizacao.objects.filter(usuario=request.user, noticia=noticia).exists():
-            Visualizacao.objects.create(usuario=request.user, noticia=noticia)
-
-    # 🔹 Recupera comentários relacionados
+    # 💬 Busca comentários
     comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
+
+    # ❤️ Lógica de curtidas
+    total_curtidas = Curtida.objects.filter(noticia=noticia).count()
+
+    # Verifica se o usuário atual já curtiu (se estiver logado)
+    usuario_curtiu = False
+    if request.user.is_authenticated:
+        usuario_curtiu = Curtida.objects.filter(noticia=noticia, usuario=request.user).exists()
 
     context = {
         'noticia': noticia,
         'comentarios': comentarios,
+        'visualizacoes': visualizacao.quantidade,
+        'total_curtidas': total_curtidas,
+        'usuario_curtiu': usuario_curtiu,
     }
+
     return render(request, 'noticias/detalhar_noticia.html', context)
+
+@login_required
+def curtir_noticia(request, noticia_id):
+    noticia = get_object_or_404(Noticia, id=noticia_id)
+    usuario = request.user
+
+    curtida_existente = Curtida.objects.filter(noticia=noticia, usuario=usuario).first()
+    if curtida_existente:
+        curtida_existente.delete()
+    else:
+        Curtida.objects.create(noticia=noticia, usuario=usuario)
+
+    return redirect('detalhar_noticia', id=noticia.id)
 
 
 def logout_view(request):
@@ -158,7 +182,11 @@ def dashboard(request):
     }
     return render(request, 'noticias/dashboard.html', context)
 
-
+@login_required
+def perfil(request):
+    user = request.user
+    
+    return render(request, 'noticias/perfil.html', {'user': user})
 
 @login_required
 def editar_noticia(request, id):
