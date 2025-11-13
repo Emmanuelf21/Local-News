@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.db.models import Count
 from .forms import CadastroForm, LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +9,7 @@ from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
 import folium
 from taggit.models import Tag 
-from .utils import analisar_texto_noticia
+from .utils import analisar_texto_noticia 
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
@@ -54,16 +55,19 @@ def home(request):
         noticias = Noticia.objects.filter(tema=tema).order_by('-created_at')
     else:
         noticias = Noticia.objects.all().order_by('-created_at')
+    #  Notícias mais curtidas (até 6)
+    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
 
     # 🔹 Últimas 5 notícias para o carrossel
     ultimas_noticias = Noticia.objects.all().order_by('-created_at')[:5]
-
+    
     # 🔹 Mapa interativo
     mapa_html = mapa_noticias()
 
     context = {
         'noticias': noticias,
         'ultimas_noticias': ultimas_noticias,  # envia para o template
+        'mais_curtidas': mais_curtidas,   
         'tema_selecionada': tema_id,
         'temas': temas,
         'mapa': mapa_html,
@@ -226,25 +230,65 @@ def excluir_noticia(request, id):
 def mapa_noticias():
     noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
 
-    # Mapa inicial do Brasil
+    # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
     mapa = folium.Map(
-        location=[-9.95, -67.75],
+        location=[-9.97499, -67.8243],  # Rio Branco - AC
         zoom_start=13,
-        zoom_control=False,
-        scrollWheelZoom=False,
-        doubleClickZoom=False,
-        touchZoom=False,
+        zoom_control=True,        # habilita controle de zoom para mobile
+        scrollWheelZoom=True,     # permite zoom por gesto
+        dragging=True,            # permite arrastar em mobile
+        touchZoom=True,           # zoom por pinça no celular
     )
-    
+
+    # 🟦 Adiciona marcadores das notícias
     for noticia in noticias:
         bairro = noticia.bairro
         if bairro.latitude and bairro.longitude:
+
             popup_text = f"""
-                <b>{noticia.titulo}</b><br>
-                <i>{bairro.bairro}</i><br>
-                <small>{noticia.tema}</small><br>
-                <a href='/noticia/{noticia.id}/' target='_blank'>Ver notícia</a>
+                    <div style="
+                            width: 230px;
+                            font-family: Arial, sans-serif;
+                            border-radius: 10px;
+                            overflow: hidden;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                            background: #ffffff;
+                        ">
+                            <img src='{noticia.image.url if noticia.image else ""}'
+                                style="width: 100%; height: 120px; object-fit: cover; display: block;" />
+
+                            <div style="padding: 10px;">
+                                <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">
+                                    {noticia.titulo}
+                                </h4>
+
+                                <p style="margin: 0; font-size: 13px; color: #666;">
+                                    <i>{bairro.bairro}</i>
+                                </p>
+
+                                <p style="margin: 4px 0 10px 0; font-size: 12px; color: #999;">
+                                    {noticia.tema}
+                                </p>
+
+                                <a href='/noticia/{noticia.id}/'
+                                target='_blank'
+                                style="
+                                        display: inline-block;
+                                        background: #2563eb;
+                                        color: white;
+                                        padding: 6px 10px;
+                                        border-radius: 6px;
+                                        text-decoration: none;
+                                        font-size: 12px;
+                                        font-weight: bold;
+                                ">
+                                    Ver notícia →
+                                </a>
+                            </div>
+                        </div>
+
             """
+
             folium.Marker(
                 location=[bairro.latitude, bairro.longitude],
                 popup=folium.Popup(popup_text, max_width=300),
@@ -252,13 +296,12 @@ def mapa_noticias():
                 icon=folium.Icon(color='blue', icon='info-sign')
             ).add_to(mapa)
 
-
+    # 🔒 Define limites aproximados de Rio Branco (opcional)
     mapa.options['maxBounds'] = [
-        [-10.02, -67.95],
-        [-9.98, -67.75],
-        [-10.02, -67.95],
-        [-9.98, -67.75]
+        [-10.20, -68.00],  # sudoeste
+        [-9.90, -67.60]    # nordeste
     ]
 
     mapa_html = mapa._repr_html_()
     return mapa_html
+
