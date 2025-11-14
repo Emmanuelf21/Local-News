@@ -4,31 +4,35 @@
 <main class="w-full px-4 md:px-10 py-8 dark:bg-gray-900 min-h-screen transition-colors duration-300">
 
   <!-- 🔹 Cabeçalho -->
-  <div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700 pb-4">
+  <div
+    class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-200 dark:border-gray-700 pb-4">
     <div class="text-center md:text-left">
       <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100">📊 Dashboard Administrativo</h2>
       <p class="text-gray-500 dark:text-gray-400 mt-1">Gerencie e acompanhe suas publicações</p>
     </div>
 
-    <a href="{% url 'cadastrar_noticia' %}" 
-       class="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg shadow transition-transform hover:scale-[1.03]">
+    <a href="{% url 'cadastrar_noticia' %}"
+      class="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2.5 rounded-lg shadow transition-transform hover:scale-[1.03]">
       + Nova notícia
     </a>
   </div>
 
   <!-- 🔹 Cards de estatísticas -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700">
       <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Visualizações</h5>
       <p class="text-4xl font-semibold text-blue-600 dark:text-blue-400 mt-2">{{ total_visualizacoes }}</p>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700">
       <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Curtidas</h5>
       <p class="text-4xl font-semibold text-green-600 dark:text-green-400 mt-2">{{ total_curtidas }}</p>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700 hidden lg:block">
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md text-center border border-gray-200 dark:border-gray-700 hidden lg:block">
       <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Notícias Publicadas</h5>
       <p class="text-4xl font-semibold text-purple-600 dark:text-purple-400 mt-2">{{ noticias.count }}</p>
     </div>
@@ -39,9 +43,9 @@
     <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
         {% if user.is_superuser %}
-          Todas as Notícias
+        Todas as Notícias
         {% else %}
-          Suas Notícias Publicadas
+        Suas Notícias Publicadas
         {% endif %}
       </h4>
     </div>
@@ -60,19 +64,28 @@
         </thead>
         <tbody>
           {% for n in noticias %}
-          <tr class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <tr
+            class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
             <td class="px-6 py-3 text-center text-gray-800 dark:text-gray-200 font-medium">{{ n.titulo }}</td>
             <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400">{{ n.usuario.nome_usuario }}</td>
             <td class="px-6 py-3 text-center text-blue-600 dark:text-blue-400">{{ n.curtidas.count }}</td>
             <td class="px-6 py-3 text-center text-green-600 dark:text-green-400">{{ n.comentarios.count }}</td>
-            <td class="px-6 py-3 text-center text-purple-600 dark:text-purple-400">{{ n.visualizacoes.count }}</td>
+            <td class="px-6 py-3 text-center text-purple-600 dark:text-purple-400">  
+              {% for v in visualizacoes %}
+                {% if v.noticia_id == n.id%}
+                {{v.quantidade}}
+                {% with found=True %}{% endwith %}
+                {% endif %}
+              {% endfor %}
+              
+            </td>
             <td class="px-6 py-3 text-center flex justify-center gap-2">
-              <a href="{% url 'editar_noticia' n.id %}" 
-                 class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-md text-xs transition">
+              <a href="{% url 'editar_noticia' n.id %}"
+                class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-md text-xs transition">
                 ✏️ Editar
               </a>
-              <a href="{% url 'excluir_noticia' n.id %}" 
-                 class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-xs transition">
+              <a href="{% url 'excluir_noticia' n.id %}"
+                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-xs transition">
                 🗑️ Excluir
               </a>
             </td>

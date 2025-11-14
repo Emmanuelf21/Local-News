@@ -189,15 +189,16 @@ def dashboard(request):
 
     # Todas as visualizações
     visualizacoes = Visualizacao.objects.all()
-    # Totais do dashboard
+
+    # Totais
     total_visualizacoes = sum(v.quantidade for v in visualizacoes)
     total_curtidas = sum(n.curtidas.count() for n in noticias)
 
     context = {
         'noticias': noticias,
+        'visualizacoes': visualizacoes,  # ← ENVIA A TABELA COMPLETA
         'total_visualizacoes': total_visualizacoes,
         'total_curtidas': total_curtidas,
-        'visualizacoes': visualizacoes
     }
     
     return render(request, 'noticias/dashboard.html', context)
