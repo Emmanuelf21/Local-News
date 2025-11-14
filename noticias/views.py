@@ -50,12 +50,16 @@ def login_cadastro(request):
 def home(request):
     tema_id = request.GET.get('tema')
     temas = Tag.objects.all()
-
+    
+    
     if tema_id:
         tema = get_object_or_404(Tag, id=tema_id)
         noticias = Noticia.objects.filter(tema=tema).order_by('-created_at')
     else:
-        noticias = Noticia.objects.all().order_by('-created_at')
+        noticias = Noticia.objects.filter(categoria__id=1)
+        noticias = noticias.order_by('-created_at')
+        
+        
     #  Notícias mais curtidas (até 6)
     mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
 
@@ -173,7 +177,6 @@ def cadastrar_noticia(request):
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
 
 
-
 @login_required
 def dashboard(request):
     user = request.user
@@ -184,15 +187,19 @@ def dashboard(request):
     else:
         noticias = Noticia.objects.filter(usuario=user)
 
+    # Todas as visualizações
+    visualizacoes = Visualizacao.objects.all()
     # Totais do dashboard
-    total_visualizacoes = sum(n.visualizacoes.count() for n in noticias)
+    total_visualizacoes = sum(v.quantidade for v in visualizacoes)
     total_curtidas = sum(n.curtidas.count() for n in noticias)
 
     context = {
         'noticias': noticias,
         'total_visualizacoes': total_visualizacoes,
         'total_curtidas': total_curtidas,
+        'visualizacoes': visualizacoes
     }
+    
     return render(request, 'noticias/dashboard.html', context)
 
 @login_required
