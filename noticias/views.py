@@ -190,12 +190,17 @@ def dashboard(request):
         noticias = Noticia.objects.all()
     else:
         noticias = Noticia.objects.filter(usuario=user)
-
+    
     # Todas as visualizações
     visualizacoes = Visualizacao.objects.all()
 
+    if (user.perfil == 'admin'):
+        total_visualizacoes = sum(v.quantidade for v in visualizacoes)
+    elif (user.perfil == 'editor'):
+        visualizacoes2 = Visualizacao.objects.filter(noticia__in=noticias)
+        total_visualizacoes = sum(v.quantidade for v in visualizacoes2)
+        
     # Totais
-    total_visualizacoes = sum(v.quantidade for v in visualizacoes)
     total_curtidas = sum(n.curtidas.count() for n in noticias)
 
     context = {

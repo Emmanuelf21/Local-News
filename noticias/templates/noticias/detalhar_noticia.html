@@ -28,7 +28,7 @@
 
       {% if noticia.video %}
         <div class="my-4 aspect-w-16 aspect-h-9">
-          <iframe class="w-full h-64 md:h-96" src="{{ noticia.video }}" frameborder="0" allowfullscreen></iframe>
+          <iframe class="w-full h-64 md:h-96" src="{{ noticia.video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
         </div>
       {% endif %}
 
@@ -72,11 +72,7 @@
       </div>
     </div>
 
-    <div class="mt-10">
-      <a href="{% url 'home' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md">
-        ← Voltar para Home
-      </a>
-    </div>
+    
 
   </article>
 
@@ -112,7 +108,13 @@
       {% else %}
       <p class="text-gray-500 text-sm">Nenhuma notícia curtida ainda.</p>
       {% endif %}
+      <div class="mt-10">
+        <a href="{% url 'home' %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md">
+          ← Voltar para Home
+        </a>
+      </div>
     </div>
+    
   </aside>
 
 </div>
