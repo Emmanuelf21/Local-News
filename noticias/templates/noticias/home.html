@@ -18,7 +18,8 @@
           <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.tema }}</span>
           <h2 class="text-3xl font-bold text-white mb-2">{{ noticia.titulo }}</h2>
           <p class="text-gray-200 line-clamp-2 mb-4">{{ noticia.descricao|truncatechars:150 }}</p>
-          <a href="{% url 'detalhar_noticia' noticia.id %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
+          <a href="{% url 'detalhar_noticia' noticia.id %}"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
         </div>
       </div>
       {% endif %}
@@ -62,7 +63,8 @@
       <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
       <h2 class="text-3xl font-bold mt-3">{{ destaque.titulo }}</h2>
       <p class="text-gray-200 mt-2 mb-4">{{ destaque.descricao|truncatewords:20 }}</p>
-      <a href="{% url 'detalhar_noticia' destaque.id %}" class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
+      <a href="{% url 'detalhar_noticia' destaque.id %}"
+        class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
     </div>
   </section>
   {% endwith %}
@@ -85,7 +87,8 @@
             <div class="text-xs text-gray-500 mb-3">
               Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
             </div>
-            <a href="{% url 'detalhar_noticia' noticia.id %}" class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
+            <a href="{% url 'detalhar_noticia' noticia.id %}"
+              class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
           </div>
         </article>
         {% endif %}
@@ -103,22 +106,25 @@
         {% if mais_curtidas %}
         <ul class="space-y-4">
           {% for noticia in mais_curtidas %}
+          {% if noticia.categoria.id == 1 %}
           <li class="bg-white rounded-lg shadow p-3 hover:shadow-md transition">
             <div class="flex items-center gap-3">
               {% if noticia.image %}
               <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-16 h-16 object-cover rounded-md">
               {% endif %}
               <div class="flex-1">
-                <a href="{% url 'detalhar_noticia' noticia.id %}" class="font-semibold text-sm text-gray-800 hover:text-blue-700">
+                <a href="{% url 'detalhar_noticia' noticia.id %}"
+                  class="font-semibold text-sm text-gray-800 hover:text-blue-700">
                   {{ noticia.titulo|truncatewords:6 }}
                 </a>
                 <div class="text-xs text-gray-500 flex items-center justify-between mt-1">
                   <span>{{ noticia.created_at|date:"d/m" }}</span>
-                  <span class="text-pink-600 font-semibold">❤️ {{ noticia.curtidas }}</span>
+                  <span class="text-pink-600 font-semibold">❤️ {{ noticia.curtidas.count }}</span>
                 </div>
               </div>
             </div>
           </li>
+          {% endif %}
           {% endfor %}
         </ul>
         {% else %}

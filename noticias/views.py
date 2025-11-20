@@ -102,6 +102,9 @@ def detalhar_noticia(request, id):
 
     # 💬 Busca comentários
     comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
+    
+    #  Notícias mais curtidas (até 6)
+    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
 
     # ❤️ Lógica de curtidas
     total_curtidas = Curtida.objects.filter(noticia=noticia).count()
@@ -116,6 +119,7 @@ def detalhar_noticia(request, id):
         'comentarios': comentarios,
         'visualizacoes': visualizacao.quantidade,
         'total_curtidas': total_curtidas,
+        'mais_curtidas': mais_curtidas, 
         'usuario_curtiu': usuario_curtiu,
     }
 
