@@ -11,6 +11,7 @@ import folium
 from taggit.models import Tag 
 from .utils import analisar_texto_noticia 
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
@@ -185,34 +186,78 @@ def cadastrar_noticia(request):
 def dashboard(request):
     user = request.user
 
-    # Admin vê todas as notícias, editor vê apenas as suas
+    # Separando publicadas e recusadas
     if user.is_superuser:
-        noticias = Noticia.objects.all()
+        noticias_publicadas = Noticia.objects.filter(categoria_id=1).order_by("-id")
+        noticias_recusadas = Noticia.objects.exclude(categoria_id=1).order_by("-id")
     else:
-        noticias = Noticia.objects.filter(usuario=user)
-    
-    # Todas as visualizações
-    visualizacoes = Visualizacao.objects.all()
-    total_visualizacoes=0
-    
-    if (user.perfil == 'admin'):
-        total_visualizacoes = sum(v.quantidade for v in visualizacoes)
-        
-    elif (user.perfil == 'editor'):
-        visualizacoes2 = Visualizacao.objects.filter(noticia__in=noticias)
-        total_visualizacoes = sum(v.quantidade for v in visualizacoes2)
-        
-    # Totais
-    total_curtidas = sum(n.curtidas.count() for n in noticias)
+        noticias_publicadas = Noticia.objects.filter(usuario=user, categoria_id=1).order_by("-id")
+        noticias_recusadas = Noticia.objects.filter(usuario=user).exclude(categoria_id=1).order_by("-id")
 
-    context = {
-        'noticias': noticias,
-        'visualizacoes': visualizacoes,  # ← ENVIA A TABELA COMPLETA
-        'total_visualizacoes': total_visualizacoes,
-        'total_curtidas': total_curtidas,
-    }
+    # --- Paginação ---
+    # Publicadas
+    paginator_pub = Paginator(noticias_publicadas, 5)
+    page_pub_number = request.GET.get("page_pub")
+    page_obj_pub = paginator_pub.get_page(page_pub_number)
+
+    # Recusadas
+    paginator_rec = Paginator(noticias_recusadas, 5)
+    page_rec_number = request.GET.get("page_rec")
+    page_obj_rec = paginator_rec.get_page(page_rec_number)
+
+    # --- Visualizações ---
+    visualizacoes = Visualizacao.objects.all()
+    total_visualizacoes = 0
+
+    # Corrigindo a verificação do perfil
+    perfil_nome = user.perfil.perfil.lower()  # admin / editor
+
+    if perfil_nome == "admin":
+        total_visualizacoes = sum(v.quantidade for v in visualizacoes)
+    elif perfil_nome == "editor":
+        visualizacoes_user = Visualizacao.objects.filter(noticia__in=noticias_publicadas)
+        total_visualizacoes = sum(v.quantidade for v in visualizacoes_user)
+
+    # Curtidas
+    total_curtidas = sum(n.curtidas.count() for n in noticias_publicadas)
+
+    return render(request, "noticias/dashboard.html", {
+        "page_obj_pub": page_obj_pub,
+        "page_obj_rec": page_obj_rec,
+        "visualizacoes": visualizacoes,
+        "total_visualizacoes": total_visualizacoes,
+        "total_curtidas": total_curtidas,
+    })
+    # user = request.user
+
+    # # Admin vê todas as notícias, editor vê apenas as suas
+    # if user.is_superuser:
+    #     noticias = Noticia.objects.all()
+    # else:
+    #     noticias = Noticia.objects.filter(usuario=user)
     
-    return render(request, 'noticias/dashboard.html', context)
+    # # Todas as visualizações
+    # visualizacoes = Visualizacao.objects.all()
+    # total_visualizacoes=0
+    
+    # if (user.perfil.perfil == 'admin'):
+    #     total_visualizacoes = sum(v.quantidade for v in visualizacoes)
+        
+    # elif (user.perfil.perfil == 'editor'):
+    #     visualizacoes2 = Visualizacao.objects.filter(noticia__in=noticias)
+    #     total_visualizacoes = sum(v.quantidade for v in visualizacoes2)
+        
+    # # Totais
+    # total_curtidas = sum(n.curtidas.count() for n in noticias)
+
+    # context = {
+    #     'noticias': noticias,
+    #     'visualizacoes': visualizacoes,  # ← ENVIA A TABELA COMPLETA
+    #     'total_visualizacoes': total_visualizacoes,
+    #     'total_curtidas': total_curtidas,
+    # }
+    
+    # return render(request, 'noticias/dashboard.html', context)
 
 @login_required
 def perfil(request):
@@ -232,9 +277,32 @@ def editar_noticia(request, id):
     # Instancia o form com os dados da notícia existente
     if request.method == "POST":
         form = NoticiaForm(request.POST, request.FILES, instance=noticia)
+        
         if form.is_valid():
             noticia_editada = form.save(commit=False)
             noticia_editada.usuario = noticia.usuario  # mantém o autor original
+            
+            # Combina o texto principal da notícia
+            partes = [
+                noticia_editada.titulo,
+                noticia_editada.introducao,
+                noticia_editada.desenvolvimento_inicial,
+                noticia_editada.desenvolvimento_final,
+                noticia_editada.conclusao
+            ]
+            
+            texto = ". ".join([p for p in partes if p])
+
+            # Chama o modelo da Hugging Face
+            label = analisar_texto_noticia(texto)
+            
+            # Interpreta o resultado e define a categoria
+            
+            if label == 0:
+                noticia_editada.categoria_id = 1  # REAL
+            else:
+                noticia_editada.categoria_id = 2
+                
             noticia_editada.save()
             messages.success(request, "Notícia atualizada com sucesso!")
             return redirect('dashboard')
