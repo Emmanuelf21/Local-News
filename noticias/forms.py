@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
-from .models import Noticia
+from .models import Noticia, Perfil
 
 Usuario = get_user_model()
 
@@ -40,7 +40,7 @@ class CadastroForm(forms.ModelForm):
 
         # 🔹 Define o perfil padrão como "usuário comum"
         # Ajuste o valor conforme o campo do seu modelo (exemplo: 'perfil' pode ser um CharField ou ForeignKey)
-        usuario.perfil = 'usuario'  # ou o valor correspondente ao perfil padrão no seu modelo
+        usuario.perfil = Perfil.objects.get(id=1)  # ou o valor correspondente ao perfil padrão no seu modelo
 
         if commit:
             usuario.save()

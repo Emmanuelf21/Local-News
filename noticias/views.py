@@ -193,9 +193,11 @@ def dashboard(request):
     
     # Todas as visualizações
     visualizacoes = Visualizacao.objects.all()
-
+    total_visualizacoes=0
+    
     if (user.perfil == 'admin'):
         total_visualizacoes = sum(v.quantidade for v in visualizacoes)
+        
     elif (user.perfil == 'editor'):
         visualizacoes2 = Visualizacao.objects.filter(noticia__in=noticias)
         total_visualizacoes = sum(v.quantidade for v in visualizacoes2)

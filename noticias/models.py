@@ -77,16 +77,22 @@ from taggit.managers import TaggableManager
 #     def __str__(self):
 #         return self.email_usuario
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    PERFIS = [
-        ('usuario', 'Usuário Comum'),
-        ('editor', 'Editor'),
-        ('admin', 'Administrador'),
-    ]
+    # PERFIS = [
+    #     ('usuario', 'Usuário Comum'),
+    #     ('editor', 'Editor'),
+    #     ('admin', 'Administrador'),
+    # ]
 
     email_usuario = models.EmailField(unique=True)
     nome_usuario = models.CharField(max_length=150)
-    perfil = models.CharField(max_length=20, choices=PERFIS, default='usuario')
-
+    # perfil = models.CharField(max_length=20, choices=PERFIS, default='usuario')
+    perfil = models.ForeignKey(
+            'Perfil',
+            on_delete=models.CASCADE,
+            related_name='usuarios',
+            verbose_name='Perfil',
+            default=1
+        )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
