@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('noticias.urls'))
+    path('', include('noticias.urls')),
+    path("api/", include("noticias.api_urls")), # rotas da API
 ]
 
 if settings.DEBUG:
