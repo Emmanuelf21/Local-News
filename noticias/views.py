@@ -7,37 +7,42 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import NoticiaForm
 from .models import Noticia, Curtida, Visualizacao, Comentario, Categoria
-import folium
 from taggit.models import Tag 
 from .utils import analisar_texto_noticia 
 from django.db.models import Q
 from django.core.paginator import Paginator
+
+from .utils import mapa_noticias
+from .services.noticias_service import *
+
+from django.http import JsonResponse
+from .api_views import cadastro_api, login_api
+from rest_framework.test import APIRequestFactory
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
     login_form = LoginForm()
 
     if request.method == 'POST':
-        # 🔹 Verifica qual formulário foi enviado
         if 'cadastro_submit' in request.POST:
             cadastro_form = CadastroForm(request.POST)
             if cadastro_form.is_valid():
-                cadastro_form.save()
+                usuario = cadastro_form.save()
                 messages.success(request, 'Usuário cadastrado com sucesso! Faça login.')
-                return redirect('login_cadastro')
+                return redirect('login_cadastro')  # redireciona para a própria página de cadastro/login
             else:
                 messages.error(request, 'Erro no cadastro. Verifique os campos.')
-        
+
         elif 'login_submit' in request.POST:
             login_form = LoginForm(request.POST)
             if login_form.is_valid():
                 email = login_form.cleaned_data.get('email')
                 senha = login_form.cleaned_data.get('senha')
                 user = authenticate(email_usuario=email, password=senha)
-                if user is not None:
+                if user:
                     login(request, user)
                     messages.success(request, f'Bem-vindo, {user.nome_usuario}!')
-                    return redirect('home')
+                    return redirect('home')  # redireciona para a home após login
                 else:
                     messages.error(request, 'Email ou senha incorretos.')
 
@@ -47,83 +52,38 @@ def login_cadastro(request):
     }
     return render(request, 'noticias/cadastro.html', context)
 
-
 def home(request):
-    tema_id = request.GET.get('tema')
-    temas = Tag.objects.all()
-    
-    
-    if tema_id:
-        tema = get_object_or_404(Tag, id=tema_id)
-        noticias = Noticia.objects.filter(tema=tema).order_by('-created_at')
-    else:
-        noticias = Noticia.objects.filter(categoria__id=1)
-        noticias = noticias.order_by('-created_at')
-        
-        
-    #  Notícias mais curtidas (até 6)
-    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
-
-    # 🔹 Últimas 5 notícias para o carrossel
-    ultimas_noticias = Noticia.objects.all().order_by('-created_at')[:5]
-    
-    # 🔹 Mapa interativo
-    mapa_html = mapa_noticias()
-
-    # BARRA DE PESQUISA
-    query = request.GET.get('q')
-    if query:
-        noticias = noticias.filter(
-            Q(titulo__icontains=query) |
-            Q(descricao__icontains=query) |
-            Q(introducao__icontains=query) |
-            Q(desenvolvimento_inicial__icontains=query) |
-            Q(desenvolvimento_final__icontains=query) |
-            Q(conclusao__icontains=query)
-        )
+    data = get_home_data(
+        tema_id=request.GET.get("tema"),
+        query=request.GET.get("q")
+    )
 
     context = {
-        'noticias': noticias,
-        'ultimas_noticias': ultimas_noticias,  # envia para o template
-        'mais_curtidas': mais_curtidas,   
-        'tema_selecionada': tema_id,
-        'temas': temas,
-        'mapa': mapa_html,
+        'noticias': data["noticias"],
+        'ultimas_noticias': data["ultimas_noticias"],
+        'mais_curtidas': data["mais_curtidas"],
+        'tema_selecionada': data["tema_id"],
+        'temas': data["temas"],
+        'mapa': mapa_noticias(),
     }
+
     return render(request, 'noticias/home.html', context)
+
 
 
 # 📰 NOVA VIEW — página individual da notícia
 def detalhar_noticia(request, id):
-    noticia = get_object_or_404(Noticia, id=id)
-    # 🔢 Atualiza as visualizações
-    visualizacao, created = Visualizacao.objects.get_or_create(noticia=noticia)
-    visualizacao.quantidade += 1
-    visualizacao.save(update_fields=['quantidade'])
-
-    # 💬 Busca comentários
-    comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
+    data = get_noticia_detail(id, usuario=request.user)
     
-    #  Notícias mais curtidas (até 6)
-    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
-
-    # ❤️ Lógica de curtidas
-    total_curtidas = Curtida.objects.filter(noticia=noticia).count()
-
-    # Verifica se o usuário atual já curtiu (se estiver logado)
-    usuario_curtiu = False
-    if request.user.is_authenticated:
-        usuario_curtiu = Curtida.objects.filter(noticia=noticia, usuario=request.user).exists()
-
     context = {
-        'noticia': noticia,
-        'comentarios': comentarios,
-        'visualizacoes': visualizacao.quantidade,
-        'total_curtidas': total_curtidas,
-        'mais_curtidas': mais_curtidas, 
-        'usuario_curtiu': usuario_curtiu,
+        'noticia': data["noticia"],
+        'comentarios': data["comentarios"],
+        'visualizacoes': data["visualizacoes"],
+        'total_curtidas': data["total_curtidas"],
+        'usuario_curtiu': data["usuario_curtiu"],
+        'mais_curtidas': data["mais_curtidas"],
     }
-
+    
     return render(request, 'noticias/detalhar_noticia.html', context)
 
 @login_required
@@ -142,7 +102,6 @@ def curtir_noticia(request, noticia_id):
 
 def logout_view(request):
     logout(request)
-    messages.info(request, 'Você saiu da sua conta.')
     return redirect('login_cadastro')
 
 
@@ -228,36 +187,6 @@ def dashboard(request):
         "total_visualizacoes": total_visualizacoes,
         "total_curtidas": total_curtidas,
     })
-    # user = request.user
-
-    # # Admin vê todas as notícias, editor vê apenas as suas
-    # if user.is_superuser:
-    #     noticias = Noticia.objects.all()
-    # else:
-    #     noticias = Noticia.objects.filter(usuario=user)
-    
-    # # Todas as visualizações
-    # visualizacoes = Visualizacao.objects.all()
-    # total_visualizacoes=0
-    
-    # if (user.perfil.perfil == 'admin'):
-    #     total_visualizacoes = sum(v.quantidade for v in visualizacoes)
-        
-    # elif (user.perfil.perfil == 'editor'):
-    #     visualizacoes2 = Visualizacao.objects.filter(noticia__in=noticias)
-    #     total_visualizacoes = sum(v.quantidade for v in visualizacoes2)
-        
-    # # Totais
-    # total_curtidas = sum(n.curtidas.count() for n in noticias)
-
-    # context = {
-    #     'noticias': noticias,
-    #     'visualizacoes': visualizacoes,  # ← ENVIA A TABELA COMPLETA
-    #     'total_visualizacoes': total_visualizacoes,
-    #     'total_curtidas': total_curtidas,
-    # }
-    
-    # return render(request, 'noticias/dashboard.html', context)
 
 @login_required
 def perfil(request):
@@ -327,81 +256,4 @@ def excluir_noticia(request, id):
 
 
 
-def mapa_noticias():
-    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
-
-    # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
-    mapa = folium.Map(
-        location=[-9.97499, -67.8243],  # Rio Branco - AC
-        zoom_start=13,
-        zoom_control=True,        # habilita controle de zoom para mobile
-        scrollWheelZoom=True,     # permite zoom por gesto
-        dragging=True,            # permite arrastar em mobile
-        touchZoom=True,           # zoom por pinça no celular
-    )
-
-    # 🟦 Adiciona marcadores das notícias
-    for noticia in noticias:
-        bairro = noticia.bairro
-        if bairro.latitude and bairro.longitude:
-
-            popup_text = f"""
-                    <div style="
-                            width: 230px;
-                            font-family: Arial, sans-serif;
-                            border-radius: 10px;
-                            overflow: hidden;
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                            background: #ffffff;
-                        ">
-                            <img src='{noticia.image.url if noticia.image else ""}'
-                                style="width: 100%; height: 120px; object-fit: cover; display: block;" />
-
-                            <div style="padding: 10px;">
-                                <h4 style="margin: 0 0 5px 0; font-size: 15px; font-weight: bold; color: #333;">
-                                    {noticia.titulo}
-                                </h4>
-
-                                <p style="margin: 0; font-size: 13px; color: #666;">
-                                    <i>{bairro.bairro}</i>
-                                </p>
-
-                                <p style="margin: 4px 0 10px 0; font-size: 12px; color: #999;">
-                                    {noticia.tema}
-                                </p>
-
-                                <a href='/noticia/{noticia.id}/'
-                                target='_blank'
-                                style="
-                                        display: inline-block;
-                                        background: #2563eb;
-                                        color: white;
-                                        padding: 6px 10px;
-                                        border-radius: 6px;
-                                        text-decoration: none;
-                                        font-size: 12px;
-                                        font-weight: bold;
-                                ">
-                                    Ver notícia →
-                                </a>
-                            </div>
-                        </div>
-
-            """
-
-            folium.Marker(
-                location=[bairro.latitude, bairro.longitude],
-                popup=folium.Popup(popup_text, max_width=300),
-                tooltip=noticia.titulo,
-                icon=folium.Icon(color='blue', icon='info-sign')
-            ).add_to(mapa)
-
-    # 🔒 Define limites aproximados de Rio Branco (opcional)
-    mapa.options['maxBounds'] = [
-        [-10.20, -68.00],  # sudoeste
-        [-9.90, -67.60]    # nordeste
-    ]
-
-    mapa_html = mapa._repr_html_()
-    return mapa_html
 
