@@ -26,7 +26,7 @@ def analisar_texto_noticia(texto):
         
     prob_real = probs[0][0].item()
     print(f"Prob_REAL: {prob_real}")
-    if prob_real < 0.95:
+    if prob_real < 0.90:
         label = 1  # FAKE
     else:
         label = 0  # REAL

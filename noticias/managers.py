@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 
 class UsuarioManager(BaseUserManager):
-    def create_user(self, email_usuario, nome_usuario, senha_usuario=None, perfil='usuario', **extra_fields):
+    def create_user(self, email_usuario, nome_usuario, senha_usuario=None, perfil=1, **extra_fields):
         if not email_usuario:
             raise ValueError('O email é obrigatório.')
 
@@ -17,11 +17,11 @@ class UsuarioManager(BaseUserManager):
         return usuario
 
     def create_editor(self, email_usuario, nome_usuario, senha_usuario=None, **extra_fields):
-        extra_fields.setdefault('perfil', 'editor')
+        extra_fields.setdefault('perfil', 2)
         return self.create_user(email_usuario, nome_usuario, senha_usuario, **extra_fields)
 
     def create_superuser(self, email_usuario, nome_usuario, senha_usuario=None, **extra_fields):
-        extra_fields.setdefault('perfil', 'admin')
+        extra_fields.setdefault('perfil', 3)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
