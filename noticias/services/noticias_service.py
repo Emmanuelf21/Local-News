@@ -98,3 +98,33 @@ def criar_noticia(validated_data, usuario, analisar_func):
     noticia.save()
 
     return noticia
+
+def atualizar_noticia(noticia, validated_data, analisar_func):
+    # Atualiza os campos existentes
+    for attr, value in validated_data.items():
+        setattr(noticia, attr, value)
+
+    # Mantém o usuário original
+    usuario = noticia.usuario
+
+    # Combina o texto principal
+    partes = [
+        noticia.titulo,
+        noticia.descricao,
+        noticia.introducao,
+        noticia.desenvolvimento_inicial,
+        noticia.desenvolvimento_final,
+        noticia.conclusao
+    ]
+    texto = ". ".join([p for p in partes if p])
+
+    # Chama o modelo da Hugging Face
+    label = analisar_func(texto)
+
+    # Define categoria
+    noticia.categoria_id = 1 if label == 0 else 2
+
+    noticia.usuario = usuario  # garante que o autor não muda
+    noticia.save()
+
+    return noticia

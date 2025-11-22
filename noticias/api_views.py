@@ -67,6 +67,58 @@ def cadastrar_noticia_api(request):
 
     return Response(serializer.errors, status=400)
 
+@api_view(['GET','PUT'])
+@permission_classes([IsAuthenticated])
+def editar_noticia_api(request, id):
+    """
+        Modelo de PUT para atualizar a notícia
+        {
+        "id": 231,
+        "titulo": "Nova praça inaugurada",
+        "descricao": "Moradores comemoram",
+        "introducao": "Evento reuniu dezenas de pessoas...",
+        "desenvolvimento_inicial": "As obras começaram...",
+        "desenvolvimento_final": "A praça inclui jardim...",
+        "conclusao": "A comunidade aprovou...",
+        "tema": 2
+    }
+
+    """
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Só o autor ou admin pode editar
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        return Response({"detail": "Você não tem permissão para editar esta notícia."},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        serializer = NoticiaSerializer(noticia)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = NoticiaCreateSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            noticia_editada = atualizar_noticia(
+                noticia, serializer.validated_data, analisar_texto_noticia
+            )
+            return Response(NoticiaSerializer(noticia_editada).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def excluir_noticia_api(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Só o autor ou admin pode excluir
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        return Response(
+            {"detail": "Você não tem permissão para excluir esta notícia."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    noticia.delete()
+    return Response({"detail": "Notícia excluída com sucesso."}, status=status.HTTP_200_OK)
+
 # ----------------------------------------------------------------------  
 # GET Bairros
 @api_view(['GET'])

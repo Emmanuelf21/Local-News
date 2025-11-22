@@ -15,7 +15,7 @@ class NoticiaSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'titulo', 'descricao', 'introducao',
             'desenvolvimento_inicial', 'desenvolvimento_final', 
-            'conclusao', 'tema', 'categoria', 'created_at'
+            'conclusao', 'image','tema', 'categoria', 'created_at'
         ]
 
 class NoticiaCreateSerializer(serializers.ModelSerializer):
