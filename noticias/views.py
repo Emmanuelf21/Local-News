@@ -110,34 +110,16 @@ def logout_view(request):
 def cadastrar_noticia(request):
     if request.method == 'POST':
         form = NoticiaForm(request.POST, request.FILES)
+
         if form.is_valid():
-            noticia = form.save(commit=False)
-            noticia.usuario = request.user
-
-            # Combina o texto principal da notícia
-            partes = [
-                noticia.titulo,
-                noticia.introducao,
-                noticia.desenvolvimento_inicial,
-                noticia.desenvolvimento_final,
-                noticia.conclusao
-            ]
-            texto = ". ".join([p for p in partes if p])
-
-            # Chama o modelo da Hugging Face
-            label = analisar_texto_noticia(texto)
-            
-            # Interpreta o resultado e define a categoria
-            
-            if label == 0:
-                noticia.categoria_id = 1  # REAL
-            else:
-                noticia.categoria_id = 2 
-
-            noticia.save()
+            noticia = criar_noticia(
+                validated_data=form.cleaned_data,
+                usuario=request.user,
+                analisar_func=analisar_texto_noticia
+            )
             return redirect('home')
-    else:
-        form = NoticiaForm()
+
+    form = NoticiaForm()
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
 
 
@@ -203,36 +185,15 @@ def editar_noticia(request, id):
         messages.error(request, "Você não tem permissão para editar esta notícia.")
         return redirect('dashboard')
 
-    # Instancia o form com os dados da notícia existente
     if request.method == "POST":
         form = NoticiaForm(request.POST, request.FILES, instance=noticia)
-        
         if form.is_valid():
-            noticia_editada = form.save(commit=False)
-            noticia_editada.usuario = noticia.usuario  # mantém o autor original
-            
-            # Combina o texto principal da notícia
-            partes = [
-                noticia_editada.titulo,
-                noticia_editada.introducao,
-                noticia_editada.desenvolvimento_inicial,
-                noticia_editada.desenvolvimento_final,
-                noticia_editada.conclusao
-            ]
-            
-            texto = ". ".join([p for p in partes if p])
-
-            # Chama o modelo da Hugging Face
-            label = analisar_texto_noticia(texto)
-            
-            # Interpreta o resultado e define a categoria
-            
-            if label == 0:
-                noticia_editada.categoria_id = 1  # REAL
-            else:
-                noticia_editada.categoria_id = 2
-                
-            noticia_editada.save()
+            # Reutiliza a função atualizar_noticia
+            noticia_editada = atualizar_noticia(
+                noticia,
+                form.cleaned_data,
+                analisar_texto_noticia
+            )
             messages.success(request, "Notícia atualizada com sucesso!")
             return redirect('dashboard')
     else:

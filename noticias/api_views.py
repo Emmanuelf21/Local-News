@@ -1,5 +1,7 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .utils import analisar_texto_noticia
 from .api.serializers import *
 from .services.noticias_service import *
 
@@ -48,7 +50,84 @@ def noticia_detail_api(request, noticia_id):
         "usuario_curtiu": data["usuario_curtiu"],
         "mais_curtidas": NoticiaSerializer(data["mais_curtidas"], many=True).data,
     })
-    
+  
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cadastrar_noticia_api(request):
+
+    serializer = NoticiaCreateSerializer(data=request.data)
+
+    if serializer.is_valid():
+        noticia = criar_noticia(
+            validated_data=serializer.validated_data,
+            usuario=request.user,
+            analisar_func=analisar_texto_noticia
+        )
+        return Response({"id": noticia.id}, status=201)
+
+    return Response(serializer.errors, status=400)
+
+@api_view(['GET','PUT'])
+@permission_classes([IsAuthenticated])
+def editar_noticia_api(request, id):
+    """
+        Modelo de PUT para atualizar a notícia
+        {
+        "id": 231,
+        "titulo": "Nova praça inaugurada",
+        "descricao": "Moradores comemoram",
+        "introducao": "Evento reuniu dezenas de pessoas...",
+        "desenvolvimento_inicial": "As obras começaram...",
+        "desenvolvimento_final": "A praça inclui jardim...",
+        "conclusao": "A comunidade aprovou...",
+        "tema": 2
+    }
+
+    """
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Só o autor ou admin pode editar
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        return Response({"detail": "Você não tem permissão para editar esta notícia."},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        serializer = NoticiaSerializer(noticia)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = NoticiaCreateSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            noticia_editada = atualizar_noticia(
+                noticia, serializer.validated_data, analisar_texto_noticia
+            )
+            return Response(NoticiaSerializer(noticia_editada).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def excluir_noticia_api(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Só o autor ou admin pode excluir
+    if not request.user.is_superuser and noticia.usuario != request.user:
+        return Response(
+            {"detail": "Você não tem permissão para excluir esta notícia."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    noticia.delete()
+    return Response({"detail": "Notícia excluída com sucesso."}, status=status.HTTP_200_OK)
+
+# ----------------------------------------------------------------------  
+# GET Bairros
+@api_view(['GET'])
+def listar_bairros(request):
+    bairros = Bairro.objects.all().order_by('bairro')
+    serializer = BairroSerializer(bairros, many=True)
+    return Response(serializer.data)
+
+# ----------------------------------------------------------------------  
 # CRUD Login
 @api_view(['POST'])
 def cadastro_api(request):

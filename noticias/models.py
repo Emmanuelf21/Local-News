@@ -118,8 +118,6 @@ class Noticia(models.Model):
         null=True,
     )
 
-    
-
     bairro = models.ForeignKey('Bairro', on_delete=models.CASCADE, related_name='noticias', verbose_name='Bairro', default=1)
     descricao=models.CharField("Descrição", max_length=255)
     introducao=models.TextField("Introdução")
