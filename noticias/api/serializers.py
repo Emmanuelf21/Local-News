@@ -18,6 +18,11 @@ class NoticiaSerializer(serializers.ModelSerializer):
             'conclusao', 'tema', 'categoria', 'created_at'
         ]
 
+class NoticiaCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Noticia
+        exclude = ['usuario', 'categoria', 'created_at', 'updated_at']
+        
 class ComentarioSerializer(serializers.ModelSerializer):
     usuario = serializers.StringRelatedField()
     

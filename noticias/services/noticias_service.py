@@ -77,3 +77,24 @@ def get_noticia_detail(noticia_id, usuario=None):
         "usuario_curtiu": usuario_curtiu,
         "mais_curtidas": mais_curtidas,
     }
+    
+def criar_noticia(validated_data, usuario, analisar_func):
+    noticia = Noticia(**validated_data)
+    noticia.usuario = usuario
+
+    partes = [
+        noticia.titulo,
+        noticia.descricao,
+        noticia.introducao,
+        noticia.desenvolvimento_inicial,
+        noticia.desenvolvimento_final,
+        noticia.conclusao
+    ]
+    texto = ". ".join([p for p in partes if p])
+
+    label = analisar_func(texto)
+
+    noticia.categoria_id = 1 if label == 0 else 2
+    noticia.save()
+
+    return noticia

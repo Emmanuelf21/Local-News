@@ -1,5 +1,7 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .utils import analisar_texto_noticia
 from .api.serializers import *
 from .services.noticias_service import *
 
@@ -48,7 +50,24 @@ def noticia_detail_api(request, noticia_id):
         "usuario_curtiu": data["usuario_curtiu"],
         "mais_curtidas": NoticiaSerializer(data["mais_curtidas"], many=True).data,
     })
-    
+  
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cadastrar_noticia_api(request):
+
+    serializer = NoticiaCreateSerializer(data=request.data)
+
+    if serializer.is_valid():
+        noticia = criar_noticia(
+            validated_data=serializer.validated_data,
+            usuario=request.user,
+            analisar_func=analisar_texto_noticia
+        )
+        return Response({"id": noticia.id}, status=201)
+
+    return Response(serializer.errors, status=400)
+
+# ----------------------------------------------------------------------  
 # CRUD Login
 @api_view(['POST'])
 def cadastro_api(request):
