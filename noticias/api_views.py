@@ -68,6 +68,14 @@ def cadastrar_noticia_api(request):
     return Response(serializer.errors, status=400)
 
 # ----------------------------------------------------------------------  
+# GET Bairros
+@api_view(['GET'])
+def listar_bairros(request):
+    bairros = Bairro.objects.all().order_by('bairro')
+    serializer = BairroSerializer(bairros, many=True)
+    return Response(serializer.data)
+
+# ----------------------------------------------------------------------  
 # CRUD Login
 @api_view(['POST'])
 def cadastro_api(request):

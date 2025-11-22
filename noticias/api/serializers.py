@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Noticia, Tag, Comentario
+from ..models import Noticia, Tag, Comentario, Bairro
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,7 +22,12 @@ class NoticiaCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Noticia
         exclude = ['usuario', 'categoria', 'created_at', 'updated_at']
-        
+
+class BairroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bairro
+        fields = ['id', 'bairro', 'latitude', 'longitude']
+ 
 class ComentarioSerializer(serializers.ModelSerializer):
     usuario = serializers.StringRelatedField()
     
