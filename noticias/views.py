@@ -69,8 +69,6 @@ def home(request):
 
     return render(request, 'noticias/home.html', context)
 
-
-
 # 📰 NOVA VIEW — página individual da notícia
 def detalhar_noticia(request, id):
     data = get_noticia_detail(id, usuario=request.user)
@@ -104,8 +102,6 @@ def logout_view(request):
     logout(request)
     return redirect('login_cadastro')
 
-
-
 @login_required
 def cadastrar_noticia(request):
     if request.method == 'POST':
@@ -121,7 +117,6 @@ def cadastrar_noticia(request):
 
     form = NoticiaForm()
     return render(request, 'noticias/cadastrar_noticia.html', {'form': form})
-
 
 @login_required
 def dashboard(request):
@@ -203,7 +198,6 @@ def editar_noticia(request, id):
     return render(request, 'noticias/editar_noticia.html', context)
 
 
-
 @login_required
 def excluir_noticia(request, id):
     noticia = get_object_or_404(Noticia, id=id)
@@ -218,18 +212,21 @@ def excluir_noticia(request, id):
 #secção de comentarios eu acho kkkkk
 
 def detalhar_noticia(request, id):
-    noticia = get_object_or_404(Noticia, id=id)
 
     # Registrar visualização automática
-    Visualizacao.objects.get_or_create(usuario=request.user if request.user.is_authenticated else None,
-                                       noticia=noticia)
+    
 
-    comentarios = Comentario.objects.filter(noticia=noticia).order_by('-criado_em')
-
+    data = get_noticia_detail(request, id, usuario=request.user)
+    
     context = {
-        'noticia': noticia,
-        'comentarios': comentarios,
+        'noticia': data["noticia"],
+        'comentarios': data["comentarios"],
+        'visualizacoes': data["visualizacoes"],
+        'total_curtidas': data["total_curtidas"],
+        'usuario_curtiu': data["usuario_curtiu"],
+        'mais_curtidas': data["mais_curtidas"],
     }
+    
     return render(request, 'noticias/detalhar_noticia.html', context)
 
 @login_required
@@ -237,12 +234,12 @@ def comentar(request, id):
     noticia = get_object_or_404(Noticia, id=id)
 
     if request.method == "POST":
-        texto = request.POST.get("texto")
-        if texto.strip():
+        comentario = request.POST.get("comentario")
+        if comentario.strip():
             Comentario.objects.create(
                 usuario=request.user,
                 noticia=noticia,
-                texto=texto
+                comentario=comentario
             )
             messages.success(request, "Comentário enviado!")
         else:

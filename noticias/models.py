@@ -154,8 +154,8 @@ class NoticiaPopularManager(models.Manager):
 class Comentario(models.Model):
     usuario = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     noticia = models.ForeignKey(Noticia, on_delete=models.CASCADE, related_name="comentarios")
-    texto = models.TextField()
-    criado_em = models.DateTimeField(auto_now_add=True)
+    comentario = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Comentário de {self.usuario} em {self.noticia.titulo}"

@@ -2,6 +2,8 @@ from django.db.models import Q, Count
 from django.shortcuts import get_object_or_404
 from ..models import Noticia, Tag, Visualizacao, Comentario, Curtida
 from ..utils import mapa_noticias
+from django.utils import timezone
+from datetime import timedelta
 
 def get_home_data(tema_id=None, query=None):
     temas = Tag.objects.all()
@@ -39,7 +41,7 @@ def get_home_data(tema_id=None, query=None):
         "mapa_html": mapa_noticias(),
     }
 
-def get_noticia_detail(noticia_id, usuario=None):
+def get_noticia_detail(request, noticia_id, usuario=None):
     """
     Retorna os dados completos de uma única notícia, incluindo:
     - Comentários ordenados por data decrescente
@@ -51,10 +53,28 @@ def get_noticia_detail(noticia_id, usuario=None):
     noticia = get_object_or_404(Noticia, id=noticia_id)
 
     # Atualiza visualizações
-    visualizacao, created = Visualizacao.objects.get_or_create(noticia=noticia)
-    visualizacao.quantidade += 1
-    visualizacao.save(update_fields=['quantidade'])
+    visualizacao, created = Visualizacao.objects.get_or_create(
+        noticia=noticia
+    )
 
+    # ----- CONTROLE DE VISUALIZAÇÃO -----
+
+    # chave única baseada no ID da notícia
+    chave_sessao = f"visualizou_noticia_{noticia_id}"
+
+    tempo_limite = timezone.now() - timedelta(minutes=30)  # ⬅ 30 minutos
+
+    # verifica se o usuário já registrou visualização recentemente
+    ultima_visualizacao = request.session.get(chave_sessao)
+
+    if not ultima_visualizacao or ultima_visualizacao < str(tempo_limite):
+        # incrementa contagem
+        visualizacao.quantidade += 1
+        visualizacao.save()
+
+        # salva horário da visualização na sessão
+        request.session[chave_sessao] = str(timezone.now())
+    
     # Comentários
     comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
 
