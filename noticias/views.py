@@ -247,5 +247,54 @@ def comentar(request, id):
 
     return redirect('detalhar_noticia', id=noticia.id)
 
+# -----------------------------
+# EDITAR COMENTÁRIO
+# -----------------------------
+@login_required
+def editar_comentario(request, id):
+    comentario = get_object_or_404(Comentario, id=id)
 
+    # Permitir apenas autor ou staff
+    if request.user != comentario.usuario and not request.user.is_staff:
+        messages.error(request, "Você não tem permissão para editar este comentário.")
+        return redirect("detalhar_noticia", comentario.noticia.id)
+
+    if request.method == "POST":
+        novo_texto = request.POST.get("texto")
+
+        if novo_texto.strip() == "":
+            messages.error(request, "O comentário não pode estar vazio.")
+            return redirect("editar_comentario", id)
+
+        comentario.texto = novo_texto
+        comentario.save()
+
+        messages.success(request, "Comentário atualizado com sucesso!")
+        return redirect("detalhar_noticia", comentario.noticia.id)
+
+    return render(request, "noticias/editar_comentario.html", {
+        "comentario": comentario
+    })
+
+
+# -----------------------------
+# DELETAR COMENTÁRIO
+# -----------------------------
+@login_required
+def deletar_comentario(request, id):
+    comentario = get_object_or_404(Comentario, id=id)
+
+    # Permitir apenas autor ou staff
+    if request.user != comentario.usuario and not request.user.is_staff:
+        messages.error(request, "Você não tem permissão para deletar este comentário.")
+        return redirect("detalhar_noticia", comentario.noticia.id)
+
+    if request.method == "POST":
+        noticia_id = comentario.noticia.id
+        comentario.delete()
+        messages.success(request, "Comentário deletado com sucesso!")
+        return redirect("detalhar_noticia", noticia_id)
+
+    # DELETE sempre por POST → evitar HTML GET deletando acidentalmente
+    return redirect("detalhar_noticia", comentario.noticia.id)
 
