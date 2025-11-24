@@ -184,6 +184,11 @@ def criar_visualizacao(request):
 def atualizar_visualizacao(request, id):
     """
     Recebe o ID na tabela visualização para atualizar
+    {
+        "id":2,
+        "noticia":3,
+        "quantidade":4
+    }
     """
     try:
         visualizacao = Visualizacao.objects.get(id=id)
