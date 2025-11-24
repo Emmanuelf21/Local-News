@@ -13,5 +13,7 @@ urlpatterns = [
     path('perfil/',views.perfil, name='perfil'),
     path('noticia/<int:id>/', views.detalhar_noticia, name='detalhar_noticia'),
     path('noticia/<int:noticia_id>/curtir/', views.curtir_noticia, name='curtir_noticia'),
-    path('noticia/<int:id>/comentar/', views.comentar, name='comentar'),
+    path('comentario/adicionar/<int:noticia_id>/', views.adicionar_comentario, name='adicionar_comentario'),
+    path('comentario/editar/<int:id>/', views.editar_comentario, name='editar_comentario'),
+    path('comentario/deletar/<int:id>/', views.deletar_comentario, name='deletar_comentario'),
 ]
