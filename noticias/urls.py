@@ -13,4 +13,5 @@ urlpatterns = [
     path('perfil/',views.perfil, name='perfil'),
     path('noticia/<int:id>/', views.detalhar_noticia, name='detalhar_noticia'),
     path('noticia/<int:noticia_id>/curtir/', views.curtir_noticia, name='curtir_noticia'),
+    path('noticia/<int:id>/comentar/', views.comentar, name='comentar'),
 ]
