@@ -215,6 +215,40 @@ def excluir_noticia(request, id):
     messages.success(request, "Notícia excluída com sucesso!")
     return redirect('dashboard')
 
+#secção de comentarios eu acho kkkkk
+
+def detalhar_noticia(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Registrar visualização automática
+    Visualizacao.objects.get_or_create(usuario=request.user if request.user.is_authenticated else None,
+                                       noticia=noticia)
+
+    comentarios = Comentario.objects.filter(noticia=noticia).order_by('-criado_em')
+
+    context = {
+        'noticia': noticia,
+        'comentarios': comentarios,
+    }
+    return render(request, 'noticias/detalhar_noticia.html', context)
+
+@login_required
+def comentar(request, id):
+    noticia = get_object_or_404(Noticia, id=id)
+
+    if request.method == "POST":
+        texto = request.POST.get("texto")
+        if texto.strip():
+            Comentario.objects.create(
+                usuario=request.user,
+                noticia=noticia,
+                texto=texto
+            )
+            messages.success(request, "Comentário enviado!")
+        else:
+            messages.error(request, "O comentário não pode estar vazio.")
+
+    return redirect('detalhar_noticia', id=noticia.id)
 
 
 
