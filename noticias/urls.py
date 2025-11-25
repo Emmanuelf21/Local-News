@@ -14,4 +14,6 @@ urlpatterns = [
     path('noticia/<int:id>/', views.detalhar_noticia, name='detalhar_noticia'),
     path('noticia/<int:noticia_id>/curtir/', views.curtir_noticia, name='curtir_noticia'),
     path('noticia/<int:id>/comentar/', views.comentar, name='comentar'),
+    path('comentario/<int:comentario_id>/editar/', views.editar_comentario, name='editar_comentario'),
+    path('comentario/<int:comentario_id>/deletar/', views.apagar_comentario, name='deletar_comentario'),
 ]
