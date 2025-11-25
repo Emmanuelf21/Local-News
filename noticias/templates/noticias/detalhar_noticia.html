@@ -73,55 +73,92 @@
     </div>
 
 
-    <!-- ============================== -->
-    <!--     SEÇÃO DE COMENTÁRIOS      -->
-    <!-- ============================== -->
+    <!-- SEÇÃO DE COMENTÁRIOS -->
+<section id="comentarios" class="mt-10 border-t pt-6">
 
-    <section class="mt-12 border-t pt-8">
+  <h2 class="text-2xl font-bold mb-4">💬 Comentários</h2>
 
-      <h2 class="text-2xl font-bold mb-4">💬 Comentários ({{ comentarios.count }})</h2>
+  <!-- FORMULÁRIO DE NOVO COMENTÁRIO -->
+  {% if user.is_authenticated %}
+    <form action="{% url 'adicionar_comentario' noticia.id %}" method="post" class="mb-6">
+      {% csrf_token %}
+      <textarea name="texto" rows="3" 
+        class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+        placeholder="Escreva seu comentário..." required></textarea>
+      
+      <button 
+        type="submit"
+        class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+        Publicar comentário
+      </button>
+    </form>
+  {% else %}
+    <p class="text-gray-500 mb-4">
+      <a href="{% url 'login_cadastro' %}" class="text-blue-600 font-semibold">Faça login</a>
+      para comentar.
+    </p>
+  {% endif %}
 
-      {% if user.is_authenticated %}
-      <form method="POST" action="{% url 'comentar' noticia.id %}" class="mb-6">
-        {% csrf_token %}
-        <textarea 
-          name="comentario" 
-          rows="3"
-          type="text"
-          class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-md p-3"
-          placeholder="Escreva seu comentário..."
-        ></textarea>
 
-        <button 
-          type="submit" 
-          class="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-          Enviar Comentário
-        </button>
-      </form>
-      {% else %}
-      <p class="text-gray-500 mb-6">
-        <a href="{% url 'login_cadastro' %}" class="text-blue-600">Faça login</a> para comentar.
-      </p>
-      {% endif %}
+    <!-- LISTA DE COMENTÁRIOS -->
+    {% if comentarios %}
+      <ul class="space-y-4">
+        {% for comentario in comentarios %}
+        <li class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow">
 
-      <!-- LISTA DE COMENTÁRIOS -->
-      <div class="space-y-4">
-        {% for c in comentarios %}
-        <div class="border border-gray-300 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
-          <div class="flex justify-between">
-            <p class="font-semibold text-gray-800 dark:text-gray-200">{{ c.usuario }}</p>
-            <p class="text-gray-500 dark:text-gray-400 text-sm">{{ c.created_at|date:"d/m/Y H:i" }}</p>
+          <div class="flex justify-between items-start">
+            
+            <!-- Nome + data -->
+            <div>
+              <p class="font-semibold text-gray-700 dark:text-gray-300">
+                {{ comentario.usuario.username }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{ comentario.created_at|date:"d/m/Y H:i" }}
+              </p>
+            </div>
+
+            <!-- BOTÕES EDITAR / DELETAR -->
+            {% if user == comentario.usuario or user.is_staff %}
+            <div class="flex gap-2">
+
+              <!-- Editar -->
+              <a href="{% url 'editar_comentario' comentario.id %}"
+                class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                ✏️ Editar
+              </a>
+
+              <!-- Deletar -->
+              <form action="{% url 'deletar_comentario' comentario.id %}" 
+                    method="post" 
+                    onsubmit="return confirm('Tem certeza que deseja deletar este comentário?');">
+                {% csrf_token %}
+                <button type="submit" 
+                  class="text-red-600 hover:text-red-800 text-sm font-semibold">
+                  🗑️ Excluir
+                </button>
+              </form>
+
+            </div>
+            {% endif %}
+
           </div>
-          <p class="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ c.comentario }}</p>
-        </div>
-        {% empty %}
-        <p class="text-gray-500">Nenhum comentário ainda. Seja o primeiro!</p>
+
+          <!-- Texto do comentário -->
+          <p class="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">
+            {{ comentario.texto|linebreaks }}
+          </p>
+
+        </li>
         {% endfor %}
-      </div>
+      </ul>
 
-    </section>
+    {% else %}
+      <p class="text-gray-500">Nenhum comentário ainda. Seja o primeiro!</p>
+    {% endif %}
 
-  </article>
+  </section>
+</article>
 
 
 
