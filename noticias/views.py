@@ -252,7 +252,7 @@ def comentar(request, id):
 def editar_comentario(request, comentario_id):
     comentario = get_object_or_404(Comentario, id=comentario_id)
 
-    if request.user != comentario.usuario and not request.user.is_staff:
+    if request.user != comentario.usuario and not request.user.perfil.perfil == 'admin':
         return HttpResponseForbidden("sem permissão")
 
     if request.method == "POST":

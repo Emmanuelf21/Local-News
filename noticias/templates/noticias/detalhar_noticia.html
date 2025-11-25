@@ -118,7 +118,7 @@
             </div>
 
             <!-- BOTÕES EDITAR / DELETAR -->
-            {% if user == comentario.usuario or user.is_staff %}
+            {% if user == comentario.usuario or user.perfil.perfil == 'admin' %}
             <div class="flex gap-2">
 
               <!-- Editar -->
