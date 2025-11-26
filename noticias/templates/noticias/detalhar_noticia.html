@@ -9,7 +9,8 @@
   <article class="lg:col-span-2">
 
     {% if noticia.image %}
-      <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-96 object-cover rounded-xl shadow-md mb-6">
+    <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}"
+      class="w-full h-96 object-cover rounded-xl shadow-md mb-6">
     {% endif %}
 
     <main class="mb-6">
@@ -22,14 +23,15 @@
       </p>
     </main>
 
-    <div class="prose max-w-none dark:text-gray-500 leading-relaxed">    
+    <div class="prose max-w-none dark:text-gray-500 leading-relaxed">
       <p>{{ noticia.introducao|linebreaks }}</p>
       <p>{{ noticia.desenvolvimento_inicial|linebreaks }}</p>
 
       {% if noticia.video %}
-        <div class="my-4 aspect-w-16 aspect-h-9">
-          <iframe class="w-full h-64 md:h-96" src="{{ noticia.video }}" title="YouTube video player" frameborder="0"></iframe>
-        </div>
+      <div class="my-4 aspect-w-16 aspect-h-9">
+        <iframe class="w-full h-64 md:h-96" src="{{ noticia.video }}" title="YouTube video player"
+          frameborder="0"></iframe>
+      </div>
       {% endif %}
 
       <p>{{ noticia.desenvolvimento_final|linebreaks }}</p>
@@ -50,68 +52,65 @@
 
       <div class="flex items-center gap-2">
         {% if user.is_authenticated %}
-          <form action="{% url 'curtir_noticia' noticia.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" 
-              class="flex items-center gap-1 transition-colors
+        <form action="{% url 'curtir_noticia' noticia.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="flex items-center gap-1 transition-colors
                      {% if usuario_curtiu %}
                        text-red-500 hover:text-gray-500
                      {% else %}
                        text-gray-500 hover:text-red-500
                      {% endif %}">
-              <i class="fas fa-heart"></i>
-              <span>{{ total_curtidas }} curtidas</span>
-            </button>
-          </form>
-        {% else %}
-          <div class="flex items-center gap-1 text-gray-400 cursor-default">
             <i class="fas fa-heart"></i>
             <span>{{ total_curtidas }} curtidas</span>
-          </div>
+          </button>
+        </form>
+        {% else %}
+        <div class="flex items-center gap-1 text-gray-400 cursor-default">
+          <i class="fas fa-heart"></i>
+          <span>{{ total_curtidas }} curtidas</span>
+        </div>
         {% endif %}
       </div>
     </div>
 
 
     <!-- SEÇÃO DE COMENTÁRIOS -->
-<section id="comentarios" class="mt-10 border-t pt-6">
+    <section id="comentarios" class="mt-10 border-t pt-6">
 
-  <h2 class="text-2xl font-bold mb-4">💬 Comentários</h2>
+      <h2 class="text-2xl font-bold mb-4">💬 Comentários</h2>
 
-  <!-- FORMULÁRIO DE NOVO COMENTÁRIO -->
-  {% if user.is_authenticated %}
-    <form action="{% url 'adicionar_comentario' noticia.id %}" method="post" class="mb-6">
-      {% csrf_token %}
-      <textarea name="texto" rows="3" 
-        class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
-        placeholder="Escreva seu comentário..." required></textarea>
-      
-      <button 
-        type="submit"
-        class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
-        Publicar comentário
-      </button>
-    </form>
-  {% else %}
-    <p class="text-gray-500 mb-4">
-      <a href="{% url 'login_cadastro' %}" class="text-blue-600 font-semibold">Faça login</a>
-      para comentar.
-    </p>
-  {% endif %}
+      <!-- FORMULÁRIO DE NOVO COMENTÁRIO -->
+      {% if user.is_authenticated %}
+      <form action="{% url 'comentar' noticia.id %}" method="post" class="mb-6">
+        {% csrf_token %}
+        <textarea name="comentario" type="text" rows="3"
+          class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+          placeholder="Escreva seu comentário..." required></textarea>
+
+        <button type="submit" class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+          Publicar comentário
+        </button>
+      </form>
+      {% else %}
+      <p class="text-gray-500 mb-4">
+        <a href="{% url 'login_cadastro' %}" class="text-blue-600 font-semibold">Faça login</a>
+        para comentar.
+      </p>
+      {% endif %}
 
 
-    <!-- LISTA DE COMENTÁRIOS -->
-    {% if comentarios %}
+      <!-- LISTA DE COMENTÁRIOS -->
+      {% if comentarios %}
       <ul class="space-y-4">
         {% for comentario in comentarios %}
         <li class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow">
 
           <div class="flex justify-between items-start">
-            
+
             <!-- Nome + data -->
             <div>
-              <p class="font-semibold text-gray-700 dark:text-gray-300">
-                {{ comentario.usuario.username }}
+              <p class="font-semibold text-sm text-gray-700 dark:text-gray-300">
+                {{ comentario.usuario }}
               </p>
               <p class="text-xs text-gray-500">
                 {{ comentario.created_at|date:"d/m/Y H:i" }}
@@ -119,22 +118,21 @@
             </div>
 
             <!-- BOTÕES EDITAR / DELETAR -->
-            {% if user == comentario.usuario or user.is_staff %}
+            {% if user == comentario.usuario or user.perfil.perfil == 'admin' %}
             <div class="flex gap-2">
 
               <!-- Editar -->
-              <a href="{% url 'editar_comentario' comentario.id %}"
+              <a href="javascript:void(0);" onclick="editarComentario('{{ comentario.id }}')"
                 class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
                 ✏️ Editar
               </a>
 
+
               <!-- Deletar -->
-              <form action="{% url 'deletar_comentario' comentario.id %}" 
-                    method="post" 
-                    onsubmit="return confirm('Tem certeza que deseja deletar este comentário?');">
+              <form action="{% url 'deletar_comentario' comentario.id %}" method="post"
+                onsubmit="return confirm('Tem certeza que deseja deletar este comentário?');">
                 {% csrf_token %}
-                <button type="submit" 
-                  class="text-red-600 hover:text-red-800 text-sm font-semibold">
+                <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-semibold">
                   🗑️ Excluir
                 </button>
               </form>
@@ -144,21 +142,41 @@
 
           </div>
 
-          <!-- Texto do comentário -->
-          <p class="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">
-            {{ comentario.texto|linebreaks }}
+          <!-- Texto normal do comentário -->
+          <p id="texto-comentario-{{ comentario.id }}" class="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">
+            {{ comentario.comentario|linebreaks }}
           </p>
+
+          <!-- Formulário de edição oculto -->
+          <form id="form-editar-{{ comentario.id }}" action="{% url 'editar_comentario' comentario.id %}" method="post"
+            class="hidden mt-2">
+            {% csrf_token %}
+
+            <textarea name="comentario" type="text" rows="3"
+              class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+              required>{{ comentario.comentario }}</textarea>
+
+            <button type="submit" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+              Salvar
+            </button>
+
+            <button type="button" onclick="cancelarEdicao('{{ comentario.id }}')"
+              class="mt-2 ml-2 bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+
+          </form>
 
         </li>
         {% endfor %}
       </ul>
 
-    {% else %}
+      {% else %}
       <p class="text-gray-500">Nenhum comentário ainda. Seja o primeiro!</p>
-    {% endif %}
+      {% endif %}
 
-  </section>
-</article>
+    </section>
+  </article>
 
 
 
@@ -177,7 +195,8 @@
             <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-16 h-16 object-cover rounded-md">
             {% endif %}
             <div class="flex-1">
-              <a href="{% url 'detalhar_noticia' noticia.id %}" class="font-semibold text-sm text-gray-800 dark:text-gray-200 hover:text-blue-700">
+              <a href="{% url 'detalhar_noticia' noticia.id %}"
+                class="font-semibold text-sm text-gray-800 dark:text-gray-200 hover:text-blue-700">
                 {{ noticia.titulo|truncatewords:6 }}
               </a>
               <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between mt-1">
@@ -203,5 +222,22 @@
   </aside>
 
 </div>
-
+<script>
+  function editarComentario(id) {
+      // esconder texto do comentário
+      document.getElementById("texto-comentario-" + id).style.display = "none";
+  
+      // mostrar formulário de edição
+      document.getElementById("form-editar-" + id).classList.remove("hidden");
+  }
+  
+  function cancelarEdicao(id) {
+      // mostrar texto novamente
+      document.getElementById("texto-comentario-" + id).style.display = "block";
+  
+      // esconder formulário
+      document.getElementById("form-editar-" + id).classList.add("hidden");
+  }
+  </script>
+  
 {% endblock %}

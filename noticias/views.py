@@ -18,6 +18,7 @@ from .services.noticias_service import *
 from django.http import JsonResponse
 from .api_views import cadastro_api, login_api
 from rest_framework.test import APIRequestFactory
+from django.http import HttpResponseForbidden
 
 def login_cadastro(request):
     cadastro_form = CadastroForm()
@@ -247,5 +248,28 @@ def comentar(request, id):
 
     return redirect('detalhar_noticia', id=noticia.id)
 
+@login_required
+def editar_comentario(request, comentario_id):
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+
+    if request.user != comentario.usuario and not request.user.perfil.perfil == 'admin':
+        return HttpResponseForbidden("sem permissão")
+
+    if request.method == "POST":
+        comentario.comentario = request.POST.get("comentario")
+        comentario.save()
+        return redirect('detalhar_noticia', id=comentario.noticia_id)
+
+@login_required
+def apagar_comentario(request, comentario_id):
+    comentario = get_object_or_404(Comentario, id=comentario_id)
+
+    # Só o dono ou admin pode deletar
+    if request.user == comentario.usuario or request.user.perfil.perfil == 'admin':
+        noticia_id = comentario.noticia_id
+        comentario.delete()
+        return redirect('detalhar_noticia', id=noticia_id)
+
+    return redirect('detalhar_noticia', id=comentario.noticia_id)
 
 
