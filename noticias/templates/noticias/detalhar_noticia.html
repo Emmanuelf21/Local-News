@@ -103,7 +103,7 @@
       {% if comentarios %}
       <ul class="space-y-4">
         {% for comentario in comentarios %}
-        <li class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow">
+        <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
 
           <div class="flex justify-between items-start">
 
@@ -143,9 +143,9 @@
           </div>
 
           <!-- Texto normal do comentário -->
-          <p id="texto-comentario-{{ comentario.id }}" class="mt-2 text-gray-700 dark:text-gray-300 leading-relaxed">
+          <h3 id="texto-comentario-{{ comentario.id }}" class="mt-2 text-gray-200 dark:text-gray-200 leading-relaxed">
             {{ comentario.comentario|linebreaks }}
-          </p>
+          </h3>
 
           <!-- Formulário de edição oculto -->
           <form id="form-editar-{{ comentario.id }}" action="{% url 'editar_comentario' comentario.id %}" method="post"
@@ -153,7 +153,7 @@
             {% csrf_token %}
 
             <textarea name="comentario" type="text" rows="3"
-              class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-200"
+              class="w-full p-3 border rounded-lg bg-gray-800 dark:bg-gray-800 dark:text-gray-200"
               required>{{ comentario.comentario }}</textarea>
 
             <button type="submit" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
@@ -189,14 +189,14 @@
       <ul class="space-y-4">
         {% for noticia in mais_curtidas %}
         {% if noticia.categoria.id == 1 %}
-        <li class="bg-white dark:bg-gray-800 rounded-lg shadow p-3 hover:shadow-md transition">
+        <li class="bg-white rounded-lg shadow p-3 hover:shadow-md transition">
           <div class="flex items-center gap-3">
             {% if noticia.image %}
             <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-16 h-16 object-cover rounded-md">
             {% endif %}
             <div class="flex-1">
               <a href="{% url 'detalhar_noticia' noticia.id %}"
-                class="font-semibold text-sm text-gray-800 dark:text-gray-200 hover:text-blue-700">
+                class="font-semibold text-sm text-gray-800  hover:text-blue-700">
                 {{ noticia.titulo|truncatewords:6 }}
               </a>
               <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between mt-1">
@@ -224,20 +224,20 @@
 </div>
 <script>
   function editarComentario(id) {
-      // esconder texto do comentário
-      document.getElementById("texto-comentario-" + id).style.display = "none";
-  
-      // mostrar formulário de edição
-      document.getElementById("form-editar-" + id).classList.remove("hidden");
+    // esconder texto do comentário
+    document.getElementById("texto-comentario-" + id).style.display = "none";
+
+    // mostrar formulário de edição
+    document.getElementById("form-editar-" + id).classList.remove("hidden");
   }
-  
+
   function cancelarEdicao(id) {
-      // mostrar texto novamente
-      document.getElementById("texto-comentario-" + id).style.display = "block";
-  
-      // esconder formulário
-      document.getElementById("form-editar-" + id).classList.add("hidden");
+    // mostrar texto novamente
+    document.getElementById("texto-comentario-" + id).style.display = "block";
+
+    // esconder formulário
+    document.getElementById("form-editar-" + id).classList.add("hidden");
   }
-  </script>
-  
+</script>
+
 {% endblock %}

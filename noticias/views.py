@@ -272,4 +272,28 @@ def apagar_comentario(request, comentario_id):
 
     return redirect('detalhar_noticia', id=comentario.noticia_id)
 
+@login_required
+def editar_perfil(request):
+    user = request.user
+
+    if request.method == "POST":
+        novo_nome = request.POST.get("nome_usuario")
+        nova_senha = request.POST.get("senha")
+
+        # Atualiza nome
+        if novo_nome and novo_nome.strip():
+            user.nome_usuario = novo_nome.strip()
+
+        # Atualiza senha
+        if nova_senha and nova_senha.strip():
+            user.set_password(nova_senha.strip())
+            user.save()
+            messages.success(request, "Senha atualizada! Faça login novamente.")
+            return redirect("login_cadastro")  # usuário precisa logar de novo
+
+        user.save()
+        messages.success(request, "Nome de usuário atualizado com sucesso!")
+        return redirect("perfil")
+
+    return redirect("perfil")
 
