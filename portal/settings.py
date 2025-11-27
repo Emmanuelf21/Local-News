@@ -6,8 +6,9 @@ Django settings for portal project.
 from pathlib import Path
 import os              
 from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
 
-
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -16,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-^bslunvia86+-ouu3al8$3az$92ty(@pj=u=5%b@cf$c4-i)mp" ### MODIFICADO ###
+SECRET_KEY = os.getenv("SECRET_KEY") ### MODIFICADO ###
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'True' ### MODIFICADO ###
@@ -82,17 +83,30 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 ### MODIFICADO ###
-# Substituindo a configuração do SQLite pela do Supabase/PostgreSQL
+# Substituindo a configuração do SQLite pela do PostgreSQL hospedado na Neon
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'LocalNews',
-        'USER': 'postgres',
-        'PASSWORD': 'senai103',
-        'HOST': 'localhost', 
-        'PORT': '5432',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'LocalNews',
+#         'USER': 'postgres',
+#         'PASSWORD': '#',
+#         'HOST': 'localhost', 
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
@@ -149,6 +163,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #cria uma pasta 'media' na raiz do 
 
 AUTH_USER_MODEL = 'noticias.Usuario'
 
-load_dotenv()
-
-HUGGINGFACE_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
