@@ -43,7 +43,7 @@
   <div class=" dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-md overflow-hidden">
     <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700">
       <h4 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
-        {% if user.is_superuser %}
+        {% if user.perfil.perfil == 'admin' %}
         Todas as Notícias
         {% else %}
         Suas Notícias Publicadas
@@ -64,7 +64,7 @@
           </tr>
         </thead>
         <tbody>
-          
+
           {% for n in page_obj_pub %}
           <tr
             class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
@@ -82,8 +82,14 @@
 
             </td>
             <td class="px-6 py-3 text-center flex justify-center gap-2">
+              {% if user.perfil.perfil == 'admin' %}
+              <a href="{% url 'alterar_categoria' n.id %}"
+                class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-md text-xs transition">
+                📝Bloquear
+              </a>
+              {% endif %}
               <a href="{% url 'editar_noticia' n.id %}"
-                class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-md text-xs transition">
+                class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-md text-xs transition">
                 ✏️ Editar
               </a>
               <a href="{% url 'excluir_noticia' n.id %}"
@@ -92,7 +98,7 @@
               </a>
             </td>
           </tr>
-          
+
           {% empty %}
           <tr>
             <td colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-400">Nenhuma notícia encontrada.</td>
@@ -102,19 +108,19 @@
       </table>
       <div class="flex justify-center gap-3 py-4">
         {% if page_obj_pub.has_previous %}
-            <a href="?page_pub={{ page_obj_pub.previous_page_number }}"
-            class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded">⬅️ Anterior</a>
+        <a href="?page_pub={{ page_obj_pub.previous_page_number }}"
+          class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded">⬅️ Anterior</a>
         {% endif %}
-    
+
         <span class="px-3 py-1 bg-blue-600 text-white rounded">
-            Página {{ page_obj_pub.number }} de {{ page_obj_pub.paginator.num_pages }}
+          Página {{ page_obj_pub.number }} de {{ page_obj_pub.paginator.num_pages }}
         </span>
-    
+
         {% if page_obj_pub.has_next %}
-            <a href="?page_pub={{ page_obj_pub.next_page_number }}"
-            class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded">Próxima ➡️</a>
+        <a href="?page_pub={{ page_obj_pub.next_page_number }}"
+          class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded">Próxima ➡️</a>
         {% endif %}
-    </div>
+      </div>
     </div>
 
   </div>
@@ -134,17 +140,23 @@
           </tr>
         </thead>
         <tbody>
-          
+
           {% for n in page_obj_rec %}
-          <tr
-          class="border-b border-red-400 bg-red-100 dark:bg-red-900/40">
-          <td class="px-6 py-3 text-center font-semibold text-red-800 dark:text-red-300">
-            ⚠️ {{ n.titulo }}
-          </td>
+          <tr class="border-b border-red-400 bg-red-100 dark:bg-red-900/40">
+            <td class="px-6 py-3 text-center font-semibold text-red-800 dark:text-red-300">
+              ⚠️ {{ n.titulo }}
+            </td>
             <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400">{{ n.usuario.nome_usuario }}</td>
             <td class="px-6 py-3 text-center flex justify-center gap-2">
+              {% if user.perfil.perfil == 'admin' %}
+              <a href="{% url 'alterar_categoria' n.id %}"
+                class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-md text-xs transition">
+                📝Permitir
+              </a>
+              {% endif %}
+
               <a href="{% url 'editar_noticia' n.id %}"
-                class="bg-gray-800 hover:bg-gray-700 text-white px-3 py-1.5 rounded-md text-xs transition">
+                class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-md text-xs transition">
                 ✏️ Editar
               </a>
               <a href="{% url 'excluir_noticia' n.id %}"
@@ -153,7 +165,7 @@
               </a>
             </td>
           </tr>
-          
+
           {% empty %}
           <tr>
             <td colspan="6" class="text-center py-6 text-gray-500 dark:text-gray-400">Nenhuma notícia encontrada.</td>
@@ -163,20 +175,20 @@
       </table>
       <div class="flex justify-center gap-3 py-4">
         {% if page_obj_rec.has_previous %}
-            <a href="?page_rec={{ page_obj_rec.previous_page_number }}"
-            class="px-3 py-1 bg-red-200 dark:bg-red-700 rounded">⬅️ Anterior</a>
+        <a href="?page_rec={{ page_obj_rec.previous_page_number }}"
+          class="px-3 py-1 bg-red-200 dark:bg-red-700 rounded">⬅️ Anterior</a>
         {% endif %}
-    
+
         <span class="px-3 py-1 bg-red-600 text-white rounded">
-            Página {{ page_obj_rec.number }} de {{ page_obj_rec.paginator.num_pages }}
+          Página {{ page_obj_rec.number }} de {{ page_obj_rec.paginator.num_pages }}
         </span>
-    
+
         {% if page_obj_rec.has_next %}
-            <a href="?page_rec={{ page_obj_rec.next_page_number }}"
-            class="px-3 py-1 bg-red-200 dark:bg-red-700 rounded">Próxima ➡️</a>
+        <a href="?page_rec={{ page_obj_rec.next_page_number }}"
+          class="px-3 py-1 bg-red-200 dark:bg-red-700 rounded">Próxima ➡️</a>
         {% endif %}
-    </div>
-    
+      </div>
+
     </div>
   </div>
 </main>
