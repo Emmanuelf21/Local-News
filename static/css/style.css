@@ -6,22 +6,27 @@
   --cor-texto: #0f172a;      /* Texto principal */
   --radius: 0.75rem;
   --transicao: all 0.25s ease-in-out;
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-blur: 12px;
 }
 
+/* === TIPOGRAFIA === */
 body {
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   background-color: var(--cor-clara);
   color: var(--cor-texto);
   transition: background 0.4s ease, color 0.3s ease;
+  line-height: 1.6;
 }
 
-/* === 🌗 MODO ESCURO (automático ou manual) === */
+/* === MODO ESCURO === */
 @media (prefers-color-scheme: dark) {
   :root {
     --cor-primaria: #60a5fa;
     --cor-secundaria: #0f172a;
     --cor-clara: #020617;
     --cor-texto: #e2e8f0;
+    --glass-bg: rgba(30, 41, 59, 0.25);
   }
 }
 
@@ -29,25 +34,26 @@ body.dark {
   --cor-primaria: #60a5fa;
   --cor-secundaria: #0f172a;
   --cor-clara: #020617;
-  /* --cor-texto: #e2e8f0; */
+  --cor-texto: #e2e8f0;
+  --glass-bg: rgba(30, 41, 59, 0.25);
 }
 
-/* HEADER */
+/* === HEADER === */
 header {
   transition: var(--transicao);
+  backdrop-filter: blur(6px);
+  background: var(--glass-bg);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 header:hover {
   background-color: rgba(0, 0, 0, 0.95);
 }
-
-/* LOGO */
 header h1:hover {
   transform: scale(1.05);
   transition: var(--transicao);
 }
 
-/* INPUTS E FORMULÁRIOS */
-
+/* === FORMULÁRIOS === */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -58,6 +64,8 @@ select {
   padding: 0.6rem 0.8rem;
   transition: var(--transicao);
   width: 100%;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(6px);
 }
 
 input:focus,
@@ -67,6 +75,7 @@ select:focus {
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
+
 input[type="file"] {
   background-color: #f1f5f9;
   border: 1px dashed #94a3b8;
@@ -86,11 +95,16 @@ label {
   color: #334155;
 }
 
-/* BOTÕES */
+/* === BOTÕES === */
 button,
 a.btn {
   transition: var(--transicao);
   font-weight: 500;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: var(--cor-primaria);
+  color: white;
 }
 button:hover,
 a.btn:hover {
@@ -102,16 +116,17 @@ a.btn:active {
   transform: scale(0.98);
 }
 
-/* LINKS */
+/* === LINKS === */
 a {
   text-decoration: none;
   transition: var(--transicao);
+  color: var(--cor-primaria);
 }
 a:hover {
   text-decoration: underline;
 }
 
-/* TABELAS */
+/* === TABELAS === */
 table {
   border-radius: var(--radius);
   overflow: hidden;
@@ -123,15 +138,16 @@ tr:hover td {
   background-color: #f8fafc;
 }
 
-/* IMAGENS */
+/* === IMAGENS === */
 img {
   transition: var(--transicao);
+  border-radius: var(--radius);
 }
 img:hover {
   transform: scale(1.01);
 }
 
-/* ANIMAÇÕES */
+/* === ANIMAÇÕES === */
 .fade-in {
   animation: fadeIn 0.4s ease-in-out;
 }
@@ -147,20 +163,21 @@ img:hover {
   to { transform: translateY(0); opacity: 1; }
 }
 
-/* CARDS */
-.card {
-  background: #fff;
+/* === CARDS === */
+.card, .glass {
+  background: var(--glass-bg);
   border-radius: var(--radius);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
   padding: 1rem;
   transition: var(--transicao);
+  backdrop-filter: blur(var(--glass-blur));
 }
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+.card:hover, .glass:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12);
   transform: translateY(-2px);
 }
 
-/* FOOTER */
+/* === FOOTER === */
 footer {
   background: var(--cor-secundaria);
   color: #f1f5f9;
@@ -172,29 +189,27 @@ footer i:hover {
   transition: var(--transicao);
 }
 
-/* === AJUSTES VISUAIS PARA O DARK MODE === */
+/* === DARK MODE VISUALS === */
 body.dark header,
 body.dark footer {
   background-color: var(--cor-secundaria) !important;
   color: var(--cor-texto) !important;
 }
-
 body.dark{
   background-color: var(--cor-secundaria) !important;
   color: var(--cor-texto) !important;
 }
-
-body.dark .card {
-  background: #1e293b;
+body.dark .card,
+body.dark .glass {
+  background: var(--glass-bg);
   color: #f8fafc;
 }
-
 body.dark input,
 body.dark textarea,
 body.dark select {
   background-color: #1e293b;
   color: #f1f5f9;
-  border: none;
+  border: 1px solid #334155;
 }
 body.dark table {
   background-color: #1e293b;
@@ -205,10 +220,6 @@ body.dark a {
 }
 body.dark a:hover {
   color: #93c5fd;
-}
-
-.form-base>input, .form-base.dark>input{
-  border: none;
 }
 
 /* === BOTÃO DE TEMA === */
@@ -234,5 +245,8 @@ body.dark a:hover {
   }
   h2 {
     font-size: 1.5rem;
+  }
+  .card, .glass {
+    padding: 0.75rem;
   }
 }
