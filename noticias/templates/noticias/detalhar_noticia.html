@@ -24,10 +24,14 @@
       </p>
     </div>
 
-    <!-- Conteúdo -->
-    <div class="glass p-6 rounded-xl shadow-lg space-y-4">
+    <!-- Conteúdo da notícia -->
+    <div class="glass p-6 rounded-xl shadow-lg space-y-6">
+      {% if noticia.introducao %}
       <p class="text-gray-700 dark:text-gray-200">{{ noticia.introducao|linebreaks }}</p>
+      {% endif %}
+      {% if noticia.desenvolvimento_inicial %}
       <p class="text-gray-700 dark:text-gray-200">{{ noticia.desenvolvimento_inicial|linebreaks }}</p>
+      {% endif %}
 
       {% if noticia.video %}
       <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-md">
@@ -35,16 +39,20 @@
       </div>
       {% endif %}
 
+      {% if noticia.desenvolvimento_final %}
       <p class="text-gray-700 dark:text-gray-200">{{ noticia.desenvolvimento_final|linebreaks }}</p>
+      {% endif %}
 
+      {% if noticia.conclusao %}
       <h2 class="text-2xl font-semibold mt-6">Conclusão</h2>
       <p class="text-gray-700 dark:text-gray-200">{{ noticia.conclusao|linebreaks }}</p>
+      {% endif %}
 
       <p class="text-sm text-gray-400 mt-4">Publicado por {{ noticia.usuario.get_full_name }} em {{ noticia.created_at|date:"d/m/Y H:i" }}</p>
     </div>
 
     <!-- Curtidas e visualizações -->
-    <div class="glass p-4 rounded-xl shadow-lg flex gap-6 text-gray-500 text-sm">
+    <div class="glass p-4 rounded-xl shadow-lg flex flex-wrap gap-6 text-gray-500 text-sm">
       <div class="flex items-center gap-2">
         <i class="fas fa-eye"></i>
         <span>{{ visualizacoes }} visualizações</span>
@@ -87,7 +95,7 @@
       {% if comentarios %}
       <ul class="space-y-4">
         {% for comentario in comentarios %}
-        <li class="glass p-4 rounded-xl shadow-md">
+        <li class="glass p-4 rounded-xl shadow-md space-y-2">
           <div class="flex justify-between items-start">
             <div>
               <p class="font-semibold text-gray-700 dark:text-gray-300">{{ comentario.usuario }}</p>
@@ -103,7 +111,7 @@
             </div>
             {% endif %}
           </div>
-          <h3 id="texto-comentario-{{ comentario.id }}" class="mt-2 text-gray-700 dark:text-gray-200">{{ comentario.comentario|linebreaks }}</h3>
+          <h3 id="texto-comentario-{{ comentario.id }}" class="text-gray-700 dark:text-gray-200">{{ comentario.comentario|linebreaks }}</h3>
 
           <!-- Formulário edição oculto -->
           <form id="form-editar-{{ comentario.id }}" action="{% url 'editar_comentario' comentario.id %}" method="post" class="hidden mt-2 space-y-2">

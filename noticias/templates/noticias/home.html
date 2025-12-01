@@ -2,11 +2,11 @@
 {% block title %}Home - Local News{% endblock %}
 
 {% block content %}
-<main class="max-w-7xl mx-auto px-6 py-8">
+<main class="max-w-7xl mx-auto px-6 py-10 space-y-12">
 
   <!-- CARROSSEL DE ÚLTIMAS NOTÍCIAS -->
   {% if ultimas_noticias %}
-  <div class="relative w-full mb-10 overflow-hidden rounded-xl shadow-lg">
+  <div class="relative w-full overflow-hidden rounded-xl shadow-lg">
     <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
       {% for noticia in ultimas_noticias %}
       <div class="min-w-full relative glass p-4">
@@ -17,12 +17,11 @@
           <span class="bg-blue-600 text-xs px-3 py-1 rounded-full">{{ noticia.tema }}</span>
           <h2 class="text-2xl font-bold mt-2">{{ noticia.titulo }}</h2>
           <p class="text-gray-200 mt-1 line-clamp-2">{{ noticia.descricao }}</p>
-          <a href="{% url 'detalhar_noticia' noticia.id %}" class="mt-2 inline-block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition">Ler mais</a>
+          <a href="{% url 'detalhar_noticia' noticia.id %}" class="mt-2 inline-block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Ler mais</a>
         </div>
       </div>
       {% endfor %}
     </div>
-
     <button id="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
       <i class="fas fa-chevron-left text-white"></i>
     </button>
@@ -32,10 +31,10 @@
   </div>
   {% endif %}
 
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
 
     <!-- COLUNA PRINCIPAL -->
-    <div class="lg:col-span-3 space-y-6">
+    <div class="lg:col-span-3 space-y-8">
 
       <!-- NOTÍCIA DESTAQUE -->
       {% if noticias %}
@@ -46,8 +45,8 @@
         {% endif %}
         <span class="bg-blue-600 text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
         <h2 class="text-3xl font-bold mt-2">{{ destaque.titulo }}</h2>
-        <p class="text-gray-700 dark:text-gray-200 mt-2 line-clamp-3">{{ destaque.descricao }}</p>
-        <a href="{% url 'detalhar_noticia' destaque.id %}" class="mt-3 inline-block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition">Ver mais</a>
+        <p class="text-gray-700 dark:text-gray-200 mt-3 line-clamp-3">{{ destaque.descricao }}</p>
+        <a href="{% url 'detalhar_noticia' destaque.id %}" class="mt-4 inline-block bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Ver mais</a>
       </div>
       {% endwith %}
       {% endif %}
@@ -55,13 +54,13 @@
       <!-- GRID DE NOTÍCIAS -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
         {% for noticia in noticias|slice:"1:" %}
-        <div class="glass p-4 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+        <div class="glass p-5 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
           {% if noticia.image %}
           <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover rounded-lg mb-3"/>
           {% endif %}
           <h3 class="text-lg font-semibold mb-1">{{ noticia.titulo }}</h3>
           <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">{{ noticia.descricao }}</p>
-          <div class="text-xs text-gray-500 mt-1">Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}</div>
+          <div class="text-xs text-gray-500 mt-2">Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}</div>
           <a href="{% url 'detalhar_noticia' noticia.id %}" class="text-blue-600 hover:text-blue-800 font-semibold mt-2 inline-block">Ler mais →</a>
         </div>
         {% empty %}
@@ -73,7 +72,7 @@
 
     <!-- SIDEBAR MAIS CURTIDAS -->
     <aside class="lg:col-span-1 space-y-6 sticky top-24">
-      <div class="glass p-4 rounded-xl shadow-md">
+      <div class="glass p-6 rounded-xl shadow-md">
         <h2 class="text-xl font-bold mb-4 border-b border-blue-600 pb-1">🔥 Mais Curtidas</h2>
         {% if mais_curtidas %}
         <ul class="space-y-4">
@@ -103,8 +102,8 @@
   </div>
 
   <!-- SEÇÃO MAPA -->
-  <section class="bg-transparent flex flex-col items-center mt-10 border-t border-gray-200 py-4">
-    <h1 class="text-2xl font-bold mb-4">🗺️ Notícias por Região</h1>
+  <section class="bg-gray-50 dark:bg-gray-800 flex flex-col items-center mt-12 rounded-xl p-6 shadow-md">
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">🗺️ Notícias por Região</h2>
     <div class="rounded-lg overflow-hidden shadow-lg h-[400px] w-full max-w-6xl" id="mapa-container"></div>
   </section>
 
@@ -112,7 +111,7 @@
 
 {% block extra_scripts %}
 <script>
-  // Carrossel
+  // CARROSSEL
   const slides = document.getElementById('carrosselSlides');
   if (slides) {
     const totalSlides = slides.children.length;
@@ -138,11 +137,11 @@
     }, 7000);
   }
 
-  // Exemplo fetch mapa (adaptar conforme API)
+  // EXEMPLO FETCH MAPA (adaptar conforme API)
   fetch('/api/noticias/')
   .then(r => r.json())
   .then(data => {
-      document.getElementById("mapa-container").innerHTML = data.mapa;
+    document.getElementById("mapa-container").innerHTML = data.mapa;
   });
 </script>
 {% endblock %}

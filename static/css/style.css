@@ -15,8 +15,8 @@ body {
   font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   background-color: var(--cor-clara);
   color: var(--cor-texto);
-  transition: background 0.4s ease, color 0.3s ease;
   line-height: 1.6;
+  transition: background 0.4s ease, color 0.3s ease;
 }
 
 /* === MODO ESCURO === */
@@ -67,7 +67,6 @@ select {
   background: rgba(255,255,255,0.8);
   backdrop-filter: blur(6px);
 }
-
 input:focus,
 textarea:focus,
 select:focus {
@@ -75,7 +74,6 @@ select:focus {
   border-color: var(--cor-primaria);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
-
 input[type="file"] {
   background-color: #f1f5f9;
   border: 1px dashed #94a3b8;
@@ -84,7 +82,6 @@ input[type="file"] {
 input[type="file"]:hover {
   border-color: var(--cor-primaria);
 }
-
 form {
   display: flex;
   flex-direction: column;
@@ -130,9 +127,13 @@ a:hover {
 table {
   border-radius: var(--radius);
   overflow: hidden;
+  border-collapse: collapse;
+  width: 100%;
 }
 th, td {
+  padding: 0.75rem;
   transition: var(--transicao);
+  text-align: left;
 }
 tr:hover td {
   background-color: #f8fafc;
@@ -142,6 +143,7 @@ tr:hover td {
 img {
   transition: var(--transicao);
   border-radius: var(--radius);
+  display: block;
 }
 img:hover {
   transform: scale(1.01);
@@ -183,6 +185,8 @@ footer {
   color: #f1f5f9;
   font-size: 0.875rem;
   transition: var(--transicao);
+  padding: 1rem 0;
+  text-align: center;
 }
 footer i:hover {
   transform: scale(1.2);

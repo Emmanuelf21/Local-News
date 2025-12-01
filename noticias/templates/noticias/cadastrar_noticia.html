@@ -3,26 +3,50 @@
 
 {% block content %}
 
-<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 border border-warm-base/20 
-            p-8 rounded-xl mt-10">
+<div class="max-w-2xl mx-auto glass p-8 rounded-xl mt-10 shadow-lg">
 
-    <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
-        Cadastrar Notícia
+    <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
+        📝 Cadastrar Nova Notícia
     </h2>
 
-    <form method="post" enctype="multipart/form-data" class="flex flex-col gap-5">
+    <form method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
         {% csrf_token %}
 
-        <!-- Estilo minimalista nos inputs -->
-        <div class="flex flex-col gap-6 text-gray-700 dark:text-gray-200">
-            {{ form.as_p }}
+        <!-- Título -->
+        <div class="titulo">
+            <label for="id_titulo">Título da Notícia</label>
+            {{ form.titulo }}
         </div>
 
-        <!-- Botão minimalista quente -->
+        <!-- Descrição / Conteúdo -->
+        <div class="descricao">
+            <label for="id_descricao">Descrição</label>
+            {{ form.descricao }}
+        </div>
+
+        <!-- Imagem -->
+        <div class="inserir-imagem">
+            <label for="id_image">Imagem de Capa</label>
+            {{ form.image }}
+        </div>
+
+        <!-- Categoria e Bairro -->
+        <div class="flex gap-4 flex-col sm:flex-row">
+            <div class="categoria flex-1">
+                <label for="id_categoria">Categoria</label>
+                {{ form.categoria }}
+            </div>
+            <div class="bairro flex-1">
+                <label for="id_bairro">Bairro / Região</label>
+                {{ form.bairro }}
+            </div>
+        </div>
+
+        <!-- Botão de envio -->
         <button type="submit"
-            class="bg-warm-base text-white py-2.5 rounded-lg font-medium
-                   hover:bg-warm-dark transition transform hover:scale-[1.02]">
-            Publicar
+            class="bg-blue-600 text-white py-2.5 rounded-lg font-medium
+                   hover:bg-blue-700 transition transform hover:scale-[1.02]">
+            Publicar Notícia
         </button>
     </form>
 
