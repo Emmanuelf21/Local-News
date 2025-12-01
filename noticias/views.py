@@ -166,6 +166,25 @@ def dashboard(request):
         "total_curtidas": total_curtidas,
     })
 
+def alterar_categoria(request, id):
+    if not request.user.is_superuser:
+        messages.error(request, "Você não tem permissão para isso.")
+        return redirect("dashboard")
+
+    noticia = get_object_or_404(Noticia, id=id)
+
+    # Alterna entre 1 = Real e 2 = Fake
+    if noticia.categoria_id == 1:
+        noticia.categoria_id = 2
+        messages.success(request, "A notícia foi marcada como FAKE.")
+    else:
+        noticia.categoria_id = 1
+        messages.success(request, "A notícia foi marcada como REAL.")
+
+    noticia.save()
+    return redirect("dashboard")
+
+
 @login_required
 def perfil(request):
     user = request.user
