@@ -97,12 +97,14 @@ DATABASES = {
         'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
 }
+
+ 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'LocalNews',
 #         'USER': 'postgres',
-#         'PASSWORD': '#',
+#         'PASSWORD': 'senai103',
 #         'HOST': 'localhost', 
 #         'PORT': '5432',
 #     }
