@@ -2,24 +2,34 @@
 {% block title %}Home - Local News{% endblock %}
 {% block content %}
 
-<div class="max-w-8xl mx-auto py-8">
+<div class="max-w-7xl mx-auto py-10">
 
   <!-- 📰 Carrossel de Últimas Notícias -->
   {% if ultimas_noticias %}
-  <div id="carrosselNoticias" class="relative w-full overflow-hidden rounded-xl shadow-lg mb-10">
+  <div id="carrosselNoticias"
+    class="relative w-full overflow-hidden rounded-2xl shadow-lg mb-12 border border-warm-base/20">
     <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
+
       {% for noticia in ultimas_noticias %}
       {% if noticia.categoria.id == 1 %}
       <div class="min-w-full relative">
         {% if noticia.image %}
         <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[420px] object-cover">
         {% endif %}
+
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-8 flex flex-col justify-end">
-          <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.tema }}</span>
-          <h2 class="text-3xl font-bold text-white mb-2">{{ noticia.titulo }}</h2>
+          <span class="bg-warm-base/90 text-xs px-3 py-1 w-fit text-white rounded-full mb-2">{{ noticia.tema }}</span>
+
+          <h2 class="text-3xl font-bold text-white mb-2 drop-shadow-lg">
+            {{ noticia.titulo }}
+          </h2>
+
           <p class="text-gray-200 line-clamp-2 mb-4">{{ noticia.descricao|truncatechars:150 }}</p>
+
           <a href="{% url 'detalhar_noticia' noticia.id %}"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-fit">Ler mais</a>
+            class="bg-warm-base hover:bg-warm-dark text-white px-4 py-2 rounded-md w-fit transition">
+            Ler mais
+          </a>
         </div>
       </div>
       {% endif %}
@@ -28,67 +38,101 @@
 
     <!-- Botões -->
     <button id="prevSlide"
-      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80 transition">
       <i class="fas fa-chevron-left text-white"></i>
     </button>
+
     <button id="nextSlide"
-      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
+      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80 transition">
       <i class="fas fa-chevron-right text-white"></i>
     </button>
   </div>
   {% endif %}
 
-  <!-- temas -->
-  <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
+  <!-- 🔖 Filtro por Temas -->
+  <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-300 mb-8">
     <a href="{% url 'home' %}"
-      class="px-4 py-1 rounded-full border {% if not tema_selecionada %}bg-black text-white border-black{% else %}border-gray-300{% endif %}">
+      class="px-4 py-1 rounded-full border text-sm font-medium transition
+        {% if not tema_selecionada %}
+          bg-warm-base text-white border-warm-base
+        {% else %}
+          border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600
+        {% endif %}
+      ">
       Todas
     </a>
+
     {% for tema in temas %}
     <a href="{% url 'home' %}?tema={{ tema.id }}"
-      class="px-4 py-1 rounded-full border {% if tema_selecionada == tema.id|stringformat:'s' %}bg-black text-white border-black{% else %}border-gray-300 hover:bg-gray-100{% endif %}">
+      class="px-4 py-1 rounded-full border text-sm font-medium transition
+        {% if tema_selecionada == tema.id|stringformat:'s' %}
+          bg-warm-base text-white border-warm-base
+        {% else %}
+          border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600
+        {% endif %}
+      ">
       {{ tema.name }}
     </a>
     {% endfor %}
   </nav>
 
-  <!-- Notícia em destaque -->
+  <!-- 📰 Notícia em destaque -->
   {% if noticias %}
   {% with destaque=noticias.0 %}
-  <section class="relative rounded-xl overflow-hidden shadow-lg mb-10">
-    {% if destaque.image and destaque.categoria.id == 1%}
+  <section class="relative rounded-2xl overflow-hidden shadow-lg mb-12 border border-warm-base/20">
+    {% if destaque.image and destaque.categoria.id == 1 %}
     <img src="{{ destaque.image.url }}" class="w-full h-80 object-cover brightness-75" />
     {% endif %}
+
     <div class="absolute bottom-0 left-0 p-8 text-white bg-gradient-to-t from-black/80 to-transparent w-full">
-      <span class="bg-blue-700 text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
-      <h2 class="text-3xl font-bold mt-3">{{ destaque.titulo }}</h2>
+      <span class="bg-warm-base text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
+
+      <h2 class="text-3xl font-bold mt-3 drop-shadow-lg">
+        {{ destaque.titulo }}
+      </h2>
+
       <p class="text-gray-200 mt-2 mb-4">{{ destaque.descricao|truncatewords:20 }}</p>
+
       <a href="{% url 'detalhar_noticia' destaque.id %}"
-        class="bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-800 transition">Ver mais</a>
+        class="bg-warm-base px-5 py-2 rounded-md hover:bg-warm-dark transition text-white">
+        Ver mais
+      </a>
     </div>
   </section>
   {% endwith %}
   {% endif %}
-  <!-- 🧱 Layout principal com sidebar -->
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mt-10 px-20">
-    <!-- 📰 Coluna principal -->
+
+  <!-- 🧱 Layout principal -->
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+
+    <!-- Lista de Notícias -->
     <div class="lg:col-span-3">
       <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for noticia in noticias|slice:"1:" %}
         {% if noticia.categoria.id == 1 %}
         <article
-          class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+          class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700">
           {% if noticia.image %}
           <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
           {% endif %}
+
           <div class="p-4">
-            <h3 class="text-lg text-gray-700 font-semibold mb-1">{{ noticia.titulo }}</h3>
-            <p class="text-gray-600 text-sm mb-2">{{ noticia.descricao|truncatewords:20 }}</p>
-            <div class="text-xs text-gray-500 mb-3">
+            <h3 class="text-lg text-gray-800 dark:text-gray-100 font-bold mb-1">
+              {{ noticia.titulo }}
+            </h3>
+
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
+              {{ noticia.descricao|truncatewords:20 }}
+            </p>
+
+            <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
               Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
             </div>
+
             <a href="{% url 'detalhar_noticia' noticia.id %}"
-              class="inline-block text-blue-600 hover:text-blue-800 font-semibold">Ler mais →</a>
+              class="inline-block text-warm-base hover:text-warm-dark font-semibold transition">
+              Ler mais →
+            </a>
           </div>
         </article>
         {% endif %}
@@ -98,35 +142,43 @@
       </section>
     </div>
 
-    <!-- 🔥 Sidebar de Mais Curtidas -->
+    <!-- 🔥 Sidebar - Mais Curtidas -->
     <aside class="lg:col-span-1">
       <div class="sticky top-20">
-        <h2 class="text-xl font-bold mb-4 border-b-2 border-blue-600 pb-1">🔥 Mais Curtidas</h2>
+        <h2 class="text-xl font-semibold mb-4 border-b-2 border-warm-base pb-1 text-gray-800 dark:text-gray-200">
+          ❤️ Mais Curtidas
+        </h2>
 
         {% if mais_curtidas %}
         <ul class="space-y-4">
           {% for noticia in mais_curtidas %}
           {% if noticia.categoria.id == 1 %}
-          <li class="bg-white rounded-lg shadow p-3 hover:shadow-md transition">
+          <li
+            class="bg-white dark:bg-gray-800 rounded-lg shadow p-3 hover:shadow-md transition border border-gray-200 dark:border-gray-700">
             <div class="flex items-center gap-3">
+
               {% if noticia.image %}
-              <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-16 h-16 object-cover rounded-md">
+              <img src="{{ noticia.image.url }}" class="w-16 h-16 object-cover rounded-md">
               {% endif %}
+
               <div class="flex-1">
                 <a href="{% url 'detalhar_noticia' noticia.id %}"
-                  class="font-semibold text-sm text-gray-800 hover:text-blue-700">
+                  class="font-semibold text-sm text-gray-800 dark:text-gray-200 hover:text-warm-base">
                   {{ noticia.titulo|truncatewords:6 }}
                 </a>
-                <div class="text-xs text-gray-500 flex items-center justify-between mt-1">
+
+                <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-between mt-1">
                   <span>{{ noticia.created_at|date:"d/m" }}</span>
-                  <span class="text-pink-600 font-semibold">❤️ {{ noticia.curtidas.count }}</span>
+                  <span class="text-warm-base font-semibold">❤️ {{ noticia.curtidas.count }}</span>
                 </div>
               </div>
+
             </div>
           </li>
           {% endif %}
           {% endfor %}
         </ul>
+
         {% else %}
         <p class="text-gray-500 text-sm">Nenhuma notícia curtida ainda.</p>
         {% endif %}
@@ -135,29 +187,29 @@
 
   </div>
 
-  <!-- Section do Mapa -->
-  <section class="bg-transparent flex flex-col items-center mt-10 border-t border-gray-200 py-4">
-    <h1 class="text-2xl font-bold">🗺️ Notícias por Região</h1>
-    <main class="flex-grow p-4 w-[80%]">
-      <div class="rounded-lg overflow-hidden shadow-lg h-[400px] w-full" id="mapa-container">
-        
-      </div>
+  <!-- 🗺️ Mapa -->
+  <section class="flex flex-col items-center mt-16 border-t border-gray-300 pt-8">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">🗺️ Notícias por Região</h1>
+
+    <main class="w-[80%]">
+      <div class="rounded-xl overflow-hidden shadow-lg h-[400px] w-full border border-gray-300 dark:border-gray-700"
+        id="mapa-container"></div>
     </main>
   </section>
 
 </div>
 
-<!-- Script do Carrossel -->
+<!-- Script Carrossel + Mapa -->
 <script>
   const slides = document.getElementById('carrosselSlides');
   const totalSlides = slides.children.length;
   let index = 0;
 
   fetch('/api/noticias/')
-  .then(r => r.json())
-  .then(data => {
+    .then(r => r.json())
+    .then(data => {
       document.getElementById("mapa-container").innerHTML = data.mapa;
-  });
+    });
 
   function showSlide(i) {
     slides.style.transform = `translateX(-${i * 100}%)`;
@@ -173,7 +225,6 @@
     showSlide(index);
   });
 
-  // Auto slide a cada 7s
   setInterval(() => {
     index = (index + 1) % totalSlides;
     showSlide(index);

@@ -1,12 +1,31 @@
 {% extends "noticias/base.html" %}
 {% block title %}Nova Notícia - Local News{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
-  <h2 class="text-2xl font-semibold mb-6 text-gray-800">Cadastrar Notícia</h2>
-  <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition hover:scale-[1.02]">Publicar</button>
-  </form>
+
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 border border-warm-base/20 
+            p-8 rounded-xl mt-10">
+
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">
+        Cadastrar Notícia
+    </h2>
+
+    <form method="post" enctype="multipart/form-data" class="flex flex-col gap-5">
+        {% csrf_token %}
+
+        <!-- Estilo minimalista nos inputs -->
+        <div class="flex flex-col gap-6 text-gray-700 dark:text-gray-200">
+            {{ form.as_p }}
+        </div>
+
+        <!-- Botão minimalista quente -->
+        <button type="submit"
+            class="bg-warm-base text-white py-2.5 rounded-lg font-medium
+                   hover:bg-warm-dark transition transform hover:scale-[1.02]">
+            Publicar
+        </button>
+    </form>
+
 </div>
+
 {% endblock %}

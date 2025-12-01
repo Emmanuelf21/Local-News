@@ -1,40 +1,52 @@
 {% extends "noticias/base.html" %}
 {% block title %}Cadastro - Local News{% endblock %}
+
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
+<div class="max-w-md mx-auto bg-white dark:bg-gray-800 border border-warm-base/20 
+            p-8 rounded-xl mt-12">
+
   <!-- Título -->
-  <h2 id="form-title" class="text-2xl font-semibold mb-6 text-center text-gray-800">Crie sua conta</h2>
+  <h2 id="form-title" 
+      class="text-2xl font-semibold mb-6 text-center text-gray-800 dark:text-gray-100">
+      Crie sua conta
+  </h2>
 
   <!-- Formulário de Cadastro -->
-  <form id="cadastro-form" method="POST" class="flex flex-col gap-4">
+  <form id="cadastro-form" method="POST" class="flex flex-col gap-5">
     {% csrf_token %}
-    {{ cadastro_form.as_p }}
-    <button
-      name="cadastro_submit"
-      type="submit"
-      class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition"
-    >
+    
+    <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-200">
+      {{ cadastro_form.as_p }}
+    </div>
+
+    <button name="cadastro_submit" type="submit"
+      class="bg-warm-base text-white py-2.5 rounded-lg font-medium
+             hover:bg-warm-dark transition transform hover:scale-[1.02]">
       Cadastrar
     </button>
   </form>
 
   <!-- Formulário de Login -->
-  <form id="login-form" method="POST" class="flex flex-col gap-4 hidden">
+  <form id="login-form" method="POST" class="flex flex-col gap-5 hidden">
     {% csrf_token %}
-    {{ login_form.as_p }}
-    <button
-    name="login_submit"
-      type="submit"
-      class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition"
-    >
+
+    <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-200">
+      {{ login_form.as_p }}
+    </div>
+
+    <button name="login_submit" type="submit"
+      class="bg-warm-base text-white py-2.5 rounded-lg font-medium
+             hover:bg-warm-dark transition transform hover:scale-[1.02]">
       Entrar
     </button>
   </form>
 
-  <!-- Link de alternância -->
-  <p class="text-sm text-center text-gray-500 mt-4">
+  <!-- Link para alternar -->
+  <p class="text-sm text-center text-gray-600 dark:text-gray-400 mt-5">
     Já tem conta?
-    <a href="#" id="toggle-link" class="text-blue-600 hover:underline">Entre aqui</a>
+    <a href="#" id="toggle-link" class="text-warm-base font-medium hover:underline">
+      Entre aqui
+    </a>
   </p>
 </div>
 
@@ -48,14 +60,14 @@
   toggleLink.addEventListener("click", (e) => {
     e.preventDefault();
 
-    const isCadastroVisible = !cadastroForm.classList.contains("hidden");
+    const cadastroAtivo = !cadastroForm.classList.contains("hidden");
 
-    // Alterna a exibição dos formulários
+    // Alternar
     cadastroForm.classList.toggle("hidden");
     loginForm.classList.toggle("hidden");
 
-    // Atualiza o texto
-    if (isCadastroVisible) {
+    // Atualizar textos
+    if (cadastroAtivo) {
       formTitle.textContent = "Entre na sua conta";
       toggleLink.textContent = "Crie uma conta";
       toggleLink.previousSibling.textContent = "Não tem conta? ";

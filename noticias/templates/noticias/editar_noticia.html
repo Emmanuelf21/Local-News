@@ -1,12 +1,27 @@
 {% extends "noticias/base.html" %}
 {% block title %}Editar Notícia - Local News{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
-  <h2 class="text-2xl font-semibold mb-6 text-gray-800">Editar Notícia</h2>
-  <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 border border-warm-base/20 
+            p-8 rounded-2xl mt-14">
+
+  <h2 class="text-3xl font-bold mb-8 text-center text-gray-800 dark:text-gray-100">
+    ✏️ Editar Notícia
+  </h2>
+
+  <form method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition hover:scale-[1.02]">Salvar Alterações</button>
+
+    <div class="space-y-4 text-gray-800 dark:text-gray-200">
+      {{ form.as_p }}
+    </div>
+
+    <button 
+      type="submit"
+      class="bg-warm-base hover:bg-warm-dark text-white py-2.5 rounded-lg font-semibold 
+             transition-transform hover:scale-[1.02]">
+      Salvar Alterações
+    </button>
   </form>
 </div>
 {% endblock %}
