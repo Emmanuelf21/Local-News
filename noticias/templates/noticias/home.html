@@ -6,8 +6,31 @@
 
 <!-- Categorias -->
 <!-- Categorias / Temas -->
-<main class="max-w-7xl mx-auto">
-    <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
+<div class="w-full flex justify-center my-5 px-4">
+    <form method="get" action="{% url 'home' %}"
+        class="w-full max-w-3xl bg-white shadow-md rounded-full flex items-center 
+               px-4 py-2 gap-3 border border-gray-300
+               transition-all duration-300 focus-within:shadow-xl">
+
+        <i class="fas fa-search text-gray-600 text-lg ml-2"></i>
+
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Pesquisar..." 
+            class="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 text-lg" />
+
+        <button 
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full transition-all duration-300 text-base font-medium">
+            Buscar
+        </button>
+    </form>
+</div>
+
+
+
+<main class="max-w-[80%] mx-auto">
+    <nav class="flex justify-center gap-3 max-w-7xl mx-auto overflow-x-auto pb-4 border-b border-gray-200 mb-6">
 
         <!-- Botão Todas -->
         <a href="{% url 'home' %}#noticias" class="px-4 py-1 rounded-full border
@@ -98,7 +121,7 @@
         <article class="bg-white p-4 shadow rounded hover:shadow-lg transition">
 
             {% if noticia.image %}
-            <img src="{{ noticia.image.url }}" class="rounded mb-2 w-full h-48 object-cover">
+            <img src="{{ noticia.image.url }}" class="rounded mb-2 w-full h-80 object-cover">
             {% endif %}
 
             <h3 class="font-semibold text-gray-800 text-lg mb-1">
@@ -142,10 +165,10 @@
             {% if noticia.categoria.id == 1 %}
 
             <article
-                class="bg-white rounded-md overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+                class="bg-white rounded-md overflow-hidden max-w-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
 
                 {% if noticia.image %}
-                <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
+                <img src="{{ noticia.image.url }}" class="w-full h-80 object-cover" />
                 {% endif %}
 
                 <div class="p-4">
@@ -176,7 +199,7 @@
     <section class="bg-transparent flex flex-col items-center mt-10 border-t border-gray-200 py-4"></section>
     <h1 class="text-2xl font-bold w-fit m-auto">🗺️ Notícias por Região</h1>
     <main class="flex-grow p-4 ">
-        <div class="rounded-lg overflow-hidden shadow-lg h-auto sm:h-[450px]  w-full" id="mapa-container">
+        <div class="rounded-lg overflow-hidden max-w-7xl mx-auto shadow-lg h-9/10 sm:h-96  w-full" id="mapa-container">
 
         </div>
     </main>
