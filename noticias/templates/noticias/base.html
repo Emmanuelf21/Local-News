@@ -1,210 +1,245 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-br" class="bg-gray-50 dark:bg-gray-900 transition-colors">
+<html lang="pt-br" class="transition-colors duration-300">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Local News{% endblock %}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}Local News{% endblock %}</title>
 
-  {% block extra_head %}{% endblock %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
-  <style>
-    /* Glass effect moderno */
-    .glass {
-      backdrop-filter: blur(12px);
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 1rem;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .glass:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-  </style>
+    <!-- <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Estilos adicionais para o novo layout */
+        .header-top-bar {
+            background-color: #f0f0f0; /* Cor de fundo da barra superior */
+        }
+        .header-main-menu {
+            border-bottom: 1px solid #e5e5e5;
+        }
+    </style>
+
+    {% block head %}{% endblock %}
 </head>
-<body class="font-sans text-gray-800 dark:text-gray-200">
 
-  <!-- HEADER FIXO -->
-  <header class="bg-white dark:bg-gray-800 shadow sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
-      <a href="{% url 'home' %}" class="text-2xl font-bold text-blue-600 hover:text-blue-700">LocalNews</a>
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 transition-colors duration-300">
 
-      <!-- Menu -->
-      <nav class="hidden md:flex gap-6 font-semibold text-gray-700 dark:text-gray-200">
-        <a href="{% url 'home' %}" class="hover:text-blue-600 transition">Home</a>
-        {% for tema in temas %}
-          <a href="{% url 'home' %}?tema={{ tema.id }}" class="hover:text-blue-600 transition">{{ tema.name }}</a>
-        {% endfor %}
-        <a href="{% url 'dashboard' %}" class="hover:text-blue-600 transition">Dashboard</a>
-      </nav>
-
-      <!-- User/Login -->
-      <div>
-        {% if user.is_authenticated %}
-          <a href="{% url 'perfil' %}" class="flex items-center gap-2 hover:text-blue-600 transition">
-            <i class="fas fa-user-circle text-xl"></i> {{ user.nome_usuario }}
-          </a>
-        {% else %}
-          <a href="{% url 'login_cadastro' %}" class="text-white bg-blue-600 px-4 py-1.5 rounded-md hover:bg-blue-700 transition">Entrar</a>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Barra de pesquisa -->
-    <div class="bg-gray-100 dark:bg-gray-700 px-6 py-2">
-      <form action="{% url 'home' %}" method="get" class="max-w-3xl mx-auto flex items-center gap-2">
-        <input type="text" name="q" placeholder="Pesquisar notícias..." 
-               class="flex-1 px-4 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200" />
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
-          <i class="fas fa-search"></i>
-        </button>
-      </form>
-    </div>
-  </header>
-
-  <!-- BARRA DE TEMAS -->
-  <nav class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap py-2 px-6">
-    <a href="{% url 'home' %}" class="inline-block px-4 py-1 rounded-full border border-gray-300 dark:border-gray-600 {% if not tema_selecionada %}bg-gray-900 text-white{% endif %} mr-2 mb-2">Todas</a>
-    {% for tema in temas %}
-      <a href="{% url 'home' %}?tema={{ tema.id }}" class="inline-block px-4 py-1 rounded-full border border-gray-300 dark:border-gray-600 {% if tema_selecionada == tema.id|stringformat:'s' %}bg-gray-900 text-white{% else %}hover:bg-gray-100 dark:hover:bg-gray-800{% endif %} mr-2 mb-2">{{ tema.name }}</a>
-    {% endfor %}
-  </nav>
-
-  <!-- CONTEÚDO PRINCIPAL -->
-  <main class="max-w-7xl mx-auto px-6 py-10">
-
-    <!-- CARROSSEL DE ÚLTIMAS NOTÍCIAS -->
-    {% if ultimas_noticias %}
-    <div class="relative w-full mb-12 overflow-hidden rounded-xl shadow-lg">
-      <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
-        {% for noticia in ultimas_noticias %}
-        <div class="min-w-full relative glass p-4">
-          {% if noticia.image %}
-          <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}" class="w-full h-[400px] object-cover rounded-lg"/>
-          {% endif %}
-          <div class="absolute bottom-0 left-0 p-6 text-white bg-gradient-to-t from-black/60 to-transparent rounded-b-lg w-full">
-            <span class="bg-blue-600 text-xs px-3 py-1 rounded-full">{{ noticia.tema }}</span>
-            <h2 class="text-2xl font-bold mt-2">{{ noticia.titulo }}</h2>
-            <p class="text-gray-200 mt-1 line-clamp-2">{{ noticia.descricao }}</p>
-            <a href="{% url 'detalhar_noticia' noticia.id %}" class="mt-2 inline-block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition">Ler mais</a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-
-      <button id="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
-        <i class="fas fa-chevron-left text-white"></i>
-      </button>
-      <button id="nextSlide" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/60 p-3 rounded-full hover:bg-black/80">
-        <i class="fas fa-chevron-right text-white"></i>
-      </button>
-    </div>
-    {% endif %}
-
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-      <!-- COLUNA PRINCIPAL -->
-      <div class="lg:col-span-3 space-y-8">
-
-        <!-- NOTÍCIA DESTAQUE -->
-        {% if noticias %}
-        {% with destaque=noticias.0 %}
-        <div class="glass p-6 rounded-xl shadow-lg relative">
-          {% if destaque.image %}
-          <img src="{{ destaque.image.url }}" class="w-full h-64 object-cover rounded-lg mb-4"/>
-          {% endif %}
-          <span class="bg-blue-600 text-xs px-3 py-1 rounded-full">{{ destaque.tema }}</span>
-          <h2 class="text-3xl font-bold mt-2">{{ destaque.titulo }}</h2>
-          <p class="text-gray-700 dark:text-gray-200 mt-3 line-clamp-3">{{ destaque.descricao }}</p>
-          <a href="{% url 'detalhar_noticia' destaque.id %}" class="mt-4 inline-block bg-blue-600 px-5 py-2 rounded-md hover:bg-blue-700 transition font-semibold">Ver mais</a>
-        </div>
-        {% endwith %}
-        {% endif %}
-
-        <!-- GRID DE NOTÍCIAS -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
-          {% for noticia in noticias|slice:"1:" %}
-          <div class="glass p-5 rounded-xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
-            {% if noticia.image %}
-            <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover rounded-lg mb-3"/>
-            {% endif %}
-            <h3 class="text-lg font-semibold mb-1">{{ noticia.titulo }}</h3>
-            <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">{{ noticia.descricao }}</p>
-            <div class="text-xs text-gray-500 mt-2">Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}</div>
-            <a href="{% url 'detalhar_noticia' noticia.id %}" class="text-blue-600 hover:text-blue-800 font-semibold mt-2 inline-block">Ler mais →</a>
-          </div>
-          {% empty %}
-          <p class="text-gray-500 col-span-full">Nenhuma notícia disponível.</p>
-          {% endfor %}
-        </div>
-
-      </div>
-
-      <!-- SIDEBAR MAIS CURTIDAS -->
-      <aside class="lg:col-span-1 space-y-6 sticky top-24">
-        <div class="glass p-6 rounded-xl shadow-md">
-          <h2 class="text-xl font-bold mb-4 border-b border-blue-600 pb-1">🔥 Mais Curtidas</h2>
-          {% if mais_curtidas %}
-          <ul class="space-y-4">
-            {% for noticia in mais_curtidas %}
-            <li class="flex gap-3 items-center">
-              {% if noticia.image %}
-              <img src="{{ noticia.image.url }}" class="w-16 h-16 object-cover rounded-md"/>
-              {% endif %}
-              <div class="flex-1">
-                <a href="{% url 'detalhar_noticia' noticia.id %}" class="font-semibold text-sm text-gray-800 dark:text-gray-200 hover:text-blue-600">
-                  {{ noticia.titulo|truncatewords:6 }}
-                </a>
-                <div class="text-xs text-gray-500 flex justify-between mt-1">
-                  <span>{{ noticia.created_at|date:"d/m" }}</span>
-                  <span class="text-pink-600 font-semibold">❤️ {{ noticia.curtidas.count }}</span>
+    <header class="sticky top-0 w-full bg-white text-gray-800 shadow-lg z-50 transition-colors duration-300">
+        
+        <div class="header-top-bar text-xs text-gray-500 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-2">
+                <p class="hidden md:block">Breaking News: Major Political Shift In The Country</p>
+                <div class="flex gap-4 font-medium">
+                    <a href="{% url 'home' %}" class="hover:text-black">HOME</a>
+                    <a href="#" class="hover:text-black">CONTACT</a>
+                    <button class="md:hidden"><i class="fas fa-bars"></i></button>
                 </div>
-              </div>
-            </li>
-            {% endfor %}
-          </ul>
-          {% else %}
-          <p class="text-gray-500 text-sm">Nenhuma notícia curtida ainda.</p>
-          {% endif %}
+            </div>
         </div>
-      </aside>
 
-    </div>
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 header-main-menu">
+            
+            <nav class="hidden md:flex gap-6 font-semibold text-sm">
+                <a href="{% url 'home' %}" class="hover:text-blue-600 transition">HOME</a>
+                <a href="#" class="hover:text-blue-600 transition">CATEGORIES</a>
+                <a href="#" class="hover:text-blue-600 transition">BLOG</a>
+                <a href="#" class="hover:text-blue-600 transition">CONTACT</a>
+            </nav>
 
-  </main>
+            <div class="absolute inset-x-0 top-1/2 md:static flex justify-center py-2 md:py-0">
+                <div class="text-center">
+                    <div class="w-16 h-16 rounded-full bg-gray-200 mx-auto mb-1 flex items-center justify-center overflow-hidden">
+                        <i class="fas fa-newspaper text-3xl text-gray-700"></i>
+                    </div>
+                    <a href="{% url 'home' %}" class="text-xl font-serif font-bold text-gray-800">
+                        News Portal
+                    </a>
+                </div>
+            </div>
 
-  <!-- FOOTER -->
-  <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
-    <div class="max-w-7xl mx-auto py-8 px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="text-gray-500 text-sm">&copy; {{ year }} LocalNews. Todos os direitos reservados.</p>
-      <div class="flex gap-4 text-gray-500">
-        <a href="#" class="hover:text-blue-600 transition"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="hover:text-blue-600 transition"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="hover:text-blue-600 transition"><i class="fab fa-instagram"></i></a>
-      </div>
-    </div>
-  </footer>
+            <div class="flex items-center gap-4 text-lg">
+                <a href="{% url 'home' %}?q=search" class="hover:text-blue-600 transition"><i class="fas fa-search"></i></a>
+                <a href="#" class="hover:text-blue-600 transition"><i class="fas fa-shopping-cart"></i></a>
 
-  {% block extra_scripts %}{% endblock %}
+                <div class="relative">
+                    {% if user.is_authenticated %}
+                        <button id="perfilButton" title="{{ user.nome_usuario }}"
+                            class="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition">
+                            <i class="fas fa-user-circle text-xl"></i>
+                        </button>
 
-  <!-- Script carrossel -->
-  <script>
-    const slides = document.getElementById('carrosselSlides');
-    if (slides) {
-      const totalSlides = slides.children.length;
-      let index = 0;
-      function showSlide(i) { slides.style.transform = `translateX(-${i * 100}%)`; }
-      document.getElementById('prevSlide')?.addEventListener('click', () => { index = (index - 1 + totalSlides) % totalSlides; showSlide(index); });
-      document.getElementById('nextSlide')?.addEventListener('click', () => { index = (index + 1) % totalSlides; showSlide(index); });
-      setInterval(() => { index = (index + 1) % totalSlides; showSlide(index); }, 7000);
-    }
-  </script>
+                        <div id="dropdownMenu"
+                            class="hidden absolute top-[100%] right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 fade-in text-sm">
+                            <a href="{% url 'perfil' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Perfil</a>
+                            {% if user.perfil.perfil == "editor" or user.perfil.perfil == "admin" %}
+                            <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Publicações</a>
+                            <a href="{% url 'cadastrar_noticia' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Criar notícia</a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-500 hover:bg-gray-100 border-t mt-1">Sair</a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login_cadastro' %}" class="text-gray-800 hover:text-blue-600 transition">
+                            <i class="fas fa-user text-xl"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <nav class="bg-white border-b border-gray-200 overflow-x-auto whitespace-nowrap py-2 px-6">
+            <div class="max-w-7xl mx-auto flex items-center gap-2 md:gap-4 text-sm font-semibold">
+                
+                <a href="{% url 'home' %}" class="px-3 py-1 bg-black text-white rounded-md transition hover:bg-gray-700">All Articles</a>
+
+                {% for tema in temas %}
+                <a href="{% url 'home' %}?tema={{ tema.id }}" class="px-3 py-1 text-gray-700 rounded-md border border-gray-300 transition hover:bg-gray-100">
+                    {{ tema.name }}
+                </a>
+                {% endfor %}
+                
+                <a href="#" class="px-3 py-1 text-gray-700 rounded-md border border-gray-300 transition hover:bg-gray-100">
+                    MORE...
+                </a>
+                
+                <button class="ml-auto p-1 text-gray-700 hover:text-black">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow pt-40 md:pt-48 px-4 fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 text-white mt-12">
+        <div class="max-w-7xl mx-auto py-12 px-6 grid grid-cols-2 md:grid-cols-4 gap-12 border-b border-gray-700">
+            
+            <div>
+                <h3 class="text-md font-bold mb-4 text-gray-100">Company</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Careers</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Press</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-md font-bold mb-4 text-gray-100">Legal</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Terms and Conditions</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Cookie Policy</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-md font-bold mb-4 text-gray-100">Help</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Shipping and Delivery</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Refund and Community</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition">Payment</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-md font-bold mb-4 text-gray-100">Social</h3>
+                <div class="flex gap-4 text-xl text-gray-400">
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto py-4 px-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+            <div class="flex items-center gap-2 mb-2 md:mb-0">
+                <i class="fas fa-print"></i>
+                <p>Home / Uncategorized</p>
+            </div>
+            <p class="text-center">&copy; 2025 News Portal. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Animação inicial
+        document.body.classList.add('fade-in');
+
+        // Dropdown perfil (Funcionalidade Original Mantida)
+        const btn = document.getElementById('perfilButton');
+        const menu = document.getElementById('dropdownMenu');
+        if (btn && menu) {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                menu.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => menu.classList.add('hidden'));
+        }
+
+        // 🌗 Alternância de tema (Funcionalidade Original Mantida)
+        const themeButton = document.getElementById('toggle-theme');
+        const body = document.body;
+        
+        // As classes 'dark:' do Tailwind precisam ser ativadas no <html> ou <body>
+        // Garante que a classe 'dark' seja aplicada ao corpo para que as cores do Tailwind funcionem.
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                body.classList.add('dark', 'bg-gray-900', 'text-gray-200');
+                body.classList.remove('bg-gray-50', 'text-gray-800');
+                themeButton.textContent = '☀️';
+            } else {
+                body.classList.remove('dark', 'bg-gray-900', 'text-gray-200');
+                body.classList.add('bg-gray-50', 'text-gray-800');
+                themeButton.textContent = '🌙';
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            applyTheme('dark');
+        } else {
+             applyTheme('light');
+        }
+
+
+        // Alternar manualmente
+        themeButton.addEventListener('click', () => {
+            const isDark = !body.classList.contains('dark');
+            const newTheme = isDark ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+
+            // Se o header/footer não estiverem respondendo ao tema, você pode forçar as classes aqui
+            // Exemplo: document.querySelector('header').classList.toggle('dark:bg-gray-800', isDark);
+        });
+    </script>
 
 </body>
+
 </html>

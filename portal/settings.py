@@ -86,29 +86,29 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 # Substituindo a configuração do SQLite pela do PostgreSQL hospedado na Neon
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
-        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
-    }
-}
-
- 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'LocalNews',
-#         'USER': 'postgres',
-#         'PASSWORD': 'senai103',
-#         'HOST': 'localhost', 
-#         'PORT': '5432',
+#         'NAME': tmpPostgres.path.replace('/', ''),
+#         'USER': tmpPostgres.username,
+#         'PASSWORD': tmpPostgres.password,
+#         'HOST': tmpPostgres.hostname,
+#         'PORT': 5432,
+#         'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
 #     }
 # }
+
+ 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'LocalNews',
+        'USER': 'postgres',
+        'PASSWORD': 'senai103',
+        'HOST': 'localhost', 
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation
