@@ -8,6 +8,8 @@
 
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body class="bg-gray-100 text-gray-900">
@@ -16,7 +18,13 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
 
             <!-- Logo -->
-            <a href="/" class="text-2xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700 font-bold">Local News</a>
+            <a href="/"
+                class="group text-2xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700 font-bold">
+                Local
+                <span class="text-blue-600 transition-colors duration-300 group-hover:text-black">
+                    News
+                </span>
+            </a>
 
             <!-- Menu -->
             <nav class="flex items-center gap-6 text-sm">
@@ -25,7 +33,8 @@
                     Home
                 </a>
 
-                <button onclick="scrollToFooter()" class="text-xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700">Contato</button>
+                <button onclick="scrollToFooter()"
+                    class="text-xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700">Contato</button>
             </nav>
 
             <!-- Área do Usuário -->
@@ -64,35 +73,52 @@
     </header>
 
 
-    <main class="max-w-7xl mx-auto px-4 mt-6">
+    <main class=" mx-auto px-4 mt-6">
         {% block content %}{% endblock %}
     </main>
 
-    <footer id="site-footer" class="bg-black text-white mt-20">
+    <footer id="site-footer" class="bg-white text-black mt-20">
         <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
 
+            <!-- Sobre / Marca -->
             <div>
-                <h3 class="font-semibold mb-2">Sobre</h3>
-                <p class="text-sm">Portal de notícias e informações atualizado diariamente.</p>
+                <h3 class="font-semibold text-xl mb-2">Local <span class="text-blue-600">News</span></h3>
+                <p class="text-md italic text-gray-600">
+                    Nem sempre fake, mas sempre news!
+                </p>
             </div>
 
+            <!-- Links úteis -->
             <div>
                 <h3 class="font-semibold mb-2">Links úteis</h3>
                 <ul class="text-sm">
-                    <li><a href="/" class="hover:text-gray-300">Home</a></li>
-                    <li><a onclick="scrollToFooter()" class="hover:text-gray-300 cursor-pointer">Contato</a></li>
+                    <li><a href="/" class="hover:text-gray-500">Home</a></li>
+                    <li><a onclick="scrollToFooter()" class="hover:text-gray-500 cursor-pointer">Contato</a></li>
                 </ul>
+
+                <!-- Redes sociais -->
+                <div class="flex gap-4 mt-4 text-2xl">
+                    <i class="fab fa-facebook hover:text-blue-600"></i>
+                    <i class="fab fa-instagram hover:text-pink-600"></i>
+                    <i class="fab fa-youtube hover:text-red-600"></i>
+                </div>
             </div>
 
+            <!-- Contato -->
             <div>
-                <h3 class="font-semibold mb-2">Redes sociais</h3>
-                <p class="text-sm">Instagram • Facebook • Twitter</p>
+                <h3 class="font-semibold mb-2">Contato</h3>
+                <p class="text-sm text-gray-700">Deseja publicar no nosso portal? Entre em contato:</p>
+                <div class="mt-3 text-sm space-y-1">
+                    <p>📧 contato@localnews.com.br</p>
+                    <p>📞 (11) 3000-0000</p>
+                    <p>📍 São Paulo, SP - Brasil</p>
+                </div>
             </div>
 
         </div>
 
-        <div class="text-center py-4 text-xs bg-gray-900">
-            © 2024 News Portal - Todos os direitos reservados.
+        <div class="text-center text-white py-4 text-xs bg-gray-400">
+            © 2025 Local News - Todos os direitos reservados.
         </div>
     </footer>
 

@@ -5,218 +5,213 @@
 {% block content %}
 
 <!-- Categorias -->
- <!-- Categorias / Temas -->
-<nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
+<!-- Categorias / Temas -->
+<main class="max-w-7xl mx-auto">
+    <nav class="flex gap-3 overflow-x-auto pb-4 border-b border-gray-200 mb-6">
 
-  <!-- Botão Todas -->
-  <a href="{% url 'home' %}#noticias"
-     class="px-4 py-1 rounded-full border
+        <!-- Botão Todas -->
+        <a href="{% url 'home' %}#noticias" class="px-4 py-1 rounded-full border
      {% if not tema_selecionada %}
           bg-black text-white border-black
      {% else %}
           border-gray-300 hover:bg-gray-100
      {% endif %}">
-      Todas
-  </a>
+            Todas
+        </a>
 
-  <!-- Loop categorias -->
-  {% for tema in temas %}
-  <a href="{% url 'home' %}?tema={{ tema.id }}#noticias"
-     class="px-4 py-1 rounded-full border
+        <!-- Loop categorias -->
+        {% for tema in temas %}
+        <a href="{% url 'home' %}?tema={{ tema.id }}#noticias" class="px-4 py-1 rounded-full border
      {% if tema_selecionada == tema.id|stringformat:'s' %}
           bg-black text-white border-black
      {% else %}
           border-gray-300 hover:bg-gray-100
      {% endif %}">
-      {{ tema.name }}
-  </a>
-  {% endfor %}
-</nav>
-
-<!-- <div class="flex gap-3 mb-6">
-    <button class="px-3 py-1 bg-black text-white rounded">Todas</button>
-    <button class="px-3 py-1 border rounded">Tecnologia</button>
-    <button class="px-3 py-1 border rounded">Negócios</button>
-    <button class="px-3 py-1 border rounded">Saúde</button>
-</div> -->
-
-<!-- Notícia Principal -->
-{% if ultimas_noticias %}
-<div class="relative w-full overflow-hidden rounded-xl shadow-lg mb-10">
-
-    <!-- Slides -->
-    <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
-
-        {% for noticia in ultimas_noticias %}
-        {% if noticia.categoria.id == 1 %}
-        <div class="min-w-full grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6">
-
-            <!-- IMAGEM -->
-            <div class="relative">
-                {% if noticia.image %}
-                <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}"
-                    class="rounded w-full h-[420px] object-cover">
-                {% endif %}
-            </div>
-
-            <!-- TEXTO -->
-            <div class="flex flex-col justify-center">
-                <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-3">
-                    {{ noticia.tema }}
-                </span>
-
-                <h2 class="text-2xl font-bold mb-3">
-                    {{ noticia.titulo }}
-                </h2>
-
-                <p class="text-gray-600 mb-6 line-clamp-3">
-                    {{ noticia.descricao|truncatechars:200 }}
-                </p>
-
-                <a href="{% url 'detalhar_noticia' noticia.id %}"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-fit">
-                    Ler mais
-                </a>
-            </div>
-
-        </div>
-        {% endif %}
+            {{ tema.name }}
+        </a>
         {% endfor %}
+    </nav>
+
+    <!-- Notícia Principal -->
+    {% if ultimas_noticias %}
+    <div class="relative w-full overflow-hidden rounded-md shadow-lg mb-10">
+
+        <!-- Slides -->
+        <div class="flex transition-transform duration-700 ease-in-out" id="carrosselSlides">
+
+            {% for noticia in ultimas_noticias %}
+            {% if noticia.categoria.id == 1 %}
+            <div class="min-w-full grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6">
+
+                <!-- IMAGEM -->
+                <div class="relative">
+                    {% if noticia.image %}
+                    <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}"
+                        class="rounded w-full h-[420px] object-cover">
+                    {% endif %}
+                </div>
+
+                <!-- TEXTO -->
+                <div class="flex flex-col justify-center">
+                    <span class="bg-blue-700 text-xs px-3 py-1 w-fit text-white rounded-full mb-3">
+                        {{ noticia.tema }}
+                    </span>
+
+                    <h2 class="text-2xl font-bold mb-3">
+                        {{ noticia.titulo }}
+                    </h2>
+
+                    <p class="text-gray-600 mb-6 line-clamp-3">
+                        {{ noticia.descricao|truncatechars:200 }}
+                    </p>
+
+                    <a href="{% url 'detalhar_noticia' noticia.id %}"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-fit">
+                        Ler mais
+                    </a>
+                </div>
+
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- CONTROLES -->
+        <button id="prevSlide"
+            class="absolute top-1/2 -translate-y-1/2 left-4 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60">
+            ‹
+        </button>
+
+        <button id="nextSlide"
+            class="absolute top-1/2 -translate-y-1/2 right-4 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60">
+            ›
+        </button>
+
     </div>
+    {% endif %}
 
-    <!-- CONTROLES -->
-    <button id="prevSlide"
-        class="absolute top-1/2 -translate-y-1/2 left-4 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60">
-        ‹
-    </button>
+    <!-- Cards Secundários -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
 
-    <button id="nextSlide"
-        class="absolute top-1/2 -translate-y-1/2 right-4 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60">
-        ›
-    </button>
+        {% for noticia in ultimas_noticias|slice:"1:3" %}
+        {% if noticia.categoria.id == 1 %}
+        <article class="bg-white p-4 shadow rounded hover:shadow-lg transition">
 
-</div>
-{% endif %}
+            {% if noticia.image %}
+            <img src="{{ noticia.image.url }}" class="rounded mb-2 w-full h-48 object-cover">
+            {% endif %}
 
-<!-- <div class="grid md:grid-cols-2 gap-6 bg-white p-6 shadow rounded mb-10">
-    <img src="https://via.placeholder.com/600x350" class="rounded w-full">
+            <h3 class="font-semibold text-gray-800 text-lg mb-1">
+                {{ noticia.titulo }}
+            </h3>
 
-    <div>
-        <h2 class="text-xl font-bold mb-2">Breaking: Major Political Shift in the Country</h2>
-        <p class="text-gray-600 mb-4">Big federal and state political developments shake the national landscape...</p>
-        <p class="text-sm text-gray-500">Publicado há 1 hora</p>
-    </div>
-</div> -->
-
-<!-- Cards Secundários -->
-<!-- Cards Secundários -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-
-  {% for noticia in ultimas_noticias|slice:"1:3" %}
-  {% if noticia.categoria.id == 1 %}
-  <article class="bg-white p-4 shadow rounded hover:shadow-lg transition">
-
-      {% if noticia.image %}
-      <img src="{{ noticia.image.url }}" class="rounded mb-2 w-full h-48 object-cover">
-      {% endif %}
-
-      <h3 class="font-semibold text-gray-800 text-lg mb-1">
-          {{ noticia.titulo }}
-      </h3>
-
-      <p class="text-sm text-gray-600 line-clamp-2">
-          {{ noticia.descricao|truncatewords:18 }}
-      </p>
-
-      <a href="{% url 'detalhar_noticia' noticia.id %}"
-         class="inline-block mt-3 text-blue-600 hover:text-blue-800 font-medium">
-          Ler mais →
-      </a>
-
-  </article>
-  {% endif %}
-  {% endfor %}
-
-</div>
-
-
-<!-- Seção Todas as Notícias -->
-<section class=" py-6 px-2 border-t">
-<h2 id="noticias" class="text-2xl font-bold mb-6 w-fit m-auto">
-  {% if tema_selecionada %}
-      {% for t in temas %}
-          {% if t.id|stringformat:'s' == tema_selecionada %}
-              {{ t.name }}
-          {% endif %}
-      {% endfor %}
-  {% else %}
-      Todas as notícias
-  {% endif %}
-</h2>
-
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-    {% for noticia in noticias %}
-    {% if noticia.categoria.id == 1 %}
-
-    <article
-        class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
-
-        {% if noticia.image %}
-        <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
-        {% endif %}
-
-        <div class="p-4">
-            <h3 class="text-lg text-gray-700 font-semibold mb-1">{{ noticia.titulo }}</h3>
-
-            <p class="text-gray-600 text-sm mb-2">
-                {{ noticia.descricao|truncatewords:20 }}
+            <p class="text-sm text-gray-600 line-clamp-2">
+                {{ noticia.descricao|truncatewords:18 }}
             </p>
 
-            <div class="text-xs text-gray-500 mb-3">
-                Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
-            </div>
-
             <a href="{% url 'detalhar_noticia' noticia.id %}"
-                class="inline-block text-blue-600 hover:text-blue-800 font-semibold">
+                class="inline-block mt-3 text-blue-600 hover:text-blue-800 font-medium">
                 Ler mais →
             </a>
+
+        </article>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Seção Todas as Notícias -->
+    <section class=" py-6 px-2 border-t">
+        <h2 id="noticias" class="text-2xl font-bold mb-6 w-fit m-auto">
+            {% if tema_selecionada %}
+            {% for t in temas %}
+            {% if t.id|stringformat:'s' == tema_selecionada %}
+            {{ t.name }}
+            {% endif %}
+            {% endfor %}
+            {% else %}
+            Todas as notícias
+            {% endif %}
+        </h2>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            {% for noticia in noticias %}
+            {% if noticia.categoria.id == 1 %}
+
+            <article
+                class="bg-white rounded-md overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1">
+
+                {% if noticia.image %}
+                <img src="{{ noticia.image.url }}" class="w-full h-48 object-cover" />
+                {% endif %}
+
+                <div class="p-4">
+                    <h3 class="text-lg text-gray-700 font-semibold mb-1">{{ noticia.titulo }}</h3>
+
+                    <p class="text-gray-600 text-sm mb-2">
+                        {{ noticia.descricao|truncatewords:20 }}
+                    </p>
+
+                    <div class="text-xs text-gray-500 mb-3">
+                        Por {{ noticia.usuario }} — {{ noticia.created_at|date:"d/m/Y" }}
+                    </div>
+
+                    <a href="{% url 'detalhar_noticia' noticia.id %}"
+                        class="inline-block text-blue-600 hover:text-blue-800 font-semibold">
+                        Ler mais →
+                    </a>
+                </div>
+            </article>
+
+            {% endif %}
+            {% empty %}
+            <p class="text-center text-gray-500 col-span-full">Nenhuma notícia disponível.</p>
+            {% endfor %}
+
         </div>
-    </article>
+    </section>
+    <section class="bg-transparent flex flex-col items-center mt-10 border-t border-gray-200 py-4"></section>
+    <h1 class="text-2xl font-bold w-fit m-auto">🗺️ Notícias por Região</h1>
+    <main class="flex-grow p-4 ">
+        <div class="rounded-lg overflow-hidden shadow-lg h-auto sm:h-[450px]  w-full" id="mapa-container">
 
-    {% endif %}
-    {% empty %}
-    <p class="text-center text-gray-500 col-span-full">Nenhuma notícia disponível.</p>
-    {% endfor %}
-
-</div>
-</section>
-
+        </div>
+    </main>
+    </section>
+</main>
 <script>
-  const slides = document.getElementById('carrosselSlides');
-  const totalSlides = slides.children.length;
-  let index = 0;
+    const slides = document.getElementById('carrosselSlides');
+    const totalSlides = slides.children.length;
+    let index = 0;
 
-  function showSlide(i) {
-      slides.style.transform = `translateX(-${i * 100}%)`;
-  }
+    fetch('/api/noticias/')
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById("mapa-container").innerHTML = data.mapa;
+        });
 
-  document.getElementById('prevSlide').addEventListener('click', () => {
-      index = (index - 1 + totalSlides) % totalSlides;
-      showSlide(index);
-  });
+    function showSlide(i) {
+        slides.style.transform = `translateX(-${i * 100}%)`;
+    }
 
-  document.getElementById('nextSlide').addEventListener('click', () => {
-      index = (index + 1) % totalSlides;
-      showSlide(index);
-  });
+    document.getElementById('prevSlide').addEventListener('click', () => {
+        index = (index - 1 + totalSlides) % totalSlides;
+        showSlide(index);
+    });
 
-  // Auto slide a cada 7s
-  setInterval(() => {
-      index = (index + 1) % totalSlides;
-      showSlide(index);
-  }, 7000);
+    document.getElementById('nextSlide').addEventListener('click', () => {
+        index = (index + 1) % totalSlides;
+        showSlide(index);
+    });
+
+    // Auto slide a cada 7s
+    setInterval(() => {
+        index = (index + 1) % totalSlides;
+        showSlide(index);
+    }, 7000);
 </script>
 
 {% endblock %}
