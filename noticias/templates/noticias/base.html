@@ -38,10 +38,18 @@
             <div class="hidden md:block relative">
                 {% if user.is_authenticated %}
                 <div class="flex items-center gap-2">
-                    <button onclick="toggleUserMenu()" class="w-9 h-9 rounded-full bg-transparent hover:bg-gray-200 transition flex items-center justify-center">
-                        <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" class="w-8 h-8" />
+                    <button onclick="toggleUserMenu()" class="group flex items-center gap-2">
+        
+                        <!-- Ícone com hover -->
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center 
+                                    transition group-hover:bg-gray-200">
+                            <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" 
+                                 class="w-8 h-8" />
+                        </div>
+                
+                        <!-- Nome sem hover no fundo -->
+                        <p class="text-md">{{ user.nome_usuario }}</p>
                     </button>
-                    <p>{{user.nome_usuario}}</p>
                 </div>
                 <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
                     <a href="/perfil/" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
