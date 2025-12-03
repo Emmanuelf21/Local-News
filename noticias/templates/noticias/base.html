@@ -16,61 +16,66 @@
 
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-
+    
             <!-- Logo -->
-            <a href="/"
-                class="group text-2xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700 font-bold">
+            <a href="/" class="group text-2xl text-black hover:text-blue-600 font-bold transition">
                 Local
-                <span class="text-blue-600 transition-colors duration-300 group-hover:text-black">
-                    News
-                </span>
+                <span class="text-blue-600 group-hover:text-black transition">News</span>
             </a>
-
-            <!-- Menu -->
-            <nav class="flex items-center gap-6 text-sm">
-                <a href="/"
-                    class="text-xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700">
-                    Home
-                </a>
-
-                <button onclick="scrollToFooter()"
-                    class="text-xl text-black hover:text-blue-600 transform hover:scale-110 transition-transform duration-700">Contato</button>
+    
+            <!-- Botão mobile -->
+            <button id="mobileMenuBtn" class="md:hidden text-3xl text-gray-700">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+    
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center gap-6 text-sm">
+                <a href="/" class="text-lg hover:text-blue-600 transition">Home</a>
+                <button onclick="scrollToFooter()" class="text-lg hover:text-blue-600 transition">Contato</button>
             </nav>
-
-            <!-- Área do Usuário -->
-            <div class="relative">
+    
+            <!-- Área do Usuário (desktop) -->
+            <div class="hidden md:block relative">
                 {% if user.is_authenticated %}
-
-                <!-- Ícone de perfil -->
-                <button onclick="toggleUserMenu()"
-                    class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
-                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg"
-                        class="w-8 h-8 text-gray-700" />
-
+                <button onclick="toggleUserMenu()" class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
+                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" class="w-8 h-8" />
                 </button>
-
-                <!-- Dropdown -->
+    
                 <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
                     <a href="/perfil/" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
                     <a href="/dashboard/" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
                     <a href="/cadastrar_noticia/" class="block px-4 py-2 hover:bg-gray-100">Criar notícia</a>
                     <a href="/logout/" class="block px-4 py-2 hover:bg-gray-100 text-red-500">Sair</a>
                 </div>
-
-                <script>
-                    function toggleUserMenu() {
-                        document.getElementById("userMenu").classList.toggle("hidden");
-                    }
-                </script>
-
+    
                 {% else %}
                 <a href="{% url 'login_cadastro' %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Entrar / Cadastrar
+                    Entrar
                 </a>
                 {% endif %}
             </div>
         </div>
+    
+        <!-- Menu Mobile (abre com hambúrguer) -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white px-6 pb-4 shadow">
+    
+            <a href="/" class="block py-2 text-lg hover:text-blue-600">Home</a>
+            <button onclick="scrollToFooter()" class="block py-2 text-lg hover:text-blue-600">Contato</button>
+    
+            {% if user.is_authenticated %}
+            <hr class="my-2">
+            <a href="/perfil/" class="block py-2">Perfil</a>
+            <a href="/dashboard/" class="block py-2">Dashboard</a>
+            <a href="/cadastrar_noticia/" class="block py-2">Criar Notícia</a>
+            <a href="/logout/" class="block py-2 text-red-500">Sair</a>
+            {% else %}
+            <a href="{% url 'login_cadastro' %}" class="block mt-2 bg-blue-600 text-white py-2 rounded text-center">
+                Entrar / Cadastrar
+            </a>
+            {% endif %}
+        </div>
     </header>
+    
 
 
     <main class=" mx-auto px-4 mt-6">
@@ -78,58 +83,65 @@
     </main>
 
     <footer id="site-footer" class="bg-white text-black mt-20">
-        <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-
-            <!-- Sobre / Marca -->
-            <div>
+        <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+    
+            <!-- Sobre -->
+            <div class="text-center sm:text-left">
                 <h3 class="font-semibold text-xl mb-2">Local <span class="text-blue-600">News</span></h3>
                 <p class="text-md italic text-gray-600">
                     Nem sempre fake, mas sempre news!
                 </p>
             </div>
-
-            <!-- Links úteis -->
-            <div>
+    
+            <!-- Links -->
+            <div class="text-center sm:text-left">
                 <h3 class="font-semibold mb-2">Links úteis</h3>
-                <ul class="text-sm">
+                <ul class="text-sm space-y-1">
                     <li><a href="/" class="hover:text-gray-500">Home</a></li>
                     <li><a onclick="scrollToFooter()" class="hover:text-gray-500 cursor-pointer">Contato</a></li>
                 </ul>
-
-                <!-- Redes sociais -->
-                <div class="flex gap-4 mt-4 text-2xl">
+    
+                <div class="flex justify-center sm:justify-start gap-4 mt-4 text-2xl">
                     <i class="fab fa-facebook hover:text-blue-600"></i>
                     <i class="fab fa-instagram hover:text-pink-600"></i>
                     <i class="fab fa-youtube hover:text-red-600"></i>
                 </div>
             </div>
-
+    
             <!-- Contato -->
-            <div>
+            <div class="text-center sm:text-left">
                 <h3 class="font-semibold mb-2">Contato</h3>
-                <p class="text-sm text-gray-700">Deseja publicar no nosso portal? Entre em contato:</p>
+                <p class="text-sm text-gray-700">Deseja publicar no nosso portal?</p>
+    
                 <div class="mt-3 text-sm space-y-1">
                     <p>📧 contato@localnews.com.br</p>
                     <p>📞 (11) 3000-0000</p>
-                    <p>📍 São Paulo, SP - Brasil</p>
+                    <p>📍 São Paulo, SP</p>
                 </div>
             </div>
-
         </div>
-
+    
         <div class="text-center text-white py-4 text-xs bg-gray-400">
             © 2025 Local News - Todos os direitos reservados.
         </div>
     </footer>
+    
 
 
     <!-- Scroll para o footer -->
     <script>
         function scrollToFooter() {
-            document.getElementById("site-footer").scrollIntoView({
-                behavior: "smooth"
-            });
-        }
+        document.getElementById("site-footer").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function toggleUserMenu() {
+        document.getElementById("userMenu").classList.toggle("hidden");
+    }
+
+    // menu mobile
+    document.getElementById("mobileMenuBtn").onclick = () => {
+        document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
     </script>
 </body>
 

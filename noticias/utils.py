@@ -45,7 +45,7 @@ def mapa_noticias():
     # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
     mapa = folium.Map(
         location=[-9.97499, -67.8243],  # Rio Branco - AC
-        zoom_start=13,
+        zoom_start=12,
         zoom_control=True,        # habilita controle de zoom para mobile
         scrollWheelZoom=True,     # permite zoom por gesto
         dragging=True,            # permite arrastar em mobile

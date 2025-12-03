@@ -8,16 +8,16 @@ from datetime import timedelta
 def get_home_data(tema_id=None, query=None):
     temas = Tag.objects.all()
 
+    # Base do filtro: sempre categoria_id = 1
+    base_filter = Q(categoria__id=1)
+
+    # Filtra por tema (se houver)
     if tema_id:
-        tema = get_object_or_404(Tag, id=tema_id)
-        noticias = Noticia.objects.filter(tema=tema)
-    else:
-        noticias = Noticia.objects.filter(categoria__id=1)
+        base_filter &= Q(tema_id=tema_id)
 
-    noticias = noticias.order_by('-created_at')
-
+    # Filtra por busca (se houver)
     if query:
-        noticias = noticias.filter(
+        search_filter = (
             Q(titulo__icontains=query) |
             Q(descricao__icontains=query) |
             Q(introducao__icontains=query) |
@@ -25,13 +25,24 @@ def get_home_data(tema_id=None, query=None):
             Q(desenvolvimento_final__icontains=query) |
             Q(conclusao__icontains=query)
         )
+        base_filter &= search_filter
 
-    mais_curtidas = Noticia.objects.annotate(
-        num_curtidas=Count('curtidas')
-    ).order_by('-num_curtidas')[:6]
+    # Notícias filtradas com todas as condições somadas
+    noticias = Noticia.objects.filter(base_filter).order_by('-created_at')
 
-    ultimas_noticias = Noticia.objects.order_by('-created_at')[:5]
+    # Mais curtidas (somente categoria 1)
+    mais_curtidas = (
+        Noticia.objects.filter(categoria__id=1)
+        .annotate(num_curtidas=Count('curtidas'))
+        .order_by('-num_curtidas')[:6]
+    )
 
+    # Últimas notícias (somente categoria 1)
+    ultimas_noticias = (
+        Noticia.objects.filter(categoria__id=1)
+        .order_by('-created_at')[:5]
+    )
+    
     return {
         "temas": temas,
         "tema_id": tema_id,
@@ -79,7 +90,11 @@ def get_noticia_detail(request, noticia_id, usuario=None):
     comentarios = Comentario.objects.filter(noticia=noticia).order_by('-created_at')
 
     # Mais curtidas
-    mais_curtidas = Noticia.objects.annotate(num_curtidas=Count('curtidas')).order_by('-num_curtidas')[:6]
+    mais_curtidas = (
+        Noticia.objects.filter(categoria__id=1)
+        .annotate(num_curtidas=Count('curtidas'))
+        .order_by('-num_curtidas')[:6]
+    )
 
     # Total de curtidas
     total_curtidas = Curtida.objects.filter(noticia=noticia).count()
