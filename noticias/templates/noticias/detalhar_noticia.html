@@ -40,8 +40,8 @@
 
       {% if noticia.video %}
       <div class="my-6">
-        <iframe class="w-full h-[420px] rounded-lg shadow"
-          src="{{ noticia.video }}" frameborder="0" allowfullscreen></iframe>
+          <iframe class="w-full h-[420px] rounded-lg shadow" src="{{noticia.video}}" title="YouTube video player" frameborder="0" allow="accelerometer;
+           autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       {% endif %}
 
@@ -147,7 +147,7 @@
 
           <button type="submit"
             class="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm">
-            Publicar
+            Comentar
           </button>
         </form>
         {% else %}
