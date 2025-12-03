@@ -241,6 +241,7 @@
                     {% with lista=tema.noticias.all|default_if_none:None %}
                     {% if lista %}
                         {% for noticia in lista|slice:":3" %}
+                        {% if noticia.categoria_id == 1 %}
                         <a href="{% url 'detalhar_noticia' noticia.id %}"
                            class="flex gap-3 mb-3 hover:bg-gray-50 p-2 rounded-lg transition">
         
@@ -260,6 +261,7 @@
                             </div>
         
                         </a>
+                        {%endif%}
                         {% empty %}
                             <p class="text-xs text-gray-400 ml-2">Nenhuma notícia</p>
                         {% endfor %}

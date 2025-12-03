@@ -10,7 +10,6 @@ def get_home_data(tema_id=None, query=None):
 
     # Base do filtro: sempre categoria_id = 1
     base_filter = Q(categoria__id=1)
-
     # Filtra por tema (se houver)
     if tema_id:
         base_filter &= Q(tema_id=tema_id)
@@ -29,7 +28,7 @@ def get_home_data(tema_id=None, query=None):
 
     # Notícias filtradas com todas as condições somadas
     noticias = Noticia.objects.filter(base_filter).order_by('-created_at')
-
+    
     # Mais curtidas (somente categoria 1)
     mais_curtidas = (
         Noticia.objects.filter(categoria__id=1)

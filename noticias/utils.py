@@ -40,7 +40,7 @@ def analisar_texto_noticia(texto):
 
 
 def mapa_noticias():
-    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema').filter(categoria__id=1)
 
     # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
     mapa = folium.Map(
