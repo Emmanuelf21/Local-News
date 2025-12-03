@@ -70,12 +70,74 @@ class LoginForm(forms.Form):
 class NoticiaForm(forms.ModelForm):
     class Meta:
         model = Noticia
-        exclude = ['usuario', 'categoria']  # <--- Exclui o campo do formulário
+        exclude = ['usuario', 'categoria']
+
+        base_input = (
+            "w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm "
+            "focus:ring-2 focus:ring-blue-500 focus:outline-none transition "
+            "hover:border-blue-400"
+        )
+
+        # SVG do select
+        select_arrow = (
+            "background-image:url('data:image/svg+xml;utf8,"
+            "<svg fill=\"%23666\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" "
+            "xmlns=\"http://www.w3.org/2000/svg\">"
+            "<path d=\"M7 10l5 5 5-5z\"/></svg>'); "
+            "background-repeat:no-repeat; background-position:right .7rem center; "
+        )
+
         widgets = {
-            'descricao': forms.TextInput(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'placeholder': 'Breve descrição'}),
-            'introducao': forms.Textarea(attrs={'class': 'form-control flex flex-col border rounded-md px-2 py-1 border-gray-500', 'rows': 3}),
-            'desenvolvimento_inicial': forms.Textarea(attrs={'class': 'form-control flex flex-col px-2 py-1 border rounded-md border-gray-500', 'rows': 4}),
-            'desenvolvimento_final': forms.Textarea(attrs={'class': 'form-control flex flex-col px-2 py-1 border rounded-md border-gray-500', 'rows': 4}),
-            'conclusao': forms.Textarea(attrs={'class': 'form-control flex flex-col border px-2 py-1 rounded-md border-gray-500', 'rows': 3}),
-            'video': forms.TextInput(attrs={'class': 'form-control flex flex-col border-b px-2 py-1', 'placeholder': 'Cole o link do YouTube'}),
+
+            # SELECT: Tema
+            'tema': forms.Select(attrs={
+                'class': base_input + " bg-white appearance-none pr-10 cursor-pointer",
+                'style': select_arrow,
+            }),
+
+            # SELECT: Bairro
+            'bairro': forms.Select(attrs={
+                'class': base_input + " bg-white appearance-none pr-10 cursor-pointer",
+                'style': select_arrow,
+            }),
+            'titulo': forms.TextInput(attrs={
+                'class': base_input,
+                'placeholder': 'Título da notícia...',
+            }),
+            # INPUTS E TEXTAREAS
+            'descricao': forms.TextInput(attrs={
+                'class': base_input,
+                'placeholder': 'Breve descrição...',
+            }),
+            'introducao': forms.Textarea(attrs={
+                'class': base_input,
+                'rows': 3
+            }),
+            'desenvolvimento_inicial': forms.Textarea(attrs={
+                'class': base_input,
+                'rows': 4
+            }),
+            'desenvolvimento_final': forms.Textarea(attrs={
+                'class': base_input,
+                'rows': 4
+            }),
+            'conclusao': forms.Textarea(attrs={
+                'class': base_input,
+                'rows': 3
+            }),
+            'video': forms.TextInput(attrs={
+                'class': base_input,
+                'placeholder': 'Link do YouTube'
+            }),
+
+            # FILE INPUT - estilizado
+            'image': forms.FileInput(attrs={
+                'class': (
+                    "mt-1 block w-full text-sm text-gray-700 cursor-pointer "
+                    "file:mr-4 file:py-2 file:px-4 file:rounded-lg "
+                    "file:border-0 file:text-sm file:font-semibold "
+                    "file:bg-blue-600 file:text-white hover:file:bg-blue-700 "
+                    "hover:border-blue-400"
+                )
+            }),
         }

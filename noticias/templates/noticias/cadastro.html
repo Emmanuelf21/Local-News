@@ -1,7 +1,7 @@
 {% extends "noticias/base.html" %}
 {% block title %}Cadastro - Local News{% endblock %}
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
+<div id="form-container" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg mt-10">
   <!-- Título -->
   <h2 id="form-title" class="text-2xl font-semibold mb-6 text-center text-gray-800">Crie sua conta</h2>
 
@@ -19,7 +19,8 @@
   </form>
 
   <!-- Formulário de Login -->
-  <form id="login-form" method="POST" class="flex flex-col gap-4 hidden">
+   
+  <form id="login-form" method="POST" class="flex flex-col gap-4 hidden ">
     {% csrf_token %}
     {{ login_form.as_p }}
     <button
@@ -40,31 +41,46 @@
 
 <!-- Script para alternar -->
 <script>
-  const toggleLink = document.getElementById("toggle-link");
-  const formTitle = document.getElementById("form-title");
-  const loginForm = document.getElementById("login-form");
-  const cadastroForm = document.getElementById("cadastro-form");
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleLink = document.getElementById("toggle-link");
+    const formTitle = document.getElementById("form-title");
+    const loginForm = document.getElementById("login-form");
+    const cadastroForm = document.getElementById("cadastro-form");
+    const formContainer = document.getElementById("form-container");
 
-  toggleLink.addEventListener("click", (e) => {
-    e.preventDefault();
+    toggleLink.addEventListener("click", (e) => {
+      e.preventDefault();
 
-    const isCadastroVisible = !cadastroForm.classList.contains("hidden");
+      const isCadastroVisible = !cadastroForm.classList.contains("hidden");
 
-    // Alterna a exibição dos formulários
-    cadastroForm.classList.toggle("hidden");
-    loginForm.classList.toggle("hidden");
+      cadastroForm.classList.toggle("hidden");
+      loginForm.classList.toggle("hidden");
 
-    // Atualiza o texto
-    if (isCadastroVisible) {
-      formTitle.textContent = "Entre na sua conta";
-      toggleLink.textContent = "Crie uma conta";
-      toggleLink.previousSibling.textContent = "Não tem conta? ";
-    } else {
-      formTitle.textContent = "Crie sua conta";
-      toggleLink.textContent = "Entre aqui";
-      toggleLink.previousSibling.textContent = "Já tem conta? ";
-    }
+      if (isCadastroVisible) {
+        // Indo para LOGIN
+        formTitle.textContent = "Entre na sua conta";
+        toggleLink.textContent = "Crie uma conta";
+        toggleLink.parentElement.firstChild.textContent = "Não tem conta? ";
+
+        // Muda margens da div pai
+        formContainer.classList.remove("mt-10");
+        formContainer.classList.add("mt-36", "mb-36");
+
+      } else {
+        // Voltando para CADASTRO
+        formTitle.textContent = "Crie sua conta";
+        toggleLink.textContent = "Entre aqui";
+        toggleLink.parentElement.firstChild.textContent = "Já tem conta? ";
+
+        // Restaura margens da div pai
+        formContainer.classList.remove("mt-36", "mb-36");
+        formContainer.classList.add("mt-10");
+      }
+    });
   });
 </script>
+
+
+
 
 {% endblock %}
