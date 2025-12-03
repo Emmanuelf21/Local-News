@@ -3,16 +3,16 @@
 
 {% block content %}
 
-<div class="max-w-6xl mx-auto py-10 grid grid-cols-1 lg:grid-cols-3 gap-10 fade-in">
+<div class="max-w-6xl lg:max-w-[70%] mx-auto py-10 lg:px-10 grid grid-cols-1 lg:grid-cols-4 gap-10 fade-in">
 
   <!-- ==========================
        COLUNA ESQUERDA — NOTÍCIA
        ========================== -->
-  <article class="lg:col-span-2 bg-white rounded-xl shadow p-6">
+  <article class="lg:col-span-3 bg-white rounded-xl shadow p-6">
 
     {% if noticia.image %}
     <img src="{{ noticia.image.url }}" alt="{{ noticia.titulo }}"
-      class="w-full h-96 object-cover rounded-xl shadow mb-6">
+      class="w-full h-auto object-cover rounded-xl shadow mb-6">
     {% endif %}
 
     <main class="mb-6">
@@ -40,7 +40,7 @@
 
       {% if noticia.video %}
       <div class="my-6">
-          <iframe class="w-full h-[420px] rounded-lg shadow" src="{{noticia.video}}" title="YouTube video player" frameborder="0" allow="accelerometer;
+          <iframe class="w-[520px] lg:w-full h-[320px] lg:h-[520px] rounded-lg shadow" src="{{noticia.video}}" title="YouTube video player" frameborder="0" allow="accelerometer;
            autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       {% endif %}

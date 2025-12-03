@@ -4,43 +4,60 @@
 
 {% block content %}
 
-<div class="max-w-lg mx-auto bg-white p-8 rounded-xl shadow-lg mt-10 text-center">
+<div class="max-w-lg mx-auto mt-40 mb-40">
 
-  <img src="{% static 'img/user_icon.png' %}" class="w-20 h-20 mx-auto rounded-full mb-4 border-2 border-blue-500" />
+  <!-- CARD -->
+  <div class="relative bg-white/80 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
 
-  <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ user.nome_usuario }}</h2>
-  <p class="text-gray-500 mb-4">{{ user.email_usuario }}</p>
-  <p class="text-sm text-gray-400 mb-6">Perfil: {{ user.perfil|title }}</p>
+    <!-- HEADER COLORIDO -->
+    <div class="h-24 bg-gradient-to-r from-blue-600 to-blue-800"></div>
 
-  <!-- Botão -->
-  <button id="btnEditar" 
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition">
-      Editar Dados
-  </button>
+    <!-- CONTEÚDO -->
+    <div class="p-8">
 
-  <!-- Formulário oculto -->
-  <form id="formEdicao" 
-        action="{% url 'editar_perfil' %}" 
-        method="POST"
-        class="mt-6 hidden text-left">
-      {% csrf_token %}
+      <!-- Avatar -->
+      <img src="{% static 'img/user_icon.png' %}" 
+           class="w-24 h-24 rounded-full mx-auto -mt-16 ring-4 ring-white shadow-md" />
 
-      <label class="block font-semibold mb-1">Nome de Usuário</label>
-      <input type="text" name="nome_usuario" value="{{ user.nome_usuario }}"
-             class="w-full border border-gray-300 rounded px-3 py-2 mb-4" />
+      <!-- Nome e Dados -->
+      <h2 class="text-2xl font-semibold text-gray-900 mt-4 text-center">
+        {{ user.nome_usuario }}
+      </h2>
 
-      <label class="block font-semibold mb-1">Nova Senha</label>
-      <input type="password" name="senha" 
-             class="w-full border border-gray-300 rounded px-3 py-2 mb-4" />
+      <p class="text-gray-500 text-center">{{ user.email_usuario }}</p>
+      <p class="text-sm text-gray-400 text-center mb-6">Perfil: {{ user.perfil|title }}</p>
 
-      <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-        Salvar Alterações
+      <!-- Botão Editar -->
+      <button id="btnEditar" 
+              class="bg-blue-600 text-white w-full py-2 rounded-lg hover:bg-blue-700 hover:scale-[1.02] transition">
+        Editar Dados
       </button>
-  </form>
 
+      <!-- Formulário (escondido inicialmente) -->
+      <form id="formEdicao" 
+            action="{% url 'editar_perfil' %}" 
+            method="POST"
+            class="mt-6 hidden transition-all duration-300 ease-out">
+        {% csrf_token %}
+
+        <label class="block font-semibold mb-1">Nome de Usuário</label>
+        <input type="text" name="nome_usuario" value="{{ user.nome_usuario }}"
+               class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-600" />
+
+        <label class="block font-semibold mb-1">Nova Senha</label>
+        <input type="password" name="senha"
+               class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-600" />
+
+        <button class="bg-green-600 text-white px-4 py-2 w-full rounded-lg hover:bg-green-700 transition">
+          Salvar Alterações
+        </button>
+      </form>
+
+    </div>
+  </div>
 </div>
 
-<!-- Script para exibir o formulário -->
+<!-- Script -->
 <script>
   document.getElementById("btnEditar").addEventListener("click", function () {
     document.getElementById("formEdicao").classList.toggle("hidden");

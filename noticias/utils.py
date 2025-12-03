@@ -41,11 +41,11 @@ def analisar_texto_noticia(texto):
 
 
 def mapa_noticias():
-    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema').filter(categoria__id=1)
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema').filter(categoria__id=1).order_by('-created_at')
 
     # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
     mapa = folium.Map(
-        location=[-9.97499, -67.8243],  # Rio Branco - AC
+        location=[-9.99199, -67.8243],  # Rio Branco - AC
         zoom_start=12,
         zoom_control=True,        # habilita controle de zoom para mobile
         scrollWheelZoom=True,     # permite zoom por gesto
@@ -111,8 +111,8 @@ def mapa_noticias():
 
     # 🔒 Define limites aproximados de Rio Branco (opcional)
     mapa.options['maxBounds'] = [
-        [-10.20, -68.00],  # sudoeste
-        [-9.90, -67.60]    # nordeste
+        [-10.40, -68.10],  # sudoeste
+        [-9.50, -67.00]    # nordeste
     ]
 
     mapa_html = mapa._repr_html_()

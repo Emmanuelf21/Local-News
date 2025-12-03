@@ -1,3 +1,4 @@
+{%load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -9,7 +10,7 @@
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <link rel="icon"  type="image/png" href="{% static 'img/favicon.png' %}" >
 </head>
 
 <body class="bg-gray-100 text-gray-900">
@@ -53,8 +54,10 @@
                 </div>
                 <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
                     <a href="/perfil/" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
+                    {% if user.perfil.perfil in 'editor admin' %}
                     <a href="/dashboard/" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
                     <a href="/cadastrar_noticia/" class="block px-4 py-2 hover:bg-gray-100">Criar notícia</a>
+                    {%endif%}
                     <a href="/logout/" class="block px-4 py-2 hover:bg-gray-100 text-red-500">Sair</a>
                 </div>
     
@@ -75,8 +78,10 @@
             {% if user.is_authenticated %}
             <hr class="my-2">
             <a href="/perfil/" class="block py-2">Perfil</a>
-            <a href="/dashboard/" class="block py-2">Dashboard</a>
-            <a href="/cadastrar_noticia/" class="block py-2">Criar Notícia</a>
+            {% if user.perfil.perfil in 'editor admin' %}
+                <a href="/dashboard/" class="block py-2">Dashboard</a>
+                <a href="/cadastrar_noticia/" class="block py-2">Criar Notícia</a>
+            {% endif %}
             <a href="/logout/" class="block py-2 text-red-500">Sair</a>
             {% else %}
             <a href="{% url 'login_cadastro' %}" class="block mt-2 bg-blue-600 text-white py-2 rounded text-center">
