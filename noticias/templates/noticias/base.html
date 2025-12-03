@@ -37,10 +37,12 @@
             <!-- Área do Usuário (desktop) -->
             <div class="hidden md:block relative">
                 {% if user.is_authenticated %}
-                <button onclick="toggleUserMenu()" class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
-                    <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" class="w-8 h-8" />
-                </button>
-    
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleUserMenu()" class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center">
+                        <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" class="w-8 h-8" />
+                    </button>
+                    <p>{{user.nome_usuario}}</p>
+                </div>
                 <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
                     <a href="/perfil/" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
                     <a href="/dashboard/" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>

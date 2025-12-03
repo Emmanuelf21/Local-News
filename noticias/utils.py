@@ -5,6 +5,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, Auto
 import torch
 import folium
 from .models import Noticia
+from timezonefinderL import TimezoneFinder
 
 def analisar_texto_noticia(texto):
     model_name = "vzani/portuguese-fake-news-classifier-bertimbau-fake-br"
@@ -116,3 +117,32 @@ def mapa_noticias():
 
     mapa_html = mapa._repr_html_()
     return mapa_html
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    return ip
+
+def get_user_timezone(ip):
+    try:
+        # API gratuita
+        data = requests.get(f"https://ipapi.co/{ip}/json/").json()
+
+        lat = data.get("latitude")
+        lon = data.get("longitude")
+
+        if lat is None or lon is None:
+            return "America/Sao_Paulo"  # fallback padrão
+
+        tf = TimezoneFinder()
+        tz = tf.timezone_at(lat=lat, lng=lon)
+
+        return tz or "America/Sao_Paulo"
+
+    except:
+        return "America/Sao_Paulo"
+    
+    
