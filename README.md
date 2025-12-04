@@ -2,7 +2,7 @@
 
 ## Instalando Dependências
 
-Este guia explica como instalar as ferramentas necessárias para o seu projeto Django. Vamos instalar o Django, Django REST Framework, Django Taggit, Django Summernote, Pillow, Folium e Geopy. Siga as etapas abaixo para configurar seu ambiente de desenvolvimento.
+Este guia explica como instalar as ferramentas necessárias para o seu projeto Django. Vamos instalar o Django, Django REST Framework, Django Taggit, Django Summernote, Pillow, Folium, Geopy e timezonefinderL. Siga as etapas abaixo para configurar seu ambiente de desenvolvimento.
 
 Pré-requisitos
 
@@ -42,7 +42,7 @@ source venv/bin/activate
 
 Agora, com o ambiente virtual ativado, instale as dependências necessárias executando o seguinte comando:
 ```
-pip install django djangorestframework django-taggit django-summernote pillow folium geopy psycopg2 python-dotenv requests
+pip install -r requirements.txt
 ```
 
 Isso irá instalar as seguintes ferramentas:
@@ -61,6 +61,8 @@ Isso irá instalar as seguintes ferramentas:
 
 * Geopy: Biblioteca para geocodificação e localização geográfica.
 
+* timezonefinderL: Alterar os horários de publicações e comentários de acordo com a localização do usuário. 
+
 3. Verificar a Instalação
 
 Após a instalação, execute o seguinte comando para garantir que o Django está funcionando corretamente:
@@ -72,17 +74,45 @@ python manage.py migrate
 Inserir os dados nas tabelas
 
 ```
-INSERT INTO public.noticias_categoria(categoria)
-	VALUES ("Válido"), ("Spam"), ("Fake"), ("Ofensivo");
+INSERT INTO public.noticias_perfil (perfil) VALUES ('usuário'), ('editor'),('admin');
+
+INSERT INTO public.taggit_tag (name, slug) VALUES
+('Economia', 'economia'),
+('Saúde', 'saúde'),
+('Tecnologia', 'tecnologia'),
+('Entretenimento', 'entretenimento'),
+('Esportes', 'esportes'),
+('Política', 'política'),
+('Outros', 'outros');
+
+INSERT INTO public.noticias_bairro (bairro, latitude, longitude) VALUES
+('Calafate', -9.977137, -67.8766039),
+('Nova Esperança', -9.977375, -67.8414052),
+('Jardim América', -9.9521151, -67.8259596),
+('Baixa da Colina', -9.9597888, -67.8011337),
+('Centro', -9.9696487, -67.8248029),
+('Quinze', -9.9861707, -67.8111672);
+
+
+INSERT INTO public.noticias_categoria (categoria) VALUES 
+('Real'), 
+('Fake');
 ```
+
+4. Banco de dados
+Foi utilizado o postgres e é necessário configurar o usuário, a senha e o nome do banco exatamento como está no arquivo [settings](https://github.com/Emmanuelf21/Local-News/blob/main/portal/settings.py)
+
+5. Após as configurações
 
 Rodar o projeto
 ```
 python manage.py runserver
 ```
 
-Abra o navegador e acesse http://127.0.0.1:8000/. Você deverá ver a página padrão do Django indicando que o servidor está funcionando.
-
-4. Banco de dados
-Foi utilizado o postgres e é necessário configurar o usuário, a senha e o nome do banco exatamento como está no arquivo [settings](https://github.com/Emmanuelf21/Local-News/blob/main/portal/settings.py)
-
+Abra o navegador e acesse http://127.0.0.1:8000/. Você deverá ver a página inicial do projeto.
+Após criar a primeira conta, é necessário alterar diretamente no banco de dados para o 'perfil' de 'admin' colocando o id como 3
+```
+UPDATE public.noticias_usuario
+SET perfil_id = 3
+WHERE id = <id do usuário>;
+```
