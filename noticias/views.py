@@ -184,7 +184,6 @@ def alterar_categoria(request, id):
     noticia.save()
     return redirect("dashboard")
 
-
 @login_required
 def perfil(request):
     user = request.user
