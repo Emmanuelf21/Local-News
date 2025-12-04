@@ -16,25 +16,33 @@
 <body class="bg-gray-100 text-gray-900">
 
     <header class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
     
             <!-- Logo -->
-            <a href="/" class="group text-2xl text-black hover:text-blue-600 font-bold transition">
-                Local
-                <span class="text-blue-600 group-hover:text-black transition">News</span>
-            </a>
+             <div class="hidden md:flex flex-col w-fit items-center">
+
+                 <a href="/" class="group text-2xl text-black hover:text-blue-600 font-bold transition">
+                     Local
+                     <span class="text-blue-600 group-hover:text-black transition">News</span>
+                    </a>
+                    <p class="text-sm text-gray-400 italic">Nem sempre Fake, mas sempre News</p>
+            </div>
     
-            <!-- Botão mobile -->
-            <button id="mobileMenuBtn" class="md:hidden text-3xl text-gray-700">
-                <i class="fa-solid fa-bars"></i>
-            </button>
     
             <!-- Menu Desktop -->
-            <nav class="hidden md:flex items-center gap-6 text-sm">
+            <!-- <nav class="hidden md:flex items-center gap-6 text-sm">
                 <a href="/" class="text-lg hover:text-xl hover:text-blue-600 transition-all duration-200">Home</a>
                 <button onclick="scrollToFooter()" class="text-lg hover:text-xl hover:text-blue-600 transition-all duration-200">Contato</button>
-            </nav>
-    
+            </nav> -->
+            <div class="max-w-32 sm:max-w-36 overflow-hidden">
+                <img class="w-32 sm:w-36" src="{% static 'img/LogonovaXD.png' %}" alt="Logo">
+            </div>
+
+             <!-- Botão mobile -->
+             <button id="mobileMenuBtn" class="md:hidden text-3xl text-gray-700">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
             <!-- Área do Usuário (desktop) -->
             <div class="hidden md:block relative">
                 {% if user.is_authenticated %}
@@ -42,14 +50,14 @@
                     <button onclick="toggleUserMenu()" class="group flex items-center gap-2">
         
                         <!-- Ícone com hover -->
-                        <div class="w-9 h-9 rounded-full flex items-center justify-center 
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center 
                                     transition group-hover:bg-gray-200">
                             <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" 
-                                 class="w-8 h-8" />
+                                 class="w-9 h-9" />
                         </div>
                 
                         <!-- Nome sem hover no fundo -->
-                        <p class="text-md">{{ user.nome_usuario }}</p>
+                        <p class="text-lg">{{ user.nome_usuario }}</p>
                     </button>
                 </div>
                 <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
