@@ -63,9 +63,11 @@ Isso irá instalar as seguintes ferramentas:
 
 * timezonefinderL: Alterar os horários de publicações e comentários de acordo com a localização do usuário. 
 
-3. Verificar a Instalação
+3. Fazer as Configurações e migrações
 
-Após a instalação, execute o seguinte comando para garantir que o Django está funcionando corretamente:
+Foi utilizado o PostgreSQL como Banco de Dados e é necessário configurar o usuário, a senha e o nome do banco no arquivo [settings](https://github.com/Emmanuelf21/Local-News/blob/main/portal/settings.py)
+Têm duas configurações, uma para o banco local que está comentada e outra para o banco hospedado.
+Após a instalação e a configuração do banco, execute o seguinte comando para garantir que o Django está funcionando corretamente:
 ```
 python manage.py makemigrations
 python manage.py migrate
@@ -99,10 +101,8 @@ INSERT INTO public.noticias_categoria (categoria) VALUES
 ('Fake');
 ```
 
-4. Banco de dados
-Foi utilizado o postgres e é necessário configurar o usuário, a senha e o nome do banco exatamento como está no arquivo [settings](https://github.com/Emmanuelf21/Local-News/blob/main/portal/settings.py)
 
-5. Após as configurações
+4. Após as configurações
 
 Rodar o projeto
 ```
