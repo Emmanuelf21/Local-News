@@ -1,175 +1,163 @@
-{% load static %}
+{%load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} News Portal {% endblock %}</title>
 
-    <title>{% block title %}Local News{% endblock %}</title>
-
-    <!-- Tailwind + Ícones -->
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-
-    <!-- Estilo customizado -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-
-    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon"  type="image/png" href="{% static 'img/favicon.png' %}" >
 </head>
 
-<body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 transition-colors duration-300">
+<body class="bg-gray-100 text-gray-900">
 
-    <!-- HEADER -->
-    <header
-        class="fixed top-0 left-0 w-full bg-black/90 backdrop-blur-md text-white shadow-md z-50 transition-colors duration-300">
-        <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    
             <!-- Logo -->
-            <a href="{% url 'home' %}" class="flex gap-2 items-center">
-                <h1 class="text-2xl font-bold">Local</h1>
-                <h1 class="text-2xl font-bold text-blue-500">News</h1>
+            <a href="/" class="group text-2xl text-black hover:text-blue-600 font-bold transition">
+                Local
+                <span class="text-blue-600 group-hover:text-black transition">News</span>
             </a>
-
-            <!-- Pesquisa -->
-            <form method="get" action="{% url 'home' %}"
-                class="form-base hidden flex flex-row md:flex bg-white dark:bg-gray-800 rounded-full overflow-hidden shadow-md w-1/2 transition-colors duration-300">
-                <input type="text" name="q" placeholder="Pesquisar..."
-                    class="flex-1 px-4 py-2 text-gray-700 dark:text-gray-200 dark:bg-gray-800 focus:outline-none outline-none border-0" />
-                <button class="bg-blue-600 px-5 hover:bg-blue-800 transition flex items-center gap-2">
-                    <i class="fas fa-search"></i><span>Buscar</span>
-                </button>
-            </form>
-
-            <!-- Perfil + Tema -->
-            <div class="flex items-center gap-3 relative">
-
-                <!-- 🌗 Botão de alternância de tema -->
-                <button id="toggle-theme" title="Alternar tema"
-                    class="text-xl p-2 rounded-full hover:bg-white/10 transition">
-                    🌙
-                </button>
-
+    
+            <!-- Botão mobile -->
+            <button id="mobileMenuBtn" class="md:hidden text-3xl text-gray-700">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+    
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center gap-6 text-sm">
+                <a href="/" class="text-lg hover:text-xl hover:text-blue-600 transition-all duration-200">Home</a>
+                <button onclick="scrollToFooter()" class="text-lg hover:text-xl hover:text-blue-600 transition-all duration-200">Contato</button>
+            </nav>
+    
+            <!-- Área do Usuário (desktop) -->
+            <div class="hidden md:block relative">
                 {% if user.is_authenticated %}
-                <button id="perfilButton"
-                    class="flex items-center gap-2 bg-white text-black dark:bg-gray-800 dark:text-white px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                    <img src="{% static 'img/user_icon.png' %}"
-                        class="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600" />
-                    <span class="hidden sm:inline">{{ user.nome_usuario }}</span>
-                    <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-
-                <div id="dropdownMenu"
-                    class="hidden absolute top-[100%] right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg fade-in">
-                    <a href="{% url 'perfil' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Perfil</a>
-                    {% if user.perfil.perfil == "editor" or user.perfil.perfil == "admin" %}
-                    <a href="{% url 'dashboard' %}"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Publicações</a>
-                    <a href="{% url 'cadastrar_noticia' %}"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Criar notícia</a>
-                    {% endif %}
-                    <a href="{% url 'logout' %}"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500">Sair</a>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleUserMenu()" class="group flex items-center gap-2">
+        
+                        <!-- Ícone com hover -->
+                        <div class="w-9 h-9 rounded-full flex items-center justify-center 
+                                    transition group-hover:bg-gray-200">
+                            <img src="https://cdn.jsdelivr.net/npm/heroicons@2.0.16/24/outline/user-circle.svg" 
+                                 class="w-8 h-8" />
+                        </div>
+                
+                        <!-- Nome sem hover no fundo -->
+                        <p class="text-md">{{ user.nome_usuario }}</p>
+                    </button>
                 </div>
+                <div id="userMenu" class="hidden absolute right-0 mt-2 bg-white shadow rounded w-40 z-50">
+                    <a href="/perfil/" class="block px-4 py-2 hover:bg-gray-100">Perfil</a>
+                    {% if user.perfil.perfil in 'editor admin' %}
+                    <a href="/dashboard/" class="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                    <a href="/cadastrar_noticia/" class="block px-4 py-2 hover:bg-gray-100">Criar notícia</a>
+                    {%endif%}
+                    <a href="/logout/" class="block px-4 py-2 hover:bg-gray-100 text-red-500">Sair</a>
+                </div>
+    
                 {% else %}
-                <a href="{% url 'login_cadastro' %}"
-                    class="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 transition">
-                    Entrar / Cadastrar
+                <a href="{% url 'login_cadastro' %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Entrar
                 </a>
                 {% endif %}
             </div>
         </div>
+    
+        <!-- Menu Mobile (abre com hambúrguer) -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white px-6 pb-4 shadow">
+    
+            <a href="/" class="block py-2 text-lg hover:text-blue-600">Home</a>
+            <button onclick="scrollToFooter()" class="block py-2 text-lg hover:text-blue-600">Contato</button>
+    
+            {% if user.is_authenticated %}
+            <hr class="my-2">
+            <a href="/perfil/" class="block py-2">Perfil</a>
+            {% if user.perfil.perfil in 'editor admin' %}
+                <a href="/dashboard/" class="block py-2">Dashboard</a>
+                <a href="/cadastrar_noticia/" class="block py-2">Criar Notícia</a>
+            {% endif %}
+            <a href="/logout/" class="block py-2 text-red-500">Sair</a>
+            {% else %}
+            <a href="{% url 'login_cadastro' %}" class="block mt-2 bg-blue-600 text-white py-2 rounded text-center">
+                Entrar / Cadastrar
+            </a>
+            {% endif %}
+        </div>
     </header>
+    
 
-    <!-- CONTEÚDO -->
-    <main class="flex-grow pt-24 px-4 fade-in">
+
+    <main class=" mx-auto px-4 mt-6">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- FOOTER -->
-    <footer class="shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] bg-black text-white text-center py-10 mt-12 transition-colors duration-300">
-        <div class="flex flex-col gap-2 items-center">
-            <div class="flex gap-2 text-2xl font-bold">
-                <span>Local</span><span class="text-blue-500">News</span>
+    <footer id="site-footer" class="bg-white text-black mt-20">
+        <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+    
+            <!-- Sobre -->
+            <div class="text-center sm:text-left">
+                <h3 class="font-semibold text-xl mb-2">Local <span class="text-blue-600">News</span></h3>
+                <p class="text-md italic text-gray-600">
+                    Nem sempre fake, mas sempre news!
+                </p>
             </div>
-            <p class="text-gray-400 text-sm italic">Nem sempre fake, mas sempre news!</p>
-            <div class="flex gap-4 mt-4">
-                <i class="fab fa-facebook hover:text-blue-500"></i>
-                <i class="fab fa-instagram hover:text-pink-500"></i>
-                <i class="fab fa-youtube hover:text-red-600"></i>
-            </div>
-            <div class="mt-6 text-gray-200 text-sm sm:text-base">
-                <p class="text-md">Deseja publicar no nosso portal? Entre em contato:</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-3 text-white">
-                    <p class="text-md">📧 contato@localnews.com.br</p>
-                    <p class="text-md">📞 (11) 3000-0000</p>
-                    <p class="text-md">📍 São Paulo, SP - Brasil</p>
+    
+            <!-- Links -->
+            <div class="text-center sm:text-left">
+                <h3 class="font-semibold mb-2">Links úteis</h3>
+                <ul class="text-sm space-y-1">
+                    <li><a href="/" class="hover:text-gray-500">Home</a></li>
+                    <li><a onclick="scrollToFooter()" class="hover:text-gray-500 cursor-pointer">Contato</a></li>
+                </ul>
+    
+                <div class="flex justify-center sm:justify-start gap-4 mt-4 text-2xl">
+                    <i class="fab fa-facebook hover:text-blue-600"></i>
+                    <i class="fab fa-instagram hover:text-pink-600"></i>
+                    <i class="fab fa-youtube hover:text-red-600"></i>
                 </div>
             </div>
-            <p class="text-xs text-gray-500 mt-4">&copy; 2025 - Local News. Todos os direitos reservados.</p>
+    
+            <!-- Contato -->
+            <div class="text-center sm:text-left">
+                <h3 class="font-semibold mb-2">Contato</h3>
+                <p class="text-sm text-gray-700">Deseja publicar no nosso portal?</p>
+    
+                <div class="mt-3 text-sm space-y-1">
+                    <p>📧 contato@localnews.com.br</p>
+                    <p>📞 (11) 3000-0000</p>
+                    <p>📍 São Paulo, SP</p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="text-center text-white py-4 text-xs bg-gray-400">
+            © 2025 Local News - Todos os direitos reservados.
         </div>
     </footer>
+    
 
-    <!-- JS -->
+
+    <!-- Scroll para o footer -->
     <script>
-        // Animação inicial
-        document.body.classList.add('fade-in');
+        function scrollToFooter() {
+        document.getElementById("site-footer").scrollIntoView({ behavior: "smooth" });
+    }
 
-        // Dropdown perfil
-        const btn = document.getElementById('perfilButton');
-        const menu = document.getElementById('dropdownMenu');
-        if (btn && menu) {
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                menu.classList.toggle('hidden');
-            });
-            document.addEventListener('click', () => menu.classList.add('hidden'));
-        }
+    function toggleUserMenu() {
+        document.getElementById("userMenu").classList.toggle("hidden");
+    }
 
-        // 🌗 Alternância de tema
-        const themeButton = document.getElementById('toggle-theme');
-        const body = document.body;
-
-        // Preferência salva
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') body.classList.add('dark');
-        else if (savedTheme === 'light') body.classList.remove('dark');
-        else if (window.matchMedia('(prefers-color-scheme: dark)').matches) body.classList.add('dark');
-
-        // Ícone inicial
-        themeButton.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
-
-        // Alternar manualmente
-        themeButton.addEventListener('click', () => {
-            body.classList.toggle('dark');
-            const isDark = body.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            themeButton.textContent = isDark ? '☀️' : '🌙';
-        });
+    // menu mobile
+    document.getElementById("mobileMenuBtn").onclick = () => {
+        document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
     </script>
-
 </body>
 
 </html>

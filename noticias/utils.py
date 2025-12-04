@@ -5,6 +5,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, Auto
 import torch
 import folium
 from .models import Noticia
+from timezonefinderL import TimezoneFinder
 
 def analisar_texto_noticia(texto):
     model_name = "vzani/portuguese-fake-news-classifier-bertimbau-fake-br"
@@ -28,7 +29,7 @@ def analisar_texto_noticia(texto):
         
     prob_real = probs[0][0].item()
     print(f"Prob_REAL: {prob_real}")
-    if prob_real < 0.90:
+    if prob_real > 0.40:
         label = 1  # FAKE
     else:
         label = 0  # REAL
@@ -40,12 +41,12 @@ def analisar_texto_noticia(texto):
 
 
 def mapa_noticias():
-    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema')
+    noticias = Noticia.objects.select_related('bairro', 'usuario', 'tema').filter(categoria__id=1).order_by('-created_at')
 
     # 🌎 Mapa centralizado em Rio Branco - AC, com mobile funcionando
     mapa = folium.Map(
-        location=[-9.97499, -67.8243],  # Rio Branco - AC
-        zoom_start=13,
+        location=[-9.99199, -67.8243],  # Rio Branco - AC
+        zoom_start=12,
         zoom_control=True,        # habilita controle de zoom para mobile
         scrollWheelZoom=True,     # permite zoom por gesto
         dragging=True,            # permite arrastar em mobile
@@ -110,9 +111,38 @@ def mapa_noticias():
 
     # 🔒 Define limites aproximados de Rio Branco (opcional)
     mapa.options['maxBounds'] = [
-        [-10.20, -68.00],  # sudoeste
-        [-9.90, -67.60]    # nordeste
+        [-10.40, -68.10],  # sudoeste
+        [-9.50, -67.00]    # nordeste
     ]
 
     mapa_html = mapa._repr_html_()
     return mapa_html
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+    return ip
+
+def get_user_timezone(ip):
+    try:
+        # API gratuita
+        data = requests.get(f"https://ipapi.co/{ip}/json/").json()
+
+        lat = data.get("latitude")
+        lon = data.get("longitude")
+
+        if lat is None or lon is None:
+            return "America/Sao_Paulo"  # fallback padrão
+
+        tf = TimezoneFinder()
+        tz = tf.timezone_at(lat=lat, lng=lon)
+
+        return tz or "America/Sao_Paulo"
+
+    except:
+        return "America/Sao_Paulo"
+    
+    
