@@ -35,8 +35,9 @@
     </main>
 
     <div class="prose max-w-none text-gray-700 leading-relaxed">
-      <p>{{ noticia.introducao|linebreaks }}</p>
-      <p>{{ noticia.desenvolvimento_inicial|linebreaks }}</p>
+      <p>{{ noticia.introducao|safe }}</p>
+      <br>
+      <p>{{ noticia.desenvolvimento_inicial|safe }}</p>
 
       {% if noticia.video %}
       <div class="my-6">
@@ -45,10 +46,10 @@
       </div>
       {% endif %}
 
-      <p>{{ noticia.desenvolvimento_final|linebreaks }}</p>
+      <p>{{ noticia.desenvolvimento_final|safe }}</p>
 
       <h2 class="text-2xl font-bold mt-6 mb-2">Conclusão</h2>
-      <p>{{ noticia.conclusao|linebreaks }}</p>
+      <p>{{ noticia.conclusao|safe }}</p>
 
       <p class="text-sm text-gray-500 mt-6">
         Publicado por {{ noticia.usuario }} em {{ noticia.created_at|date:"d/m/Y H:i" }}
