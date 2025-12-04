@@ -26,7 +26,7 @@ DEBUG = 'False' ### MODIFICADO ###
 if DEBUG:
     ALLOWED_HOSTS = ['*']  # Permite todos os hosts em modo debug
 else:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'Emmanuelf21.pythonanywhere.com']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localnews.onrender.com']
 
 
 # Application definition
