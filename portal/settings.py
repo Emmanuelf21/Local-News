@@ -43,15 +43,7 @@ INSTALLED_APPS = [
     'noticias',
 ]
 
-STATIC_URL = '/static/'
 
-STATIC_ROOT = BASE_DIR / "static"
-
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static"
-# ]
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -172,6 +164,15 @@ USE_TZ = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+STATIC_URL = '/static/'
+
+STATIC_ROOT = BASE_DIR / "static"
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static"
+# ]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
