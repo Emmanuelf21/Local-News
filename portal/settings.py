@@ -26,7 +26,7 @@ DEBUG = 'False' ### MODIFICADO ###
 #     ALLOWED_HOSTS = ['*']  # Permite todos os hosts em modo debug
 # else:
 #     ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localnews-v5t9.onrender.com']
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'localnews-v5t9.onrender.com', ".onrender.com"]
 
 # Application definition
 
