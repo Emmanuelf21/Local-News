@@ -5,7 +5,7 @@
 {% block content %}
 
 <!-- Barra de Pesquisa -->
-<div class="w-full flex justify-center my-5 px-4">
+<div class="w-full flex justify-center my-5 px-1 sm:px-4 ">
     <form method="get" action="{% url 'home' %}" class="w-full max-w-xl md:max-w-3xl bg-white shadow-md rounded-full flex items-center 
                px-4 py-2 gap-1 sm:gap-3 border border-gray-300
                transition-all duration-300 focus-within:shadow-xl">
@@ -16,7 +16,7 @@
             class="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-500 text-base sm:text-lg" />
 
         <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-full transition-all duration-300 text-sm sm:text-base font-medium">
+            class="w-18 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-full transition-all duration-300 text-sm sm:text-base font-medium">
             Buscar
         </button>
     </form>
