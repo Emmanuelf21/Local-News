@@ -1,1 +1,1 @@
-web: gunicorn portal.wsgi:application --bind 0.0.0.0:$PORT
+web: gunicorn portal.wsgi:application --workers=1 --threads=2 --timeout=120 --bind 0.0.0.0:$PORT
