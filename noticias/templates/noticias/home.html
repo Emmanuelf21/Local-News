@@ -7,7 +7,7 @@
 <!-- Barra de Pesquisa -->
 <div class="w-full flex justify-center my-5 px-4">
     <form method="get" action="{% url 'home' %}" class="w-full max-w-xl md:max-w-3xl bg-white shadow-md rounded-full flex items-center 
-               px-4 py-2 gap-3 border border-gray-300
+               px-4 py-2 gap-1 sm:gap-3 border border-gray-300
                transition-all duration-300 focus-within:shadow-xl">
 
         <i class="fas fa-search text-gray-600 text-lg ml-2"></i>
@@ -186,9 +186,9 @@
             </section>
 
             <!-- Mapa -->
-            <section class="flex flex-col items-center mt-10 border-t border-gray-200 py-4">
+            <section class="hidden sm:flex sm:flex-col items-center mt-10 border-t border-gray-200 py-4">
                 <h1 class="text-xl sm:text-2xl font-bold mb-4">🗺️ Notícias por Região</h1>
-                <div class="rounded-lg overflow-hidden max-w-7xl mx-auto shadow-lg h-64 sm:h-96 w-full"
+                <div class="rounded-lg overflow-hidden max-w-7xl mx-auto shadow-lg h-82 sm:h-96 w-full"
                     id="mapa-container">
                 </div>
             </section>
