@@ -116,3 +116,7 @@ UPDATE public.noticias_usuario
 SET perfil_id = 3
 WHERE id = <id do usuário>;
 ```
+
+5. Documentação
+
+[notion](https://mesquite-tumble-17b.notion.site/Local-News-27d42cb686c18046b8b1ec21c634e686?pvs=73)
